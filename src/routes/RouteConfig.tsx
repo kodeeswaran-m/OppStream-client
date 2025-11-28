@@ -6,10 +6,12 @@ import AssociateManagerDashboard from "../pages/associateManager/Dashboard";
 import VPDashboard from "../pages/VP/Dashboard";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import CreateBusinessUnit from "../pages/admin/CreateBusinessUnit";
+import EmployeeFormPage from "../pages/EmployeeFormPages";
 
 export const routeConfig: Record<UserRole, AppRoute[]> = {
   employee: [
     { path: "/employee/dashboard", label: "Dashboard", element: <EmployeeDashboard /> },
+    { path: "/employee/form", label: "Form", element: <EmployeeFormPage /> },
   ],
 
   "reporting manager": [

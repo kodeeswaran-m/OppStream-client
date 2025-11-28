@@ -24,25 +24,12 @@ a:hover {
 
 body {
   margin: 0;
-<<<<<<< HEAD
   min-width: 320px;
   min-height: 100vh;
   width: 100%;
 }
 
 
-=======
-  padding: 0;
-  width: 100%;
-  height: auto;
-  overflow-x: hidden;   /* Prevent unwanted horizontal scroll */
-  background: var(--bg);
-  color: var(--text);
-}
-
-
-
->>>>>>> bc794095affee0583c9b8b469e0d3d6ece242914
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
