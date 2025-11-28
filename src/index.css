@@ -24,11 +24,15 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  width: 100%;
+  height: auto;
+  overflow-x: hidden;   /* Prevent unwanted horizontal scroll */
+  background: var(--bg);
+  color: var(--text);
 }
+
+
 
 h1 {
   font-size: 3.2em;
