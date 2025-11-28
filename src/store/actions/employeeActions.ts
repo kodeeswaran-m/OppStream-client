@@ -1,4 +1,3 @@
-// store/actions/employeeActions.ts
 import axios from "../../utils/axiosInstance";
 import type { Dispatch } from "redux";
 import {
@@ -11,6 +10,9 @@ import {
   GET_SINGLE_EMP_REQUEST,
   GET_SINGLE_EMP_SUCCESS,
   GET_SINGLE_EMP_FAILURE,
+  GET_MANAGERS_REQUEST,
+  GET_MANAGERS_SUCCESS,
+  GET_MANAGERS_FAILURE,
 } from "../constants/employeeConstants";
 
 // ---------- CREATE OR UPDATE EMPLOYEE ----------
@@ -93,3 +95,30 @@ export const getEmployeeById =
       return { success: false, data: message };
     }
   };
+
+
+  // -------------------- GET MANAGERS LIST --------------------
+export const getManagersList = () => async (dispatch: Dispatch) => {
+  dispatch({ type: GET_MANAGERS_REQUEST });
+
+  try {
+    const res = await axios.get("/api/employee/getManagers");
+
+    dispatch({
+      type: GET_MANAGERS_SUCCESS,
+      payload: res.data.managers,
+    });
+
+    return { success: true, data: res.data.managers };
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || "Failed to fetch managers";
+
+    dispatch({
+      type: GET_MANAGERS_FAILURE,
+      payload: message,
+    });
+
+    return { success: false, data: message };
+  }
+};

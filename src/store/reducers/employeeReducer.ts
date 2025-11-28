@@ -9,6 +9,9 @@ import {
   GET_SINGLE_EMP_REQUEST,
   GET_SINGLE_EMP_SUCCESS,
   GET_SINGLE_EMP_FAILURE,
+  GET_MANAGERS_REQUEST,
+  GET_MANAGERS_SUCCESS,
+  GET_MANAGERS_FAILURE,
 } from "../constants/employeeConstants";
 
 export interface Employee {
@@ -28,6 +31,7 @@ interface EmployeeState {
   message: string | null;
   employees: Employee[];
   selectedEmployee: Employee | null;
+  managers: Employee[];
 }
 
 const initialState: EmployeeState = {
@@ -36,6 +40,7 @@ const initialState: EmployeeState = {
   message: null,
   employees: [],
   selectedEmployee: null,
+  managers: [], // <-- NEW
 };
 
 export const employeeReducer = (
@@ -75,6 +80,16 @@ export const employeeReducer = (
       return { ...state, loading: false, selectedEmployee: action.payload };
 
     case GET_SINGLE_EMP_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+
+    // ---------------- GET MANAGERS ----------------
+    case GET_MANAGERS_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case GET_MANAGERS_SUCCESS:
+      return { ...state, loading: false, managers: action.payload };
+
+    case GET_MANAGERS_FAILURE:
       return { ...state, loading: false, error: action.payload };
 
     default:
