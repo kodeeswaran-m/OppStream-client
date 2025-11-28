@@ -1,8 +1,8 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import type { RootState } from "../store";
-import { ROLE_HOME } from "../utils/roleHome";
+import type { RootState } from "../../store";
+import { ROLE_HOME } from "../../utils/roleHome";
 
 interface Props {
   children: React.ReactNode;

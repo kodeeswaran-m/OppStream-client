@@ -59,6 +59,7 @@ const Login = () => {
             <TextField
               label="Email"
               fullWidth
+              size="small"
               margin="normal"
               value={email}
               type="email"
@@ -68,6 +69,7 @@ const Login = () => {
             <TextField
               label="Password"
               fullWidth
+              size="small"
               margin="normal"
               type="password"
               value={password}
@@ -92,9 +94,14 @@ const Login = () => {
           </form>
 
           <Typography textAlign="center" mt={2} fontSize={14} color="primary">
-            Don't have an account? <span style={{cursor:"pointer", textDecoration:"underline"}}  onClick={()=>navigate("/signup")}>Click here</span>
+            Don't have an account?{" "}
+            <span
+              style={{ cursor: "pointer", textDecoration: "underline" }}
+              onClick={() => navigate("/signup")}
+            >
+              Click here
+            </span>
           </Typography>
-          
         </Paper>
       </Box>
     </>

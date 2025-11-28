@@ -37,16 +37,15 @@ const Signup = () => {
     e.preventDefault();
     // dispatch(signup(username, email, password, confirmPassword, role));
 
-     const result = await dispatch(
-    signup(username, email, password, confirmPassword, role)
-  );
+    const result = await dispatch(
+      signup(username, email, password, confirmPassword, role)
+    );
 
-  console.log("Signup result =>", result);
+    console.log("Signup result =>", result);
 
-  if (result.success) {
-    navigate("/login");
-  }
-
+    if (result.success) {
+      navigate("/login");
+    }
   };
 
   useEffect(() => {
@@ -64,7 +63,10 @@ const Signup = () => {
         backgroundColor: "#f5f5f5",
       }}
     >
-      <Paper elevation={6} sx={{ padding: 4, width: 380, borderRadius: 3 }}>
+      <Paper
+        elevation={6}
+        sx={{ margin: 4, padding: 5, width: 380, borderRadius: 3 }}
+      >
         <Typography variant="h5" fontWeight={600} textAlign="center" mb={3}>
           Create Account
         </Typography>
@@ -74,6 +76,7 @@ const Signup = () => {
             fullWidth
             label="Username"
             value={username}
+            size="small"
             sx={{ mb: 2 }}
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -83,6 +86,7 @@ const Signup = () => {
             fullWidth
             label="Role"
             value={role}
+            size="small"
             sx={{ mb: 2 }}
             onChange={(e) => setRole(e.target.value)}
           >
@@ -90,12 +94,14 @@ const Signup = () => {
             <MenuItem value="reporting manager">Reporting Manager</MenuItem>
             <MenuItem value="associate manager">Associate Manager</MenuItem>
             <MenuItem value="VP">VP</MenuItem>
+            <MenuItem value="admin">Admin</MenuItem>
           </TextField>
 
           <TextField
             fullWidth
             label="Email"
             value={email}
+            size="small"
             sx={{ mb: 2 }}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -104,6 +110,7 @@ const Signup = () => {
             fullWidth
             type="password"
             label="Password"
+            size="small"
             value={password}
             sx={{ mb: 2 }}
             onChange={(e) => setPassword(e.target.value)}
@@ -113,6 +120,7 @@ const Signup = () => {
             fullWidth
             type="password"
             label="Confirm Password"
+            size="small"
             value={confirmPassword}
             sx={{ mb: 3 }}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -122,15 +130,21 @@ const Signup = () => {
             variant="contained"
             fullWidth
             type="submit"
+            size="small"
             disabled={loading}
             sx={{ py: 1.2, fontWeight: 600 }}
           >
             {loading ? <CircularProgress size={22} /> : "Sign Up"}
           </Button>
 
-          <Typography textAlign="center" mt={2} fontSize={14} color="primary" >
-            Already have an account? 
-            <span style={{cursor:"pointer", textDecoration:"underline"}} onClick={() => navigate("/login")}>Click here</span>
+          <Typography textAlign="center" mt={2} fontSize={14} color="primary">
+            Already have an account?
+            <span
+              style={{ cursor: "pointer", textDecoration: "underline" }}
+              onClick={() => navigate("/login")}
+            >
+              Click here
+            </span>
           </Typography>
         </form>
 
