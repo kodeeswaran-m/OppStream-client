@@ -13,7 +13,12 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.5",
+<<<<<<< HEAD
     "@mui/material": "^7.3.5",
+=======
+    "@mui/material": "^5.18.0",
+    "@mui/system": "^5.18.0",
+>>>>>>> bc794095affee0583c9b8b469e0d3d6ece242914
     "axios": "^1.13.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
