@@ -13,35 +13,37 @@ import {
   GET_MANAGERS_REQUEST,
   GET_MANAGERS_SUCCESS,
   GET_MANAGERS_FAILURE,
+  GET_CURRENT_EMP_REQUEST,
+  GET_CURRENT_EMP_SUCCESS,
+  GET_CURRENT_EMP_FAILURE,
 } from "../constants/employeeConstants";
 
+
 // ---------- CREATE OR UPDATE EMPLOYEE ----------
-export const upsertEmployee =
-  (formData: any) =>
-  async (dispatch: Dispatch) => {
-    dispatch({ type: UPSERT_EMP_REQUEST });
+export const upsertEmployee = (formData: any) => async (dispatch: Dispatch) => {
+  dispatch({ type: UPSERT_EMP_REQUEST });
 
-    try {
-      const res = await axios.post("/api/employee/upsert", formData);
+  try {
+    const res = await axios.post("/api/employee/upsert", formData);
 
-      dispatch({
-        type: UPSERT_EMP_SUCCESS,
-        payload: res.data,
-      });
+    dispatch({
+      type: UPSERT_EMP_SUCCESS,
+      payload: res.data,
+    });
 
-      return { success: true, data: res.data };
-    } catch (error: any) {
-      const message =
-        error.response?.data?.message || "Failed to save employee details";
+    return { success: true, data: res.data };
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || "Failed to save employee details";
 
-      dispatch({
-        type: UPSERT_EMP_FAILURE,
-        payload: message,
-      });
+    dispatch({
+      type: UPSERT_EMP_FAILURE,
+      payload: message,
+    });
 
-      return { success: false, data: message };
-    }
-  };
+    return { success: false, data: message };
+  }
+};
 
 // ---------- GET ALL EMPLOYEES ----------
 export const getEmployees = () => async (dispatch: Dispatch) => {
@@ -70,34 +72,31 @@ export const getEmployees = () => async (dispatch: Dispatch) => {
 };
 
 // ---------- GET SINGLE EMPLOYEE ----------
-export const getEmployeeById =
-  (id: string) => async (dispatch: Dispatch) => {
-    dispatch({ type: GET_SINGLE_EMP_REQUEST });
+export const getEmployeeById = (id: string) => async (dispatch: Dispatch) => {
+  dispatch({ type: GET_SINGLE_EMP_REQUEST });
 
-    try {
-      const res = await axios.get(`/api/employees/${id}`);
+  try {
+    const res = await axios.get(`/api/employees/${id}`);
 
-      dispatch({
-        type: GET_SINGLE_EMP_SUCCESS,
-        payload: res.data.employee,
-      });
+    dispatch({
+      type: GET_SINGLE_EMP_SUCCESS,
+      payload: res.data.employee,
+    });
 
-      return { success: true, data: res.data.employee };
-    } catch (error: any) {
-      const message =
-        error.response?.data?.message || "Failed to fetch employee";
+    return { success: true, data: res.data.employee };
+  } catch (error: any) {
+    const message = error.response?.data?.message || "Failed to fetch employee";
 
-      dispatch({
-        type: GET_SINGLE_EMP_FAILURE,
-        payload: message,
-      });
+    dispatch({
+      type: GET_SINGLE_EMP_FAILURE,
+      payload: message,
+    });
 
-      return { success: false, data: message };
-    }
-  };
+    return { success: false, data: message };
+  }
+};
 
-
-  // -------------------- GET MANAGERS LIST --------------------
+// -------------------- GET MANAGERS LIST --------------------
 export const getManagersList = () => async (dispatch: Dispatch) => {
   dispatch({ type: GET_MANAGERS_REQUEST });
 
@@ -111,11 +110,35 @@ export const getManagersList = () => async (dispatch: Dispatch) => {
 
     return { success: true, data: res.data.managers };
   } catch (error: any) {
-    const message =
-      error.response?.data?.message || "Failed to fetch managers";
+    const message = error.response?.data?.message || "Failed to fetch managers";
 
     dispatch({
       type: GET_MANAGERS_FAILURE,
+      payload: message,
+    });
+
+    return { success: false, data: message };
+  }
+};
+
+export const getCurrentEmployee = () => async (dispatch: Dispatch) => {
+  dispatch({ type: GET_CURRENT_EMP_REQUEST });
+
+  try {
+    const res = await axios.get("/api/employee/getEmployeeByUserId");
+
+    dispatch({
+      type: GET_CURRENT_EMP_SUCCESS,
+      payload: res.data.employee,
+    });
+
+    return { success: true, data: res.data.employee };
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || "Failed to load employee details";
+
+    dispatch({
+      type: GET_CURRENT_EMP_FAILURE,
       payload: message,
     });
 

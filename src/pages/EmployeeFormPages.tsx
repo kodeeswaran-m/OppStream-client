@@ -11,23 +11,27 @@ import {
 
 import Grid from "@mui/material/Grid";
 
-
-
-
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import { useSelector } from "react-redux";
+
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { getBusinessUnits } from "../store/actions/adminActions";
 import type { RootState } from "../store";
+import { getCurrentEmployee, getManagersList, upsertEmployee } from "../store/actions/employeeActions";
 
 type Skill = {
   skillName: string;
   proficiencyLevel: string;
   experience: string;
 };
-
 const EmployeeFormPage = () => {
-  const { user } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
 
+  const { user } = useSelector((state: RootState) => state.auth);
+const currentUser = useSelector((state: any) => state.employee.currentUserDetails);
+
+  // INITIAL FORM STATE
   const [form, setForm] = useState({
     employeeId: "",
     employeeName: "",
@@ -35,7 +39,7 @@ const EmployeeFormPage = () => {
     contactNumber: "",
     dob: "",
     workLocation: "",
-    employmentType: "Full Time",
+    employmentType: "",
     role: "EMP",
     department: "",
     team: "",
@@ -45,14 +49,71 @@ const EmployeeFormPage = () => {
     previousProjects: "",
     previousCompanies: "",
     currentProjects: "",
-    skills: [{ skillName: "", proficiencyLevel: "", experience: "" }] as Skill[],
+    skills: [{ skillName: "", proficiencyLevel: "", experience: "" }],
   });
+
+  // ---------------- FETCH CURRENT EMPLOYEE ON LOAD ----------------
+  useEffect(() => {
+    dispatch(getCurrentEmployee() as any);
+  }, []);
+console.log("current user", currentUser);
+  // ---------------- UPDATE FORM WHEN EMPLOYEE DATA ARRIVES ----------------
+ useEffect(() => {
+  if (currentUser) {
+    setForm({
+      employeeId: currentUser.employeeId || "",
+      employeeName: currentUser.employeeName || "",
+      employeeEmail: user?.email || "",
+      contactNumber: currentUser.contactNumber || "",
+      dob: currentUser.dob?.substring(0, 10) || "",
+      workLocation: currentUser.workLocation || "",
+      employmentType: currentUser.employmentType || "",
+      role: currentUser.role || "",
+      department: currentUser.department || "",
+      team: currentUser.team || "",
+
+      // ⭐ Extract correct _id
+      managerId: currentUser.managerId?._id || "",
+      businessUnitId: currentUser.businessUnitId?._id || "",
+
+      totalExperience: currentUser.totalExperience?.toString() || "",
+      previousProjects: currentUser.previousProjects?.join(", ") || "",
+      previousCompanies: currentUser.previousCompanies?.join(", ") || "",
+      currentProjects: currentUser.currentProjects?.join(", ") || "",
+
+      skills:
+        currentUser.skills?.length > 0
+          ? currentUser.skills.map((s: any) => ({
+              skillName: s.skillName || "",
+              proficiencyLevel: s.proficiencyLevel || "",
+              experience: s.experience?.toString() || "",
+            }))
+          : [{ skillName: "", proficiencyLevel: "", experience: "" }],
+    });
+  }
+}, [currentUser]);
+
+
+  useEffect(() => {
+    dispatch(getBusinessUnits() as any);
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(getManagersList() as any);
+  }, [dispatch]);
+
+  const { businessUnits } = useSelector((state: RootState) => state.admin);
+  const { managers } = useSelector((state: RootState) => state.employee);
 
   const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSkillChange = (index: number, key: keyof Skill, value: string) => {
+  const handleSkillChange = (
+    index: number,
+    key: keyof Skill,
+    value: string
+  ) => {
     const updated = [...form.skills];
     updated[index][key] = value;
     setForm({ ...form, skills: updated });
@@ -61,7 +122,10 @@ const EmployeeFormPage = () => {
   const addSkill = () => {
     setForm({
       ...form,
-      skills: [...form.skills, { skillName: "", proficiencyLevel: "", experience: "" }],
+      skills: [
+        ...form.skills,
+        { skillName: "", proficiencyLevel: "", experience: "" },
+      ],
     });
   };
 
@@ -69,6 +133,39 @@ const EmployeeFormPage = () => {
     const updated = [...form.skills];
     updated.splice(index, 1);
     setForm({ ...form, skills: updated });
+  };
+
+  const handleSubmit = async () => {
+    const payload = {
+      ...form,
+
+      totalExperience: Number(form.totalExperience || 0),
+
+      previousProjects: form.previousProjects
+        ? form.previousProjects.split(",").map((x) => x.trim())
+        : [],
+
+      previousCompanies: form.previousCompanies
+        ? form.previousCompanies.split(",").map((x) => x.trim())
+        : [],
+
+      currentProjects: form.currentProjects
+        ? form.currentProjects.split(",").map((x) => x.trim())
+        : [],
+
+      skills: form.skills.map((s) => ({
+        ...s,
+        experience: Number(s.experience || 0),
+      })),
+    };
+
+    const res = await dispatch(upsertEmployee(payload) as any);
+
+    if (res.success) {
+      alert("Employee saved successfully!");
+    } else {
+      alert("Error: " + res.data);
+    }
   };
 
   return (
@@ -187,7 +284,13 @@ const EmployeeFormPage = () => {
           </Grid>
 
           <Grid item xs={4}>
-            <TextField label="Role" fullWidth name="role" disabled value={form.role} />
+            <TextField
+              label="Role"
+              fullWidth
+              name="role"
+              disabled
+              value={form.role}
+            />
           </Grid>
 
           <Grid item xs={4}>
@@ -210,7 +313,7 @@ const EmployeeFormPage = () => {
             />
           </Grid>
 
-          <Grid item xs={4}>
+          {/* <Grid item xs={4}>
             <TextField
               label="Manager ID"
               fullWidth
@@ -218,16 +321,54 @@ const EmployeeFormPage = () => {
               value={form.managerId}
               onChange={handleChange}
             />
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={4}>
             <TextField
-              label="Business Unit ID"
+              select
+              label="Reporting Manager"
               fullWidth
+              name="managerId"
+              value={form.managerId}
+              onChange={handleChange}
+            >
+              {managers.length === 0 ? (
+                <MenuItem disabled>No managers available</MenuItem>
+              ) : (
+                managers.map((mgr) => (
+                  <MenuItem key={mgr._id} value={mgr._id}>
+                    {mgr.employeeName} ({mgr.employeeId})
+                  </MenuItem>
+                ))
+              )}
+            </TextField>
+          </Grid>
+
+          {/* <Grid item xs={4}>
+            <TextField
+              label="Business Unit ID"
+              fullWidth 
               name="businessUnitId"
               value={form.businessUnitId}
               onChange={handleChange}
             />
+          </Grid> */}
+
+          <Grid item xs={4}>
+            <TextField
+              select
+              label="Business Unit"
+              fullWidth
+              name="businessUnitId"
+              value={form.businessUnitId}
+              onChange={handleChange}
+            >
+              {businessUnits.map((bu) => (
+                <MenuItem key={bu._id} value={bu._id}>
+                  {bu.name}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
         </Grid>
 
@@ -247,7 +388,7 @@ const EmployeeFormPage = () => {
             />
           </Grid>
 
-          <Grid item xs={4}>
+          {/* <Grid item xs={4}>
             <TextField
               label="Previous Projects"
               fullWidth
@@ -275,6 +416,36 @@ const EmployeeFormPage = () => {
               value={form.currentProjects}
               onChange={handleChange}
             />
+          </Grid> */}
+          <Grid item xs={4}>
+            <TextField
+              label="Previous Projects"
+              name="previousProjects"
+              fullWidth
+              placeholder="Project1, Project2"
+              value={form.previousProjects}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Previous Companies"
+              name="previousCompanies"
+              fullWidth
+              placeholder="Company1, Company2"
+              value={form.previousCompanies}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Current Projects"
+              name="currentProjects"
+              fullWidth
+              placeholder="ProjectA, ProjectB"
+              value={form.currentProjects}
+              onChange={handleChange}
+            />
           </Grid>
         </Grid>
 
@@ -291,7 +462,9 @@ const EmployeeFormPage = () => {
                 fullWidth
                 required
                 value={skill.skillName}
-                onChange={(e) => handleSkillChange(index, "skillName", e.target.value)}
+                onChange={(e) =>
+                  handleSkillChange(index, "skillName", e.target.value)
+                }
               />
             </Grid>
 
@@ -307,8 +480,17 @@ const EmployeeFormPage = () => {
             </Grid>
 
             <Grid item xs={3}>
+              {/* <TextField
+                label="Experience (Years)"
+                fullWidth
+                value={skill.experience}
+                onChange={(e) =>
+                  handleSkillChange(index, "experience", e.target.value)
+                }
+              /> */}
               <TextField
                 label="Experience (Years)"
+                type="number"
                 fullWidth
                 value={skill.experience}
                 onChange={(e) =>
@@ -330,7 +512,7 @@ const EmployeeFormPage = () => {
         </Button>
 
         <Box mt={4} textAlign="center">
-          <Button
+          {/* <Button
             variant="contained"
             sx={{
               px: 4,
@@ -338,6 +520,13 @@ const EmployeeFormPage = () => {
               borderRadius: 3,
               background: "#8347AD",
             }}
+          >
+            Submit
+          </Button> */}
+          <Button
+            variant="contained"
+            sx={{ px: 4, py: 1.2, borderRadius: 3, background: "#8347AD" }}
+            onClick={handleSubmit}
           >
             Submit
           </Button>
