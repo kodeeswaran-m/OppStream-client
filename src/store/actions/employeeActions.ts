@@ -16,8 +16,13 @@ import {
   GET_CURRENT_EMP_REQUEST,
   GET_CURRENT_EMP_SUCCESS,
   GET_CURRENT_EMP_FAILURE,
+  CREATE_EMP_LOG_REQUEST,
+  CREATE_EMP_LOG_SUCCESS,
+  CREATE_EMP_LOG_FAILURE,
+  GET_VISIBLE_LOGS_REQUEST,
+  GET_VISIBLE_LOGS_SUCCESS,
+  GET_VISIBLE_LOGS_FAILURE,
 } from "../constants/employeeConstants";
-
 
 // ---------- CREATE OR UPDATE EMPLOYEE ----------
 export const upsertEmployee = (formData: any) => async (dispatch: Dispatch) => {
@@ -139,6 +144,53 @@ export const getCurrentEmployee = () => async (dispatch: Dispatch) => {
 
     dispatch({
       type: GET_CURRENT_EMP_FAILURE,
+      payload: message,
+    });
+
+    return { success: false, data: message };
+  }
+};
+
+export const createUserLog = (payload: any) => async (dispatch: Dispatch) => {
+  dispatch({ type: CREATE_EMP_LOG_REQUEST });
+  try {
+    console.log("payload", payload);
+    const res = await axios.post("/api/employee/createLog", payload);
+    dispatch({
+      type: CREATE_EMP_LOG_SUCCESS,
+      payload: res.data,
+    });
+    console.log("res", res);
+    return { success: true, data: res.data.log };
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || "Failed to load employee details";
+
+    dispatch({
+      type: CREATE_EMP_LOG_FAILURE,
+      payload: message,
+    });
+
+    return { success: false, data: message };
+  }
+};
+
+export const getVisibleLogs = () => async (dispatch: Dispatch) => {
+  dispatch({ type: GET_VISIBLE_LOGS_REQUEST });
+  try {
+    const res = await axios.get("/api/employee/getVisibleLogs");
+    dispatch({
+      type: GET_VISIBLE_LOGS_SUCCESS,
+      payload: res.data,
+    });
+    console.log("res", res);
+    return { success: true, data: res.data.log };
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || "Failed to load employee details";
+
+    dispatch({
+      type: GET_VISIBLE_LOGS_FAILURE,
       payload: message,
     });
 

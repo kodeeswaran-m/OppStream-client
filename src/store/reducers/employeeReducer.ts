@@ -15,6 +15,12 @@ import {
   GET_CURRENT_EMP_REQUEST,
   GET_CURRENT_EMP_SUCCESS,
   GET_CURRENT_EMP_FAILURE,
+  CREATE_EMP_LOG_REQUEST,
+  CREATE_EMP_LOG_SUCCESS,
+  CREATE_EMP_LOG_FAILURE,
+  GET_VISIBLE_LOGS_REQUEST,
+  GET_VISIBLE_LOGS_SUCCESS,
+  GET_VISIBLE_LOGS_FAILURE,
 } from "../constants/employeeConstants";
 
 export interface Employee {
@@ -35,7 +41,9 @@ interface EmployeeState {
   employees: Employee[];
   selectedEmployee: Employee | null;
   managers: Employee[];
-  currentUserDetails: Employee | null; // ⭐ NEW FIELD
+  currentUserDetails: Employee | null;
+  userLogs: any[];
+  count:number
 }
 
 const initialState: EmployeeState = {
@@ -45,7 +53,9 @@ const initialState: EmployeeState = {
   employees: [],
   selectedEmployee: null,
   managers: [],
-  currentUserDetails: null, // ⭐ NEW FIELD
+  currentUserDetails: null,
+  userLogs: [],
+  count:0
 };
 
 export const employeeReducer = (
@@ -107,6 +117,41 @@ export const employeeReducer = (
       };
 
     case GET_CURRENT_EMP_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+    case CREATE_EMP_LOG_REQUEST:
+      return { ...state, loading: true, error: null };
+    case CREATE_EMP_LOG_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        // userLogs: [...state.userLogs, action.payload.log],
+      };
+
+    case CREATE_EMP_LOG_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+    case GET_CURRENT_EMP_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case GET_CURRENT_EMP_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        currentUserDetails: action.payload,
+      };
+
+    case GET_CURRENT_EMP_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+
+    case GET_VISIBLE_LOGS_REQUEST:
+      return { ...state, loading: true, error: null };
+    case GET_VISIBLE_LOGS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        userLogs: [...state.userLogs, action.payload.logs],
+        count:action.payload.count
+      };
+    case GET_VISIBLE_LOGS_FAILURE:
       return { ...state, loading: false, error: action.payload };
     default:
       return state;

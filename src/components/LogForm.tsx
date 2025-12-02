@@ -16,14 +16,20 @@ import {
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import { createUserLog } from "../store/actions/employeeActions";
+import { useDispatch } from "react-redux";
+import type { ThunkDispatch } from "redux-thunk";
+import type { RootState } from "../store";
+import type { AnyAction } from "redux";
+type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
 // ----------------------------- TYPES -----------------------------
 type People = { name: string };
 
 type TechRow = {
   technology: string;
-  count: string;
-  expertise: string;
+  count: number;
+  // expertise: string;
 };
 
 type State = {
@@ -48,7 +54,7 @@ type State = {
 
   // SECTION 3
   selectedTechnologies: string[];
-  totalPersons: string;
+  totalPersons: number;
   techRows: TechRow[];
   oppCategory: string;
   shortDescription: string;
@@ -73,32 +79,32 @@ const initialState: State = {
   department: "",
   team: "",
   manager: "",
-  requirementType: "",
+  requirementType: "EE",
 
-  projectName: "",
-  clientName: "",
-  projectCode: "",
-  urgency: "",
-  meetingType: "",
-  callDate: "",
+  projectName: "demo",
+  clientName: "demo",
+  projectCode: "demo",
+  urgency: "Immediate",
+  meetingType: "Presentation",
+  callDate: "2025-12-09",
   screenshot: null,
-  peoplePresent: [{ name: "" }],
+  peoplePresent: [{ name: "sam" }],
 
-  selectedTechnologies: [],
-  totalPersons: "",
-  techRows: [],
+  selectedTechnologies: ["React"],
+  totalPersons: 4,
+  techRows: [{ technology: "React", count: 4 }],
 
-  oppCategory: "",
-  shortDescription: "",
-  detailedNotes: "",
+  oppCategory: "New Feature",
+  shortDescription: "demo des",
+  detailedNotes: "demo description",
 
-  expectedStart: "",
-  expectedEnd: "",
+  expectedStart: "2025-12-25",
+  expectedEnd: "2027-01-01",
 
-  nnDescription: "",
-  nnClientName: "",
-  nnSource: "",
-  nnOppFrom: "",
+  nnDescription: "demo",
+  nnClientName: "demo",
+  nnSource: "demo",
+  nnOppFrom: "demo",
 };
 
 // ----------------------------- ACTION TYPES -----------------------------
@@ -110,7 +116,12 @@ type Action =
   | { type: "SET_TECHNOLOGIES"; value: string[] }
   | { type: "ADD_TECH_ROW" }
   | { type: "REMOVE_TECH_ROW"; index: number }
-  | { type: "UPDATE_TECH_ROW"; index: number; field: keyof TechRow; value: string }
+  | {
+      type: "UPDATE_TECH_ROW";
+      index: number;
+      field: keyof TechRow;
+      value: string;
+    }
   | { type: "RESET_TECH_ROWS" };
 
 // ----------------------------- REDUCER -----------------------------
@@ -139,19 +150,36 @@ function reducer(state: State, action: Action): State {
         ),
       };
 
+    // case "SET_TECHNOLOGIES":
+    //   return {
+    //     ...state,
+    //     selectedTechnologies: action.value,
+    //   };
     case "SET_TECHNOLOGIES":
       return {
         ...state,
         selectedTechnologies: action.value,
+        techRows: state.techRows.filter((row) =>
+          action.value.includes(row.technology)
+        ), // remove tech-rows that belong to unselected techs
       };
 
     case "RESET_TECH_ROWS":
       return { ...state, techRows: [] };
 
+    // case "ADD_TECH_ROW":
+    //   return {
+    //     ...state,
+    //     techRows: [...state.techRows, { technology: "", count: "" }],
+    //   };
     case "ADD_TECH_ROW":
+      if (state.techRows.length >= state.selectedTechnologies.length) {
+        return state; // block adding more rows
+      }
+
       return {
         ...state,
-        techRows: [...state.techRows, { technology: "", count: "", expertise: "" }],
+        techRows: [...state.techRows, { technology: "", count: 0 }],
       };
 
     case "REMOVE_TECH_ROW":
@@ -160,12 +188,27 @@ function reducer(state: State, action: Action): State {
         techRows: state.techRows.filter((_, i) => i !== action.index),
       };
 
+    // case "UPDATE_TECH_ROW":
+    //   return {
+    //     ...state,
+    //     techRows: state.techRows.map((row, i) =>
+    //       i === action.index ? { ...row, [action.field]: action.value } : row
+    //     ),
+    //   };
     case "UPDATE_TECH_ROW":
+      const updatedRows = state.techRows.map((row, i) =>
+        i === action.index ? { ...row, [action.field]: action.value } : row
+      );
+
+      const total = updatedRows.reduce(
+        (sum, r) => sum + Number(r.count || 0),
+        0
+      );
+
       return {
         ...state,
-        techRows: state.techRows.map((row, i) =>
-          i === action.index ? { ...row, [action.field]: action.value } : row
-        ),
+        techRows: updatedRows,
+        totalPersons: total, // auto update
       };
 
     default:
@@ -176,7 +219,7 @@ function reducer(state: State, action: Action): State {
 // ----------------------------- COMPONENT -----------------------------
 const LOGForm = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-
+  const thunkDispatch:AppDispatch=useDispatch();
   // ---------------------- Auto-fill from user profile ----------------------
   useEffect(() => {
     // Replace with your API call:
@@ -189,27 +232,89 @@ const LOGForm = () => {
       manager: "Sam",
     };
 
-    dispatch({ type: "SET_FIELD", field: "employeeId", value: user.employeeId });
-    dispatch({ type: "SET_FIELD", field: "employeeName", value: user.employeeName });
-    dispatch({ type: "SET_FIELD", field: "employeeEmail", value: user.employeeEmail });
-    dispatch({ type: "SET_FIELD", field: "department", value: user.department });
+    dispatch({
+      type: "SET_FIELD",
+      field: "employeeId",
+      value: user.employeeId,
+    });
+    dispatch({
+      type: "SET_FIELD",
+      field: "employeeName",
+      value: user.employeeName,
+    });
+    dispatch({
+      type: "SET_FIELD",
+      field: "employeeEmail",
+      value: user.employeeEmail,
+    });
+    dispatch({
+      type: "SET_FIELD",
+      field: "department",
+      value: user.department,
+    });
     dispatch({ type: "SET_FIELD", field: "team", value: user.team });
     dispatch({ type: "SET_FIELD", field: "manager", value: user.manager });
   }, []);
 
-  // ---------------------- AUTO CREATE TECH ROWS WHEN TECH SELECTED ----------------------
-  useEffect(() => {
-    dispatch({ type: "RESET_TECH_ROWS" });
-    state.selectedTechnologies.forEach(() => {
-      dispatch({ type: "ADD_TECH_ROW" });
-    });
-  }, [state.selectedTechnologies]);
-
   // ---------------------- SUBMIT ----------------------
   const handleSubmit = () => {
-    console.log("FINAL FORM:", state);
-    alert("Form Submitted!");
+    const payload = {
+      requirementType: state.requirementType,
+
+      // Opp From section
+      oppFrom:
+        state.requirementType === "NN"
+          ? undefined
+          : {
+              projectName: state.projectName,
+              clientName: state.clientName,
+              projectCode: state.projectCode,
+              urgency: state.urgency,
+              meetingType: state.meetingType,
+              meetingDate: state.callDate,
+              meetingScreenshot: state.screenshot, // upload to Cloudinary before sending
+              peoplePresent: state.peoplePresent,
+            },
+
+      // Opp To section
+      oppTo:
+        state.requirementType === "NN"
+          ? undefined
+          : {
+              technologyRequired: state.selectedTechnologies,
+              techRows: state.techRows,
+              totalPersons: state.totalPersons,
+              category: state.oppCategory,
+              shortDescription: state.shortDescription,
+              detailedNotes: state.detailedNotes,
+            },
+
+      // When NN type — include NN section fields
+      nnDetails:
+        state.requirementType === "NN"
+          ? {
+              description: state.nnDescription,
+              clientName: state.nnClientName,
+              source: state.nnSource,
+              oppFrom: state.nnOppFrom,
+            }
+          : undefined,
+
+      // Timeline
+      timeline: {
+        expectedStart: state.expectedStart,
+        expectedEnd: state.expectedEnd,
+      },
+    };
+
+    thunkDispatch(createUserLog(payload))
+      
+
+    console.log("FINAL PAYLOAD →", payload);
   };
+
+  const canAddMoreRows = () =>
+    state.techRows.length < state.selectedTechnologies.length;
 
   return (
     <Box sx={{ minHeight: "100vh", p: 4, background: "#F6F4FA" }}>
@@ -297,8 +402,7 @@ const LOGForm = () => {
         )}
 
         {/* ================= SECTION 2 (if EE or EN) ================= */}
-        {(state.requirementType === "EE" ||
-          state.requirementType === "EN") && (
+        {(state.requirementType === "EE" || state.requirementType === "EN") && (
           <>
             <Typography mt={4} variant="h6">
               Opp. From
@@ -311,7 +415,11 @@ const LOGForm = () => {
                   label="Project Name"
                   value={state.projectName}
                   onChange={(e) =>
-                    dispatch({ type: "SET_FIELD", field: "projectName", value: e.target.value })
+                    dispatch({
+                      type: "SET_FIELD",
+                      field: "projectName",
+                      value: e.target.value,
+                    })
                   }
                 />
               </Grid>
@@ -322,7 +430,11 @@ const LOGForm = () => {
                   label="Client Name"
                   value={state.clientName}
                   onChange={(e) =>
-                    dispatch({ type: "SET_FIELD", field: "clientName", value: e.target.value })
+                    dispatch({
+                      type: "SET_FIELD",
+                      field: "clientName",
+                      value: e.target.value,
+                    })
                   }
                 />
               </Grid>
@@ -333,7 +445,11 @@ const LOGForm = () => {
                   label="Project Code"
                   value={state.projectCode}
                   onChange={(e) =>
-                    dispatch({ type: "SET_FIELD", field: "projectCode", value: e.target.value })
+                    dispatch({
+                      type: "SET_FIELD",
+                      field: "projectCode",
+                      value: e.target.value,
+                    })
                   }
                 />
               </Grid>
@@ -345,7 +461,11 @@ const LOGForm = () => {
                   label="Urgency Level"
                   value={state.urgency}
                   onChange={(e) =>
-                    dispatch({ type: "SET_FIELD", field: "urgency", value: e.target.value })
+                    dispatch({
+                      type: "SET_FIELD",
+                      field: "urgency",
+                      value: e.target.value,
+                    })
                   }
                 >
                   <MenuItem value="Immediate">Immediate</MenuItem>
@@ -384,7 +504,11 @@ const LOGForm = () => {
                   InputLabelProps={{ shrink: true }}
                   value={state.callDate}
                   onChange={(e) =>
-                    dispatch({ type: "SET_FIELD", field: "callDate", value: e.target.value })
+                    dispatch({
+                      type: "SET_FIELD",
+                      field: "callDate",
+                      value: e.target.value,
+                    })
                   }
                 />
               </Grid>
@@ -419,7 +543,9 @@ const LOGForm = () => {
                     <Grid item>
                       <IconButton
                         color="error"
-                        onClick={() => dispatch({ type: "REMOVE_PEOPLE", index: i })}
+                        onClick={() =>
+                          dispatch({ type: "REMOVE_PEOPLE", index: i })
+                        }
                         disabled={state.peoplePresent.length === 1}
                       >
                         <RemoveCircleIcon />
@@ -456,43 +582,53 @@ const LOGForm = () => {
                       })
                     }
                     input={<OutlinedInput label="Technologies Required" />}
-                    renderValue={(selected) => (
-                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                        {(selected as string[]).map((value) => (
-                          <Chip key={value} label={value} />
-                        ))}
-                      </Box>
-                    )}
                   >
-                    {["React", "Angular", "Python", "Java", "Node"].map((tech) => (
-                      <MenuItem key={tech} value={tech}>
-                        {tech}
-                      </MenuItem>
-                    ))}
+                    {["React", "Angular", "Python", "Java", "Node"].map(
+                      (tech) => (
+                        <MenuItem key={tech} value={tech}>
+                          {tech}
+                        </MenuItem>
+                      )
+                    )}
                   </Select>
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid item xs={3}>
                 <TextField
-                  fullWidth
                   label="Total Persons"
-                  type="number"
                   value={state.totalPersons}
-                  onChange={(e) =>
-                    dispatch({ type: "SET_FIELD", field: "totalPersons", value: e.target.value })
-                  }
+                  fullWidth
+                  disabled
                 />
               </Grid>
             </Grid>
 
-            {/* Dynamic Tech Rows */}
-            {state.techRows.map((row, i) => (
+            {/* ADD ROW BUTTON */}
+            <Box mt={2}>
+              <Button
+                variant="outlined"
+                startIcon={<AddCircleIcon />}
+                disabled={!canAddMoreRows()}
+                onClick={() => dispatch({ type: "ADD_TECH_ROW" })}
+              >
+                Add Technology Row
+              </Button>
+
+              {/* {!canAddMoreRows() && (
+                <Typography color="error" fontSize="14px" mt={1}>
+                  Total count reached or no technologies selected.
+                </Typography>
+              )} */}
+            </Box>
+
+            {/* DYNAMIC TECH ROWS */}
+            {state.techRows.map((row, index) => (
               <Grid
                 container
                 spacing={2}
                 alignItems="center"
-                key={i}
+                key={index}
                 sx={{ mt: 1 }}
               >
                 <Grid item xs={4}>
@@ -504,17 +640,23 @@ const LOGForm = () => {
                     onChange={(e) =>
                       dispatch({
                         type: "UPDATE_TECH_ROW",
-                        index: i,
+                        index,
                         field: "technology",
                         value: e.target.value,
                       })
                     }
                   >
-                    {state.selectedTechnologies.map((tech) => (
-                      <MenuItem key={tech} value={tech}>
-                        {tech}
-                      </MenuItem>
-                    ))}
+                    {state.selectedTechnologies
+                      .filter(
+                        (tech) =>
+                          tech === row.technology || // allow already selected value
+                          !state.techRows.some((r) => r.technology === tech) // hide tech used in another row
+                      )
+                      .map((tech) => (
+                        <MenuItem key={tech} value={tech}>
+                          {tech}
+                        </MenuItem>
+                      ))}
                   </TextField>
                 </Grid>
 
@@ -527,24 +669,8 @@ const LOGForm = () => {
                     onChange={(e) =>
                       dispatch({
                         type: "UPDATE_TECH_ROW",
-                        index: i,
+                        index,
                         field: "count",
-                        value: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-
-                <Grid item xs={3}>
-                  <TextField
-                    fullWidth
-                    label="Expertise"
-                    value={row.expertise}
-                    onChange={(e) =>
-                      dispatch({
-                        type: "UPDATE_TECH_ROW",
-                        index: i,
-                        field: "expertise",
                         value: e.target.value,
                       })
                     }
@@ -554,7 +680,7 @@ const LOGForm = () => {
                 <Grid item>
                   <IconButton
                     color="error"
-                    onClick={() => dispatch({ type: "REMOVE_TECH_ROW", index: i })}
+                    onClick={() => dispatch({ type: "REMOVE_TECH_ROW", index })}
                   >
                     <RemoveCircleIcon />
                   </IconButton>
@@ -621,7 +747,7 @@ const LOGForm = () => {
 
         {/* ================= SECTION 4 ================= */}
         <Typography mt={4} variant="h6">
-          Expected Timeline & Billing
+          Expected Timeline
         </Typography>
 
         <Grid container spacing={2} mt={1}>
@@ -676,864 +802,3 @@ const LOGForm = () => {
 };
 
 export default LOGForm;
-
-
-
-
-// import React, { useEffect, useMemo, useState } from "react";
-// import {
-//   Box,
-//   Grid,
-//   Paper,
-//   Typography,
-//   TextField,
-//   MenuItem,
-//   Button,
-//   IconButton,
-//   Select,
-//   InputLabel,
-//   FormControl,
-//   FormHelperText,
-//   Chip,
-//   OutlinedInput,
-// } from "@mui/material";
-// import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-// import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-// import UploadFileIcon from "@mui/icons-material/UploadFile";
-
-// type RequirementType = "EE" | "EN" | "NN";
-// type Urgency = "Immediate" | "High" | "Normal";
-// type MeetingType =
-//   | "catch up call"
-//   | "review meeting"
-//   | "client meeting"
-//   | "one to one"
-//   | "presentation"
-//   | "others";
-
-// type TechOption = string;
-
-// type PersonPresent = {
-//   name: string;
-//   role?: string;
-// };
-
-// type TechRow = {
-//   tech: string; // tech name
-//   count: number;
-//   expertise: string;
-// };
-
-// export type LogFormPayload = {
-//   // section 1
-//   employeeId?: string;
-//   employeeName?: string;
-//   employeeEmail?: string;
-//   department?: string;
-//   team?: string;
-//   reportingManagerId?: string | null;
-
-//   // req type
-//   requirementType: RequirementType;
-
-//   // section 2 (Opp From)
-//   projectName?: string;
-//   clientName?: string;
-//   projectCode?: string;
-//   urgency?: Urgency;
-//   meetingType?: MeetingType | string;
-//   meetingDate?: string | null; // ISO date
-//   meetingScreenshot?: File | null;
-//   peoplePresent?: PersonPresent[];
-
-//   // section 3 (Opp To)
-//   technologies?: TechOption[]; // multi-select
-//   totalPersons?: number;
-//   techRows?: TechRow[]; // dynamic rows
-//   oppCategory?: string;
-//   shortDescription?: string;
-//   detailedNotes?: string;
-
-//   // section 4
-//   expectedStartDate?: string | null;
-//   expectedEndDate?: string | null;
-
-//   // metadata
-//   createdAt?: string;
-// };
-
-// interface EmployeeSummary {
-//   employeeId?: string;
-//   employeeName?: string;
-//   employeeEmail?: string;
-//   department?: string;
-//   team?: string;
-//   reportingManagerId?: string;
-// }
-
-// interface Props {
-//   initialEmployee?: EmployeeSummary | null; // optional prefill
-//   techOptions?: TechOption[]; // available tech list
-//   onSubmit?: (payload: LogFormPayload) => Promise<void> | void;
-//   submitLabel?: string;
-// }
-
-// const PRIMARY = "#8347AD";
-
-// const defaultTechOptions = [
-//   "React",
-//   "Angular",
-//   "Vue",
-//   "Node.js",
-//   "Python",
-//   "Java",
-//   "Golang",
-// ];
-
-// const sxField = { width: "100%" };
-
-// const LogForm: React.FC<Props> = ({
-//   initialEmployee = null,
-//   techOptions = defaultTechOptions,
-//   onSubmit,
-//   submitLabel = "Submit",
-// }) => {
-//   // === form state ===
-//   const [employeeId, setEmployeeId] = useState(initialEmployee?.employeeId || "");
-//   const [employeeName, setEmployeeName] = useState(initialEmployee?.employeeName || "");
-//   const [employeeEmail, setEmployeeEmail] = useState(initialEmployee?.employeeEmail || "");
-//   const [department, setDepartment] = useState(initialEmployee?.department || "");
-//   const [team, setTeam] = useState(initialEmployee?.team || "");
-//   const [reportingManagerId, setReportingManagerId] = useState<string | null>(
-//     initialEmployee?.reportingManagerId || null
-//   );
-
-//   const [requirementType, setRequirementType] = useState<RequirementType>("EE");
-
-//   // Section 2
-//   const [projectName, setProjectName] = useState("");
-//   const [clientName, setClientName] = useState("");
-//   const [projectCode, setProjectCode] = useState("");
-//   const [urgency, setUrgency] = useState<Urgency>("Normal");
-//   const [meetingType, setMeetingType] = useState<MeetingType | string>("catch up call");
-//   const [meetingDate, setMeetingDate] = useState<string | null>(null);
-//   const [meetingScreenshot, setMeetingScreenshot] = useState<File | null>(null);
-//   const [peoplePresent, setPeoplePresent] = useState<PersonPresent[]>([
-//     { name: "", role: "" },
-//   ]);
-
-//   // Section 3
-//   const [technologies, setTechnologies] = useState<string[]>([]);
-//   const [totalPersons, setTotalPersons] = useState<number | "">("");
-//   const [techRows, setTechRows] = useState<TechRow[]>([
-//     { tech: "", count: 1, expertise: "" },
-//   ]);
-//   const [oppCategory, setOppCategory] = useState("");
-//   const [shortDescription, setShortDescription] = useState("");
-//   const [detailedNotes, setDetailedNotes] = useState("");
-
-//   // Section 4
-//   const [expectedStartDate, setExpectedStartDate] = useState<string | null>(null);
-//   const [expectedEndDate, setExpectedEndDate] = useState<string | null>(null);
-
-//   // UI / validation
-//   const [errors, setErrors] = useState<Record<string, string>>({});
-//   const [submitting, setSubmitting] = useState(false);
-
-//   // Derived
-//   const showOppSections = requirementType === "EE" || requirementType === "EN";
-//   const showNNOnly = requirementType === "NN";
-
-//   // Ensure techRows length >= technologies length when user picks new techs
-//   useEffect(() => {
-//     // if user added new techs, ensure at least one techRow per selected tech
-//     if (technologies.length > 0) {
-//       setTechRows((prev) => {
-//         // keep existing rows for selected techs, add new ones for newly selected
-//         const existingByTech = prev.reduce<Record<string, TechRow>>((acc, r) => {
-//           if (r.tech) acc[r.tech] = r;
-//           return acc;
-//         }, {});
-//         const result: TechRow[] = [];
-//         for (const t of technologies) {
-//           if (existingByTech[t]) result.push(existingByTech[t]);
-//           else result.push({ tech: t, count: 1, expertise: "" });
-//         }
-//         return result;
-//       });
-//     } else {
-//       // when no tech selected, keep at least one blank row
-//       setTechRows([{ tech: "", count: 1, expertise: "" }]);
-//     }
-//   }, [technologies]);
-
-//   // Helpers for dynamic arrays
-//   const addPerson = () =>
-//     setPeoplePresent((p) => [...p, { name: "", role: "" }]);
-//   const removePerson = (i: number) =>
-//     setPeoplePresent((p) => p.filter((_, idx) => idx !== i));
-//   const updatePerson = (i: number, key: keyof PersonPresent, value: string) =>
-//     setPeoplePresent((p) => {
-//       const copy = [...p];
-//       copy[i] = { ...copy[i], [key]: value };
-//       return copy;
-//     });
-
-//   const addTechRow = () =>
-//     setTechRows((t) => [...t, { tech: "", count: 1, expertise: "" }]);
-//   const removeTechRow = (i: number) =>
-//     setTechRows((t) => t.filter((_, idx) => idx !== i));
-//   const updateTechRow = (i: number, key: keyof TechRow, value: any) =>
-//     setTechRows((t) => {
-//       const copy = [...t];
-//       copy[i] = { ...copy[i], [key]: value };
-//       return copy;
-//     });
-
-//   // Validation
-//   const validate = (): boolean => {
-//     const e: Record<string, string> = {};
-
-//     // Section 1 minimal
-//     if (!employeeName.trim()) e.employeeName = "Employee name is required";
-//     if (!employeeEmail.trim()) e.employeeEmail = "Employee email is required";
-//     // requirement type always present
-
-//     if (showOppSections) {
-//       // Section 2 validations for EE/EN
-//       if (!projectName.trim()) e.projectName = "Project name is required";
-//       if (!clientName.trim()) e.clientName = "Client name is required";
-//       if (!meetingDate) e.meetingDate = "Meeting date is required";
-//       // Section 3
-//       if (!Array.isArray(technologies) || technologies.length === 0) {
-//         e.technologies = "Select at least one technology";
-//       }
-
-//       const total = Number(totalPersons || 0);
-//       if (!total || total <= 0) {
-//         e.totalPersons = "Enter total number of persons required";
-//       }
-
-//       // techRows should cover selected techs and counts sum must be <= total
-//       const rowsForSelected = techRows.filter((r) => r.tech && technologies.includes(r.tech));
-//       const sum = rowsForSelected.reduce((acc, r) => acc + Number(r.count || 0), 0);
-//       if (sum > total) {
-//         e.techRows = `Sum of tech-specific counts (${sum}) cannot exceed total persons (${total})`;
-//       }
-
-//       // each selected tech must appear at least once in rows
-//       for (const t of technologies) {
-//         const found = techRows.some((r) => r.tech === t);
-//         if (!found) {
-//           e.techRows = `Please add at least one row for technology ${t}`;
-//           break;
-//         }
-//       }
-//     }
-
-//     // NN minimal fields
-//     if (showNNOnly) {
-//       if (!shortDescription.trim()) e.shortDescription = "Short description is required for NN";
-//       if (!clientName.trim()) e.clientName = "Client name is required";
-//     }
-
-//     setErrors(e);
-//     return Object.keys(e).length === 0;
-//   };
-
-//   // Form normalization to payload
-//   const buildPayload = (): LogFormPayload => {
-//     return {
-//       employeeId: employeeId || undefined,
-//       employeeName: employeeName || undefined,
-//       employeeEmail: employeeEmail || undefined,
-//       department: department || undefined,
-//       team: team || undefined,
-//       reportingManagerId: reportingManagerId || null,
-
-//       requirementType,
-
-//       projectName: projectName || undefined,
-//       clientName: clientName || undefined,
-//       projectCode: projectCode || undefined,
-//       urgency,
-//       meetingType,
-//       meetingDate: meetingDate || null,
-//       meetingScreenshot: meetingScreenshot || null,
-//       peoplePresent: peoplePresent.filter((p) => p.name.trim() !== ""),
-
-//       technologies: technologies.length ? technologies : undefined,
-//       totalPersons: typeof totalPersons === "number" ? totalPersons : undefined,
-//       techRows: techRows.filter((r) => r.tech),
-//       oppCategory: oppCategory || undefined,
-//       shortDescription: shortDescription || undefined,
-//       detailedNotes: detailedNotes || undefined,
-
-//       expectedStartDate: expectedStartDate || null,
-//       expectedEndDate: expectedEndDate || null,
-//       createdAt: new Date().toISOString(),
-//     };
-//   };
-
-//   // Submit handler
-//   const handleSubmit = async () => {
-//     if (!validate()) {
-//       window.scrollTo({ top: 0, behavior: "smooth" });
-//       return;
-//     }
-//     setSubmitting(true);
-//     const payload = buildPayload();
-//     try {
-//       if (onSubmit) await onSubmit(payload);
-//       else {
-//         // default demo behaviour
-//         // eslint-disable-next-line no-alert
-//         alert("Form ready to submit. Check console (payload).");
-//         // eslint-disable-next-line no-console
-//         console.log("LOG form payload:", payload);
-//       }
-//     } catch (err) {
-//       // swallow, real handler shows messages
-//       // eslint-disable-next-line no-console
-//       console.error(err);
-//     } finally {
-//       setSubmitting(false);
-//     }
-//   };
-
-//   // file input handler
-//   const handleFileChange = (f?: File | null) => {
-//     setMeetingScreenshot(f || null);
-//   };
-
-//   // multi-select changes handled with MUI OutlinedInput + Chips
-//   const handleTechToggle = (selected: readonly string[]) => {
-//     setTechnologies(selected as string[]);
-//   };
-
-//   // layout / rendering
-//   return (
-//     <Box sx={{ p: { xs: 2, md: 4 } }}>
-//       <Paper sx={{ p: { xs: 2, md: 4 }, borderRadius: 2 }}>
-//         <Typography variant="h4" mb={3} sx={{ color: PRIMARY }}>
-//           LOG Form
-//         </Typography>
-
-//         {/* SECTION 1 */}
-//         <Typography variant="h6" mb={1}>
-//           Employee details
-//         </Typography>
-//         <Grid container spacing={2} mb={2}>
-//           <Grid item xs={12} md={4}>
-//             <TextField
-//               label="Employee ID"
-//               value={employeeId}
-//               onChange={(e) => setEmployeeId(e.target.value)}
-//               sx={sxField}
-//               size="small"
-//             />
-//           </Grid>
-
-//           <Grid item xs={12} md={4}>
-//             <TextField
-//               label="Employee Name"
-//               value={employeeName}
-//               onChange={(e) => setEmployeeName(e.target.value)}
-//               sx={sxField}
-//               size="small"
-//               error={!!errors.employeeName}
-//               helperText={errors.employeeName}
-//             />
-//           </Grid>
-
-//           <Grid item xs={12} md={4}>
-//             <TextField
-//               label="Employee Email"
-//               value={employeeEmail}
-//               onChange={(e) => setEmployeeEmail(e.target.value)}
-//               sx={sxField}
-//               size="small"
-//               error={!!errors.employeeEmail}
-//               helperText={errors.employeeEmail}
-//             />
-//           </Grid>
-
-//           <Grid item xs={12} md={4}>
-//             <TextField
-//               label="Department"
-//               value={department}
-//               onChange={(e) => setDepartment(e.target.value)}
-//               sx={sxField}
-//               size="small"
-//             />
-//           </Grid>
-
-//           <Grid item xs={12} md={4}>
-//             <TextField
-//               label="Team"
-//               value={team}
-//               onChange={(e) => setTeam(e.target.value)}
-//               sx={sxField}
-//               size="small"
-//             />
-//           </Grid>
-
-//           <Grid item xs={12} md={4}>
-//             <TextField
-//               label="Reporting Manager (ID)"
-//               value={reportingManagerId ?? ""}
-//               onChange={(e) => setReportingManagerId(e.target.value || null)}
-//               sx={sxField}
-//               size="small"
-//             />
-//           </Grid>
-//         </Grid>
-
-//         {/* Requirement Type */}
-//         <Grid container spacing={2} alignItems="center" mb={2}>
-//           <Grid item xs={12} md={4}>
-//             <FormControl fullWidth size="small">
-//               <InputLabel id="req-type-label">Requirement Type</InputLabel>
-//               <Select
-//                 labelId="req-type-label"
-//                 value={requirementType}
-//                 label="Requirement Type"
-//                 onChange={(e) => setRequirementType(e.target.value as RequirementType)}
-//               >
-//                 <MenuItem value="EE">EE</MenuItem>
-//                 <MenuItem value="EN">EN</MenuItem>
-//                 <MenuItem value="NN">NN</MenuItem>
-//               </Select>
-//             </FormControl>
-//           </Grid>
-//         </Grid>
-
-//         {/* Section 2 - Opp From (shows for EE/EN) */}
-//         {showOppSections && (
-//           <>
-//             <Typography variant="h6" mt={2} mb={1}>
-//               Opp. From (Section 2)
-//             </Typography>
-
-//             <Grid container spacing={2} mb={1}>
-//               <Grid item xs={12} md={4}>
-//                 <TextField
-//                   label="Project Name"
-//                   value={projectName}
-//                   onChange={(e) => setProjectName(e.target.value)}
-//                   size="small"
-//                   fullWidth
-//                   error={!!errors.projectName}
-//                   helperText={errors.projectName}
-//                 />
-//               </Grid>
-
-//               <Grid item xs={12} md={4}>
-//                 <TextField
-//                   label="Client Name"
-//                   value={clientName}
-//                   onChange={(e) => setClientName(e.target.value)}
-//                   size="small"
-//                   fullWidth
-//                   error={!!errors.clientName}
-//                   helperText={errors.clientName}
-//                 />
-//               </Grid>
-
-//               <Grid item xs={12} md={4}>
-//                 <TextField
-//                   label="Project Code"
-//                   value={projectCode}
-//                   onChange={(e) => setProjectCode(e.target.value)}
-//                   size="small"
-//                   fullWidth
-//                 />
-//               </Grid>
-
-//               <Grid item xs={12} md={4}>
-//                 <FormControl size="small" fullWidth>
-//                   <InputLabel id="urgency-label">Urgency</InputLabel>
-//                   <Select
-//                     labelId="urgency-label"
-//                     value={urgency}
-//                     label="Urgency"
-//                     onChange={(e) => setUrgency(e.target.value as Urgency)}
-//                   >
-//                     <MenuItem value="Immediate">Immediate</MenuItem>
-//                     <MenuItem value="High">High</MenuItem>
-//                     <MenuItem value="Normal">Normal</MenuItem>
-//                   </Select>
-//                 </FormControl>
-//               </Grid>
-
-//               <Grid item xs={12} md={4}>
-//                 <FormControl size="small" fullWidth>
-//                   <InputLabel id="meeting-type-label">Meeting Type</InputLabel>
-//                   <Select
-//                     labelId="meeting-type-label"
-//                     value={meetingType}
-//                     label="Meeting Type"
-//                     onChange={(e) => setMeetingType(e.target.value as MeetingType)}
-//                   >
-//                     <MenuItem value="catch up call">Catch up call</MenuItem>
-//                     <MenuItem value="review meeting">Review meeting</MenuItem>
-//                     <MenuItem value="client meeting">Client meeting</MenuItem>
-//                     <MenuItem value="one to one">One to one</MenuItem>
-//                     <MenuItem value="presentation">Presentation</MenuItem>
-//                     <MenuItem value="others">Others</MenuItem>
-//                   </Select>
-//                 </FormControl>
-//               </Grid>
-
-//               <Grid item xs={12} md={4}>
-//                 <TextField
-//                   label="Date of discussion / call"
-//                   type="date"
-//                   InputLabelProps={{ shrink: true }}
-//                   value={meetingDate || ""}
-//                   onChange={(e) => setMeetingDate(e.target.value)}
-//                   size="small"
-//                   fullWidth
-//                   error={!!errors.meetingDate}
-//                   helperText={errors.meetingDate}
-//                 />
-//               </Grid>
-
-//               <Grid item xs={12} md={12}>
-//                 <Box display="flex" alignItems="center" gap={2}>
-//                   <Button
-//                     variant="outlined"
-//                     component="label"
-//                     startIcon={<UploadFileIcon />}
-//                     sx={{ borderColor: PRIMARY, color: PRIMARY }}
-//                   >
-//                     Upload Meeting Screenshot
-//                     <input
-//                       type="file"
-//                       hidden
-//                       accept="image/*"
-//                       onChange={(e) => handleFileChange(e.target.files?.[0] ?? null)}
-//                     />
-//                   </Button>
-//                   {meetingScreenshot && <Typography>{meetingScreenshot.name}</Typography>}
-//                 </Box>
-//               </Grid>
-
-//               {/* People present - dynamic */}
-//               <Grid item xs={12} md={12}>
-//                 <Typography variant="subtitle1" mb={1}>
-//                   People present in the meeting
-//                 </Typography>
-
-//                 {peoplePresent.map((p, idx) => (
-//                   <Grid container spacing={1} key={idx} alignItems="center" sx={{ mb: 1 }}>
-//                     <Grid item xs={12} md={5}>
-//                       <TextField
-//                         label="Name"
-//                         value={p.name}
-//                         onChange={(e) => updatePerson(idx, "name", e.target.value)}
-//                         size="small"
-//                         fullWidth
-//                       />
-//                     </Grid>
-
-//                     <Grid item xs={12} md={5}>
-//                       <TextField
-//                         label="Role"
-//                         value={p.role}
-//                         onChange={(e) => updatePerson(idx, "role", e.target.value)}
-//                         size="small"
-//                         fullWidth
-//                       />
-//                     </Grid>
-
-//                     <Grid item xs={12} md={2}>
-//                       <Box display="flex" gap={1}>
-//                         <IconButton color="primary" onClick={() => addPerson()}>
-//                           <AddCircleOutlineIcon />
-//                         </IconButton>
-//                         {peoplePresent.length > 1 && (
-//                           <IconButton color="error" onClick={() => removePerson(idx)}>
-//                             <RemoveCircleOutlineIcon />
-//                           </IconButton>
-//                         )}
-//                       </Box>
-//                     </Grid>
-//                   </Grid>
-//                 ))}
-//               </Grid>
-//             </Grid>
-//           </>
-//         )}
-
-//         {/* NN only short fields */}
-//         {showNNOnly && (
-//           <>
-//             <Typography variant="h6" mt={2} mb={1}>
-//               Quick NN Fields
-//             </Typography>
-//             <Grid container spacing={2} mb={2}>
-//               <Grid item xs={12} md={6}>
-//                 <TextField
-//                   label="Description"
-//                   value={shortDescription}
-//                   onChange={(e) => setShortDescription(e.target.value)}
-//                   fullWidth
-//                   size="small"
-//                   error={!!errors.shortDescription}
-//                   helperText={errors.shortDescription}
-//                 />
-//               </Grid>
-
-//               <Grid item xs={12} md={3}>
-//                 <TextField
-//                   label="Client Name"
-//                   value={clientName}
-//                   onChange={(e) => setClientName(e.target.value)}
-//                   fullWidth
-//                   size="small"
-//                   error={!!errors.clientName}
-//                   helperText={errors.clientName}
-//                 />
-//               </Grid>
-
-//               <Grid item xs={12} md={3}>
-//                 <TextField
-//                   label="Source"
-//                   value={projectCode}
-//                   onChange={(e) => setProjectCode(e.target.value)}
-//                   fullWidth
-//                   size="small"
-//                 />
-//               </Grid>
-
-//               <Grid item xs={12} md={12}>
-//                 <TextField
-//                   label="Opportunity From"
-//                   placeholder="Where opportunity came from"
-//                   value={detailedNotes}
-//                   onChange={(e) => setDetailedNotes(e.target.value)}
-//                   fullWidth
-//                   size="small"
-//                 />
-//               </Grid>
-//             </Grid>
-//           </>
-//         )}
-
-//         {/* Section 3 - Opp To (show for EE/EN) */}
-//         {showOppSections && (
-//           <>
-//             <Typography variant="h6" mt={2} mb={1}>
-//               Opp. To (Section 3)
-//             </Typography>
-
-//             <Grid container spacing={2} mb={2}>
-//               <Grid item xs={12} md={6}>
-//                 <FormControl fullWidth size="small" error={!!errors.technologies}>
-//                   <InputLabel id="techs-label">Technologies Required</InputLabel>
-//                   <Select
-//                     labelId="techs-label"
-//                     multiple
-//                     value={technologies}
-//                     onChange={(e) =>
-//                       handleTechToggle(
-//                         // MUI returns strings | readonly string[], cast safely
-//                         typeof e.target.value === "string" ? e.target.value.split(",") : e.target.value
-//                       )
-//                     }
-//                     input={<OutlinedInput label="Technologies Required" />}
-//                     renderValue={(selected) => (
-//                       <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-//                         {(selected as string[]).map((v) => (
-//                           <Chip key={v} label={v} size="small" sx={{ backgroundColor: "#eee" }} />
-//                         ))}
-//                       </Box>
-//                     )}
-//                   >
-//                     {techOptions.map((t) => (
-//                       <MenuItem key={t} value={t}>
-//                         {t}
-//                       </MenuItem>
-//                     ))}
-//                   </Select>
-//                   <FormHelperText>{errors.technologies}</FormHelperText>
-//                 </FormControl>
-//               </Grid>
-
-//               <Grid item xs={12} md={3}>
-//                 <TextField
-//                   label="Total number of persons"
-//                   type="number"
-//                   fullWidth
-//                   size="small"
-//                   value={totalPersons}
-//                   onChange={(e) => setTotalPersons(Number(e.target.value || 0))}
-//                   error={!!errors.totalPersons}
-//                   helperText={errors.totalPersons}
-//                 />
-//               </Grid>
-
-//               <Grid item xs={12} md={3}>
-//                 <TextField
-//                   label="Opportunity Category"
-//                   fullWidth
-//                   size="small"
-//                   value={oppCategory}
-//                   onChange={(e) => setOppCategory(e.target.value)}
-//                 />
-//               </Grid>
-
-//               {/* dynamic tech rows */}
-//               <Grid item xs={12}>
-//                 <Typography variant="subtitle1" mb={1}>
-//                   Technology breakdown
-//                 </Typography>
-//                 {techRows.map((r, idx) => (
-//                   <Grid container spacing={1} key={idx} alignItems="center" sx={{ mb: 1 }}>
-//                     <Grid item xs={12} md={4}>
-//                       <FormControl fullWidth size="small">
-//                         <InputLabel id={`tech-select-${idx}`}>Technology</InputLabel>
-//                         <Select
-//                           labelId={`tech-select-${idx}`}
-//                           value={r.tech}
-//                           label="Technology"
-//                           onChange={(e) => updateTechRow(idx, "tech", e.target.value)}
-//                         >
-//                           {/* allow any selected techs first, then all options */}
-//                           {technologies.map((t) => (
-//                             <MenuItem key={t} value={t}>
-//                               {t}
-//                             </MenuItem>
-//                           ))}
-//                           {techOptions
-//                             .filter((t) => !technologies.includes(t))
-//                             .map((t) => (
-//                               <MenuItem key={t} value={t}>
-//                                 {t}
-//                               </MenuItem>
-//                             ))}
-//                         </Select>
-//                       </FormControl>
-//                     </Grid>
-
-//                     <Grid item xs={12} md={3}>
-//                       <TextField
-//                         label="Count"
-//                         type="number"
-//                         fullWidth
-//                         size="small"
-//                         value={r.count}
-//                         onChange={(e) => updateTechRow(idx, "count", Number(e.target.value || 0))}
-//                       />
-//                     </Grid>
-
-//                     <Grid item xs={12} md={4}>
-//                       <TextField
-//                         label="Expertise level"
-//                         fullWidth
-//                         size="small"
-//                         value={r.expertise}
-//                         onChange={(e) => updateTechRow(idx, "expertise", e.target.value)}
-//                       />
-//                     </Grid>
-
-//                     <Grid item xs={12} md={1}>
-//                       <Box display="flex" gap={1}>
-//                         <IconButton color="primary" onClick={addTechRow}>
-//                           <AddCircleOutlineIcon />
-//                         </IconButton>
-//                         {techRows.length > 1 && (
-//                           <IconButton color="error" onClick={() => removeTechRow(idx)}>
-//                             <RemoveCircleOutlineIcon />
-//                           </IconButton>
-//                         )}
-//                       </Box>
-//                     </Grid>
-//                   </Grid>
-//                 ))}
-//                 {errors.techRows && (
-//                   <Typography color="error" variant="body2">
-//                     {errors.techRows}
-//                   </Typography>
-//                 )}
-//               </Grid>
-
-//               <Grid item xs={12}>
-//                 <TextField
-//                   label="Short description"
-//                   fullWidth
-//                   value={shortDescription}
-//                   onChange={(e) => setShortDescription(e.target.value)}
-//                   size="small"
-//                 />
-//               </Grid>
-
-//               <Grid item xs={12}>
-//                 <TextField
-//                   label="Detailed notes"
-//                   fullWidth
-//                   value={detailedNotes}
-//                   onChange={(e) => setDetailedNotes(e.target.value)}
-//                   size="small"
-//                   multiline
-//                   minRows={3}
-//                 />
-//               </Grid>
-//             </Grid>
-//           </>
-//         )}
-
-//         {/* Section 4 Timeline & Billing */}
-//         <Typography variant="h6" mt={2} mb={1}>
-//           Expected timeline and Billing (Section 4)
-//         </Typography>
-
-//         <Grid container spacing={2} mb={2}>
-//           <Grid item xs={12} md={6}>
-//             <TextField
-//               label="Expected start date"
-//               type="date"
-//               InputLabelProps={{ shrink: true }}
-//               fullWidth
-//               size="small"
-//               value={expectedStartDate || ""}
-//               onChange={(e) => setExpectedStartDate(e.target.value)}
-//             />
-//           </Grid>
-
-//           <Grid item xs={12} md={6}>
-//             <TextField
-//               label="Expected end date"
-//               type="date"
-//               InputLabelProps={{ shrink: true }}
-//               fullWidth
-//               size="small"
-//               value={expectedEndDate || ""}
-//               onChange={(e) => setExpectedEndDate(e.target.value)}
-//             />
-//           </Grid>
-//         </Grid>
-
-//         {/* Submit */}
-//         <Box display="flex" justifyContent="center" mt={3}>
-//           <Button
-//             variant="contained"
-//             onClick={handleSubmit}
-//             disabled={submitting}
-//             sx={{
-//               backgroundColor: PRIMARY,
-//               "&:hover": { backgroundColor: "#6b2f92" },
-//               px: 4,
-//               py: 1.2,
-//             }}
-//           >
-//             {submitLabel}
-//           </Button>
-//         </Box>
-//       </Paper>
-//     </Box>
-//   );
-// };
-
-// export default LogForm;
