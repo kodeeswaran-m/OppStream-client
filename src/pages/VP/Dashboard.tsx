@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import type { ThunkDispatch } from "redux-thunk";
 import { type AnyAction } from "redux";
 import { logout } from "../../store/actions/authActions";
-
+ 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
-
+ 
 const VPDashboard = () => {
   const { user, accessToken } = useSelector((state: RootState) => state.auth);
   const dispatch: AppDispatch = useDispatch();
@@ -25,5 +25,7 @@ const VPDashboard = () => {
     </div>
   );
 };
-
+ 
 export default VPDashboard;
+ 
+ 

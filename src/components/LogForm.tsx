@@ -8,11 +8,11 @@ import {
   Button,
   Grid,
   IconButton,
-  Chip,
   Select,
   FormControl,
   InputLabel,
   OutlinedInput,
+  Divider,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
@@ -21,57 +21,40 @@ import { useDispatch } from "react-redux";
 import type { ThunkDispatch } from "redux-thunk";
 import type { RootState } from "../store";
 import type { AnyAction } from "redux";
+
+import "./LogFormType";
+import { reducer } from "./LogFormActionReducer";
+import { Padding } from "@mui/icons-material";
+
+
+
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
-// ----------------------------- TYPES -----------------------------
-type People = { name: string };
-
-type TechRow = {
-  technology: string;
-  count: number;
-  // expertise: string;
+// --------------------- FIELD STYLE (GLOBAL) ---------------------
+const fieldStyle = {
+  "& .MuiOutlinedInput-root": {
+    height: "45px",
+    borderRadius: "10px",
+    fontSize: "13px",     // 👈 Smaller input text
+  },
+  "& .MuiInputLabel-root": {
+    fontSize: "12px",     // 👈 Smaller label text
+  },
+  "& .MuiSelect-select": {
+    fontSize: "13px",     // 👈 Smaller select menu text
+    padding: "12px",
+  },
+  "& input": {
+    fontSize: "13px",     // 👈 TextField input size
+    padding: "12px",
+  },
+  "& .MuiMenuItem-root": {
+    fontSize: "13px",     // 👈 Dropdown menu items
+  },
 };
 
-type State = {
-  employeeId: string;
-  employeeName: string;
-  employeeEmail: string;
-  department: string;
-  team: string;
-  manager: string;
 
-  requirementType: "EE" | "EN" | "NN" | "";
-
-  // SECTION 2
-  projectName: string;
-  clientName: string;
-  projectCode: string;
-  urgency: string;
-  meetingType: string;
-  callDate: string;
-  screenshot: File | null;
-  peoplePresent: People[];
-
-  // SECTION 3
-  selectedTechnologies: string[];
-  totalPersons: number;
-  techRows: TechRow[];
-  oppCategory: string;
-  shortDescription: string;
-  detailedNotes: string;
-
-  // Section 4
-  expectedStart: string;
-  expectedEnd: string;
-
-  // Section NN
-  nnDescription: string;
-  nnClientName: string;
-  nnSource: string;
-  nnOppFrom: string;
-};
-
-// ----------------------------- INITIAL STATE -----------------------------
+// --------------------- INITIAL STATE ---------------------
 const initialState: State = {
   employeeId: "",
   employeeName: "",
@@ -107,122 +90,15 @@ const initialState: State = {
   nnOppFrom: "demo",
 };
 
-// ----------------------------- ACTION TYPES -----------------------------
-type Action =
-  | { type: "SET_FIELD"; field: keyof State; value: any }
-  | { type: "ADD_PEOPLE" }
-  | { type: "REMOVE_PEOPLE"; index: number }
-  | { type: "UPDATE_PEOPLE"; index: number; value: string }
-  | { type: "SET_TECHNOLOGIES"; value: string[] }
-  | { type: "ADD_TECH_ROW" }
-  | { type: "REMOVE_TECH_ROW"; index: number }
-  | {
-      type: "UPDATE_TECH_ROW";
-      index: number;
-      field: keyof TechRow;
-      value: string;
-    }
-  | { type: "RESET_TECH_ROWS" };
-
-// ----------------------------- REDUCER -----------------------------
-function reducer(state: State, action: Action): State {
-  switch (action.type) {
-    case "SET_FIELD":
-      return { ...state, [action.field]: action.value };
-
-    case "ADD_PEOPLE":
-      return {
-        ...state,
-        peoplePresent: [...state.peoplePresent, { name: "" }],
-      };
-
-    case "REMOVE_PEOPLE":
-      return {
-        ...state,
-        peoplePresent: state.peoplePresent.filter((_, i) => i !== action.index),
-      };
-
-    case "UPDATE_PEOPLE":
-      return {
-        ...state,
-        peoplePresent: state.peoplePresent.map((p, i) =>
-          i === action.index ? { name: action.value } : p
-        ),
-      };
-
-    // case "SET_TECHNOLOGIES":
-    //   return {
-    //     ...state,
-    //     selectedTechnologies: action.value,
-    //   };
-    case "SET_TECHNOLOGIES":
-      return {
-        ...state,
-        selectedTechnologies: action.value,
-        techRows: state.techRows.filter((row) =>
-          action.value.includes(row.technology)
-        ), // remove tech-rows that belong to unselected techs
-      };
-
-    case "RESET_TECH_ROWS":
-      return { ...state, techRows: [] };
-
-    // case "ADD_TECH_ROW":
-    //   return {
-    //     ...state,
-    //     techRows: [...state.techRows, { technology: "", count: "" }],
-    //   };
-    case "ADD_TECH_ROW":
-      if (state.techRows.length >= state.selectedTechnologies.length) {
-        return state; // block adding more rows
-      }
-
-      return {
-        ...state,
-        techRows: [...state.techRows, { technology: "", count: 0 }],
-      };
-
-    case "REMOVE_TECH_ROW":
-      return {
-        ...state,
-        techRows: state.techRows.filter((_, i) => i !== action.index),
-      };
-
-    // case "UPDATE_TECH_ROW":
-    //   return {
-    //     ...state,
-    //     techRows: state.techRows.map((row, i) =>
-    //       i === action.index ? { ...row, [action.field]: action.value } : row
-    //     ),
-    //   };
-    case "UPDATE_TECH_ROW":
-      const updatedRows = state.techRows.map((row, i) =>
-        i === action.index ? { ...row, [action.field]: action.value } : row
-      );
-
-      const total = updatedRows.reduce(
-        (sum, r) => sum + Number(r.count || 0),
-        0
-      );
-
-      return {
-        ...state,
-        techRows: updatedRows,
-        totalPersons: total, // auto update
-      };
-
-    default:
-      return state;
-  }
-}
-
-// ----------------------------- COMPONENT -----------------------------
+// ============================================================
+//                       COMPONENT
+// ============================================================
 const LOGForm = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const thunkDispatch:AppDispatch=useDispatch();
-  // ---------------------- Auto-fill from user profile ----------------------
+  const thunkDispatch: AppDispatch = useDispatch();
+
+  // ---------------------- AUTO-FILL USER DATA ----------------------
   useEffect(() => {
-    // Replace with your API call:
     const user = {
       employeeId: "EMP101",
       employeeName: "John Doe",
@@ -232,28 +108,13 @@ const LOGForm = () => {
       manager: "Sam",
     };
 
-    dispatch({
-      type: "SET_FIELD",
-      field: "employeeId",
-      value: user.employeeId,
-    });
-    dispatch({
-      type: "SET_FIELD",
-      field: "employeeName",
-      value: user.employeeName,
-    });
-    dispatch({
-      type: "SET_FIELD",
-      field: "employeeEmail",
-      value: user.employeeEmail,
-    });
-    dispatch({
-      type: "SET_FIELD",
-      field: "department",
-      value: user.department,
-    });
-    dispatch({ type: "SET_FIELD", field: "team", value: user.team });
-    dispatch({ type: "SET_FIELD", field: "manager", value: user.manager });
+    for (const key in user) {
+      dispatch({
+        type: "SET_FIELD",
+        field: key as keyof State,
+        value: (user as any)[key],
+      });
+    }
   }, []);
 
   // ---------------------- SUBMIT ----------------------
@@ -261,7 +122,6 @@ const LOGForm = () => {
     const payload = {
       requirementType: state.requirementType,
 
-      // Opp From section
       oppFrom:
         state.requirementType === "NN"
           ? undefined
@@ -272,11 +132,10 @@ const LOGForm = () => {
               urgency: state.urgency,
               meetingType: state.meetingType,
               meetingDate: state.callDate,
-              meetingScreenshot: state.screenshot, // upload to Cloudinary before sending
+              meetingScreenshot: state.screenshot,
               peoplePresent: state.peoplePresent,
             },
 
-      // Opp To section
       oppTo:
         state.requirementType === "NN"
           ? undefined
@@ -289,7 +148,6 @@ const LOGForm = () => {
               detailedNotes: state.detailedNotes,
             },
 
-      // When NN type — include NN section fields
       nnDetails:
         state.requirementType === "NN"
           ? {
@@ -300,30 +158,45 @@ const LOGForm = () => {
             }
           : undefined,
 
-      // Timeline
       timeline: {
         expectedStart: state.expectedStart,
         expectedEnd: state.expectedEnd,
       },
     };
 
-    thunkDispatch(createUserLog(payload))
-      
-
-    console.log("FINAL PAYLOAD →", payload);
+    thunkDispatch(createUserLog(payload));
   };
 
   const canAddMoreRows = () =>
     state.techRows.length < state.selectedTechnologies.length;
 
   return (
-    <Box sx={{ minHeight: "100vh", p: 4, background: "#F6F4FA" }}>
-      <Paper sx={{ p: 4, borderRadius: 4 }}>
-        <Typography variant="h4" fontWeight="bold" mb={3}>
+ <Box
+  sx={{
+    minHeight: "100vh",
+    p: 6,                      // more spacing around the page
+    background: "#F7F5FF",     // lighter landscape
+    display: "flex",
+    justifyContent: "center",
+    mt: 10,                     // pushes everything further down
+  }}
+>
+
+      <Paper
+        sx={{
+          p: 4,
+          borderRadius: 4,
+           mt: 4,   // added
+          width: "100%",
+          maxWidth: "1100px",
+          boxShadow: "0px 4px 20px rgba(0,0,0,0.08)",
+        }}
+      >
+        <Typography variant="h4" fontWeight="bold" mb={3} color="#48206F">
           LOG Form
         </Typography>
 
-        {/* ================= SECTION 1 ================= */}
+        {/* ───────────────────── EMPLOYEE DETAILS ───────────────────── */}
         <Typography variant="h6" mb={2}>
           Employee Details
         </Typography>
@@ -337,22 +210,24 @@ const LOGForm = () => {
             ["Team", "team"],
             ["Reporting Manager", "manager"],
           ].map(([label, field]) => (
-            <Grid item xs={4} key={field}>
+            <Grid item xs={12} md={4} key={field}>
               <TextField
                 fullWidth
                 label={label}
                 value={state[field as keyof State]}
+                sx={fieldStyle}
                 disabled
               />
             </Grid>
           ))}
 
           {/* Requirement Type */}
-          <Grid item xs={4}>
+          <Grid item xs={12} md={4} minWidth={190}>
             <TextField
               select
               label="Requirement Type"
               fullWidth
+              sx={fieldStyle}
               value={state.requirementType}
               onChange={(e) =>
                 dispatch({
@@ -369,7 +244,7 @@ const LOGForm = () => {
           </Grid>
         </Grid>
 
-        {/* ================= NN SECTION ================= */}
+        {/* ───────────────────── NN SECTION ───────────────────── */}
         {state.requirementType === "NN" && (
           <>
             <Typography mt={4} variant="h6">
@@ -382,10 +257,11 @@ const LOGForm = () => {
                 ["Source", "nnSource"],
                 ["Opp. From", "nnOppFrom"],
               ].map(([label, field]) => (
-                <Grid item xs={6} key={field}>
+                <Grid item xs={12} md={6} key={field}>
                   <TextField
                     fullWidth
                     label={label}
+                    sx={fieldStyle}
                     value={state[field as keyof State]}
                     onChange={(e) =>
                       dispatch({
@@ -401,64 +277,49 @@ const LOGForm = () => {
           </>
         )}
 
-        {/* ================= SECTION 2 (if EE or EN) ================= */}
-        {(state.requirementType === "EE" || state.requirementType === "EN") && (
+        <Divider sx={{marginTop:4}}/>
+
+       
+
+        {/* ───────────────────── OPP FROM (EE/EN only) ───────────────────── */}
+        {(state.requirementType === "EE" ||
+          state.requirementType === "EN") && (
           <>
             <Typography mt={4} variant="h6">
               Opp. From
             </Typography>
 
             <Grid container spacing={2} mt={1}>
-              <Grid item xs={4}>
-                <TextField
-                  fullWidth
-                  label="Project Name"
-                  value={state.projectName}
-                  onChange={(e) =>
-                    dispatch({
-                      type: "SET_FIELD",
-                      field: "projectName",
-                      value: e.target.value,
-                    })
-                  }
-                />
-              </Grid>
+              {/* Standard fields */}
+              {[
+                ["Project Name", "projectName"],
+                ["Client Name", "clientName"],
+                ["Project Code", "projectCode"],
+              ].map(([label, field]) => (
+                <Grid item xs={12} md={4} key={field} width={300}>
+                  <TextField
+                    fullWidth
+                    label={label}
+                    sx={fieldStyle}
+                    value={state[field as keyof State]}
+                    onChange={(e) =>
+                      dispatch({
+                        type: "SET_FIELD",
+                        field: field as keyof State,
+                        value: e.target.value,
+                      })
+                    }
+                  />
+                </Grid>
+              ))}
 
-              <Grid item xs={4}>
-                <TextField
-                  fullWidth
-                  label="Client Name"
-                  value={state.clientName}
-                  onChange={(e) =>
-                    dispatch({
-                      type: "SET_FIELD",
-                      field: "clientName",
-                      value: e.target.value,
-                    })
-                  }
-                />
-              </Grid>
-
-              <Grid item xs={4}>
-                <TextField
-                  fullWidth
-                  label="Project Code"
-                  value={state.projectCode}
-                  onChange={(e) =>
-                    dispatch({
-                      type: "SET_FIELD",
-                      field: "projectCode",
-                      value: e.target.value,
-                    })
-                  }
-                />
-              </Grid>
-
-              <Grid item xs={4}>
+              {/* Urgency */}
+              <Grid item xs={12} md={4} minWidth={300}>
                 <TextField
                   select
                   fullWidth
                   label="Urgency Level"
+                  sx={fieldStyle}
                   value={state.urgency}
                   onChange={(e) =>
                     dispatch({
@@ -474,11 +335,13 @@ const LOGForm = () => {
                 </TextField>
               </Grid>
 
-              <Grid item xs={4}>
+              {/* Meeting Type */}
+              <Grid item xs={12} md={4} minWidth={300}>
                 <TextField
                   select
                   fullWidth
                   label="Meeting Type"
+                  sx={fieldStyle}
                   value={state.meetingType}
                   onChange={(e) =>
                     dispatch({
@@ -496,81 +359,92 @@ const LOGForm = () => {
                 </TextField>
               </Grid>
 
-              <Grid item xs={4}>
-                <TextField
-                  type="date"
-                  label="Date of Discussion"
-                  fullWidth
-                  InputLabelProps={{ shrink: true }}
-                  value={state.callDate}
-                  onChange={(e) =>
-                    dispatch({
-                      type: "SET_FIELD",
-                      field: "callDate",
-                      value: e.target.value,
-                    })
-                  }
-                />
-              </Grid>
+             {/* Date */}
+<Grid item xs={12} md={4} minWidth={300}>
+  <TextField
+    type="date"
+    fullWidth
+    label="Date of Discussion"
+    sx={fieldStyle}
+    InputLabelProps={{ shrink: true }}
+    value={state.callDate}
+    onChange={(e) =>
+      dispatch({
+        type: "SET_FIELD",
+        field: "callDate",
+        value: e.target.value,
+      })
+    }
+  />
+</Grid>
 
-              {/* People Present */}
-              <Grid item xs={12} mt={2}>
-                <Typography fontWeight="bold">People Present</Typography>
+{/* Spacing row */}
+<Grid item xs={12} />
 
-                {state.peoplePresent.map((p, i) => (
-                  <Grid
-                    container
-                    spacing={1}
-                    key={i}
-                    alignItems="center"
-                    sx={{ mt: 1 }}
-                  >
-                    <Grid item xs={4}>
-                      <TextField
-                        fullWidth
-                        label="Name"
-                        value={p.name}
-                        onChange={(e) =>
-                          dispatch({
-                            type: "UPDATE_PEOPLE",
-                            index: i,
-                            value: e.target.value,
-                          })
-                        }
-                      />
-                    </Grid>
+{/* People Present */}
+<Grid item xs={12}>
+  <Typography fontWeight="bold" mt={2}>
+    People Present
+  </Typography>
 
-                    <Grid item>
-                      <IconButton
-                        color="error"
-                        onClick={() =>
-                          dispatch({ type: "REMOVE_PEOPLE", index: i })
-                        }
-                        disabled={state.peoplePresent.length === 1}
-                      >
-                        <RemoveCircleIcon />
-                      </IconButton>
-                    </Grid>
-                  </Grid>
-                ))}
+  {state.peoplePresent.map((p, i) => (
+    <Grid
+      container
+      spacing={1}
+      key={i}
+      alignItems="center"
+      sx={{ mt: 1 }}
+    >
+      <Grid item xs={12} md={4}>
+        <TextField
+          fullWidth
+          label="Name"
+          sx={fieldStyle}
+          value={p.name}
+          onChange={(e) =>
+            dispatch({
+              type: "UPDATE_PEOPLE",
+              index: i,
+              value: e.target.value,
+            })
+          }
+        />
+      </Grid>
 
-                <Button
-                  startIcon={<AddCircleIcon />}
-                  onClick={() => dispatch({ type: "ADD_PEOPLE" })}
-                >
-                  Add Person
-                </Button>
-              </Grid>
-            </Grid>
+      <Grid item>
+        <IconButton
+          color="error"
+          onClick={() =>
+            dispatch({ type: "REMOVE_PEOPLE", index: i })
+          }
+          disabled={state.peoplePresent.length === 1}
+        >
+          <RemoveCircleIcon />
+        </IconButton>
+      </Grid>
+    </Grid>
+  ))}
 
-            {/* ================= SECTION 3 ================= */}
+  <Button
+    startIcon={<AddCircleIcon />}
+    onClick={() => dispatch({ type: "ADD_PEOPLE" })}
+  >
+    Add Person
+  </Button>
+</Grid>
+</Grid>
+
+  <Divider sx={{marginTop:4}}/>
+
+            {/* ───────────────────── OPP TO ───────────────────── */}
             <Typography mt={4} variant="h6">
               Opp. To
             </Typography>
 
-            <Grid container spacing={2} mt={1}>
-              <Grid item xs={6}>
-                <FormControl fullWidth>
+            <Grid container spacing={2} mt={3}>
+              {/* Tech Select */}
+              <Grid item xs={12} md={6} minWidth={230}>
+                <FormControl fullWidth sx={{ ...fieldStyle }}>
                   <InputLabel>Technologies Required</InputLabel>
                   <Select
                     multiple
@@ -582,6 +456,7 @@ const LOGForm = () => {
                       })
                     }
                     input={<OutlinedInput label="Technologies Required" />}
+                    sx={{ borderRadius: "12px" }}
                   >
                     {["React", "Angular", "Python", "Java", "Node"].map(
                       (tech) => (
@@ -594,35 +469,32 @@ const LOGForm = () => {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={3}>
+              {/* Total Persons */}
+              <Grid item xs={12} md={3} minWidth={230}>
                 <TextField
                   label="Total Persons"
                   value={state.totalPersons}
                   fullWidth
+                  sx={fieldStyle}
                   disabled
                 />
               </Grid>
             </Grid>
 
-            {/* ADD ROW BUTTON */}
+            {/* Add Tech Row */}
             <Box mt={2}>
               <Button
                 variant="outlined"
                 startIcon={<AddCircleIcon />}
                 disabled={!canAddMoreRows()}
                 onClick={() => dispatch({ type: "ADD_TECH_ROW" })}
+                sx={{ borderRadius: "10px" }}
               >
                 Add Technology Row
               </Button>
-
-              {/* {!canAddMoreRows() && (
-                <Typography color="error" fontSize="14px" mt={1}>
-                  Total count reached or no technologies selected.
-                </Typography>
-              )} */}
             </Box>
 
-            {/* DYNAMIC TECH ROWS */}
+            {/* Dynamic Tech Rows */}
             {state.techRows.map((row, index) => (
               <Grid
                 container
@@ -631,11 +503,12 @@ const LOGForm = () => {
                 key={index}
                 sx={{ mt: 1 }}
               >
-                <Grid item xs={4}>
+                <Grid item xs={12} mt={3} md={4} minWidth={230}>
                   <TextField
                     select
                     fullWidth
                     label="Technology"
+                    sx={fieldStyle}
                     value={row.technology}
                     onChange={(e) =>
                       dispatch({
@@ -649,8 +522,8 @@ const LOGForm = () => {
                     {state.selectedTechnologies
                       .filter(
                         (tech) =>
-                          tech === row.technology || // allow already selected value
-                          !state.techRows.some((r) => r.technology === tech) // hide tech used in another row
+                          tech === row.technology ||
+                          !state.techRows.some((r) => r.technology === tech)
                       )
                       .map((tech) => (
                         <MenuItem key={tech} value={tech}>
@@ -660,11 +533,12 @@ const LOGForm = () => {
                   </TextField>
                 </Grid>
 
-                <Grid item xs={3}>
+                <Grid item xs={12} mt={3} md={3} minWidth={230}>
                   <TextField
                     fullWidth
                     label="Count"
                     type="number"
+                    sx={fieldStyle}
                     value={row.count}
                     onChange={(e) =>
                       dispatch({
@@ -680,7 +554,9 @@ const LOGForm = () => {
                 <Grid item>
                   <IconButton
                     color="error"
-                    onClick={() => dispatch({ type: "REMOVE_TECH_ROW", index })}
+                    onClick={() =>
+                      dispatch({ type: "REMOVE_TECH_ROW", index })
+                    }
                   >
                     <RemoveCircleIcon />
                   </IconButton>
@@ -688,13 +564,15 @@ const LOGForm = () => {
               </Grid>
             ))}
 
-            {/* Category + Notes */}
-            <Grid container spacing={2} mt={2}>
-              <Grid item xs={4}>
+            {/* Category and Notes */}
+            <Grid container spacing={2} mt={3} >
+              <Grid item xs={12} md={4} minWidth={230} >
                 <TextField
                   select
                   fullWidth
+                   
                   label="Opp. Category"
+                  sx={fieldStyle}
                   value={state.oppCategory}
                   onChange={(e) =>
                     dispatch({
@@ -710,10 +588,11 @@ const LOGForm = () => {
                 </TextField>
               </Grid>
 
-              <Grid item xs={4}>
+              <Grid item xs={12} md={4} minWidth={230}>
                 <TextField
                   fullWidth
                   label="Short Description"
+                  sx={fieldStyle}
                   value={state.shortDescription}
                   onChange={(e) =>
                     dispatch({
@@ -725,13 +604,15 @@ const LOGForm = () => {
                 />
               </Grid>
 
-              <Grid item xs={4}>
+              <Grid item xs={12} md={4} minWidth={230}>
                 <TextField
                   fullWidth
                   label="Detailed Notes"
-                  value={state.detailedNotes}
                   multiline
-                  rows={2}
+                  
+                  rows={1}
+                  sx={fieldStyle}
+                  value={state.detailedNotes}
                   onChange={(e) =>
                     dispatch({
                       type: "SET_FIELD",
@@ -745,17 +626,20 @@ const LOGForm = () => {
           </>
         )}
 
-        {/* ================= SECTION 4 ================= */}
+          <Divider sx={{marginTop:4}}/>
+
+        {/* ───────────────────── TIMELINE ───────────────────── */}
         <Typography mt={4} variant="h6">
           Expected Timeline
         </Typography>
 
         <Grid container spacing={2} mt={1}>
-          <Grid item xs={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               type="date"
               fullWidth
               label="Expected Start Date"
+              sx={fieldStyle}
               InputLabelProps={{ shrink: true }}
               value={state.expectedStart}
               onChange={(e) =>
@@ -768,11 +652,12 @@ const LOGForm = () => {
             />
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid item xs={12}  md={4}>
             <TextField
               type="date"
               fullWidth
               label="Expected End Date"
+              sx={fieldStyle}
               InputLabelProps={{ shrink: true }}
               value={state.expectedEnd}
               onChange={(e) =>
@@ -790,7 +675,13 @@ const LOGForm = () => {
         <Box textAlign="center" mt={4}>
           <Button
             variant="contained"
-            sx={{ px: 4, py: 1.2, borderRadius: 3, background: "#7E57C2" }}
+            sx={{
+              px: 4,
+              py: 1.2,
+              borderRadius: "12px",
+              background: "#7E57C2",
+              fontSize: "16px",
+            }}
             onClick={handleSubmit}
           >
             Submit

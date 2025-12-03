@@ -1,0 +1,55 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.welcome-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* stack content vertically */
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4f46e5, #9333ea, #ec4899);
+  padding: 2rem;
+  text-align: center;
+}
+
+.welcome-title {
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.welcome-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.login-btn {
+  background: #fff !important;
+  color: #4f46e5 !important;
+  font-weight: 600 !important;
+  padding: 0.4rem 1rem !important;
+  font-size: 1rem !important;
+  border-radius: 8px !important;
+  width: auto !important; /* smaller button */
+  min-width: 120px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.3s ease !important;
+}
+
+.login-btn:hover {
+  background: #e0e0e0 !important;
+  transform: translateY(-2px);
+  border-color: #4f46e5;
+}
+
+.footer-text {
+  margin-top: 2rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}

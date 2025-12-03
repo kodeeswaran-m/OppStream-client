@@ -70,124 +70,128 @@ const Navbar = () => {
  
   return (
     <>
-      <AppBar position="fixed" sx={{ backgroundColor: "#8347AD" }}>
-        <Toolbar
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "94%",
-            maxWidth: "1200px",
-            margin: "0 auto",
-            minHeight: "46px !important",
-            padding: "4px 0",
-          }}
-        >
-          {/* LEFT SIDE - LOGO */}
-          <Typography
-            variant="h10"
-            to="/"
-            style={{ color: "white", textDecoration: "none" , marginLeft:"-50px"}}
-          >
-            Opp X Stream
-          </Typography>
- 
-          {/* RIGHT SIDE - DESKTOP MENU */}
-          {!isMobile && (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 ,marginRight:"-100px"}}>
-              {!isLoggedIn && (
-                <>
-                  <Button
-                    component={Link}
-                    to="/login"
-                    sx={{
-                      color: "white",
-                      ...(location.pathname === "/login" ? activeStyle : {}),
-                    }}
-                  >
-                    Login
-                  </Button>
- 
-                  <Button
-                    component={Link}
-                    to="/signup"
-                    sx={{
-                      color: "white",
-                      ...(location.pathname === "/signup" ? activeStyle : {}),
-                    }}
-                  >
-                    Signup
-                  </Button>
-                </>
-              )}
- 
-              {isLoggedIn &&
-                menuItems.map((item) => (
-                  <Button
-                    key={item.path}
-                    component={Link}
-                    to={item.path}
-                    sx={{
-                      color: "white",
-                      ...(location.pathname === item.path ? activeStyle : {}),
-                    }}
-                  >
-                    {item.label}
-                  </Button>
-                ))}
- 
-              {/* PROFILE ICON */}
-              {isLoggedIn && (
-                <>
-                  <IconButton sx={{ color: "white" }} onClick={handleClick}>
-                    <AccountCircleIcon sx={{ fontSize: 30 }} />
-                  </IconButton>
- 
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                    transformOrigin={{ vertical: "top", horizontal: "right" }}
-                  >
-                    <MenuItem disabled>
-                      <Box>
-                        <Typography fontWeight="bold">{user?.username}</Typography>
-                        <Typography variant="body2">{user?.email}</Typography>
-                      </Box>
-                    </MenuItem>
- 
-                    <MenuItem
-                      onClick={() => {
-                        handleClose();
-                        window.location.href = "/employee/form";
-                      }}
-                    >
-                      Update Profile
-                    </MenuItem>
- 
-                    <MenuItem
-                      onClick={() => {
-                        handleClose();
-                        handleLogout();
-                      }}
-                    >
-                      Logout
-                    </MenuItem>
-                  </Menu>
-                </>
-              )}
-            </Box>
-          )}
- 
-          {/* MOBILE MENU ICON */}
-          {isMobile && (
-            <IconButton color="inherit" onClick={() => setOpenDrawer(true)}>
-              <MenuIcon />
+   <AppBar position="fixed" sx={{ backgroundColor: "#8347AD" }}>
+  <Toolbar
+    sx={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      width: "100%",
+      maxWidth: "1300px",
+      margin: "0 auto",
+      padding: "4px 20px",
+      minHeight: "46px !important",
+    }}
+  >
+    {/* LEFT SIDE - LOGO */}
+    <Typography
+      variant="h10"
+      to="/"
+      style={{
+        color: "white",
+        textDecoration: "none",
+      }}
+    >
+      Opp X Stream
+    </Typography>
+
+    {/* RIGHT SIDE (DESKTOP MENU) */}
+    {!isMobile && (
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        {!isLoggedIn && (
+          <>
+            <Button
+              component={Link}
+              to="/login"
+              sx={{
+                color: "white",
+                ...(location.pathname === "/login" ? activeStyle : {}),
+              }}
+            >
+              Login
+            </Button>
+
+            <Button
+              component={Link}
+              to="/signup"
+              sx={{
+                color: "white",
+                ...(location.pathname === "/signup" ? activeStyle : {}),
+              }}
+            >
+              Signup
+            </Button>
+          </>
+        )}
+
+        {isLoggedIn &&
+          menuItems.map((item) => (
+            <Button
+              key={item.path}
+              component={Link}
+              to={item.path}
+              sx={{
+                color: "white",
+                ...(location.pathname === item.path ? activeStyle : {}),
+              }}
+            >
+              {item.label}
+            </Button>
+          ))}
+
+        {/* PROFILE ICON */}
+        {isLoggedIn && (
+          <>
+            <IconButton sx={{ color: "white" }} onClick={handleClick}>
+              <AccountCircleIcon sx={{ fontSize: 30 }} />
             </IconButton>
-          )}
-        </Toolbar>
-      </AppBar>
+
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+              <MenuItem disabled>
+                <Box>
+                  <Typography fontWeight="bold">{user?.username}</Typography>
+                  <Typography variant="body2">{user?.email}</Typography>
+                </Box>
+              </MenuItem>
+
+              <MenuItem
+                onClick={() => {
+                  handleClose();
+                  window.location.href = "/employee/form";
+                }}
+              >
+                Update Profile
+              </MenuItem>
+
+              <MenuItem
+                onClick={() => {
+                  handleClose();
+                  handleLogout();
+                }}
+              >
+                Logout
+              </MenuItem>
+            </Menu>
+          </>
+        )}
+      </Box>
+    )}
+
+    {/* MOBILE MENU ICON */}
+    {isMobile && (
+      <IconButton color="inherit" onClick={() => setOpenDrawer(true)}>
+        <MenuIcon />
+      </IconButton>
+    )}
+  </Toolbar>
+</AppBar>
+
  
       {/* MOBILE DRAWER */}
       <Drawer anchor="right" open={openDrawer} onClose={() => setOpenDrawer(false)}>
