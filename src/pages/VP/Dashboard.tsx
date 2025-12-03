@@ -12,10 +12,10 @@ const VPDashboard = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   console.log("access token", accessToken);
-const handleLogout=()=>{
-dispatch(logout());
-navigate("/login")
-}
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
   return (
     <div>
       <h1>Welcome to VP Dashboard</h1>

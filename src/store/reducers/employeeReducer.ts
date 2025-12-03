@@ -21,6 +21,9 @@ import {
   GET_VISIBLE_LOGS_REQUEST,
   GET_VISIBLE_LOGS_SUCCESS,
   GET_VISIBLE_LOGS_FAILURE,
+  GET_REPORTING_EMPLOYEE_LOGS_REQUEST,
+  GET_REPORTING_EMPLOYEE_LOGS_SUCCESS,
+  GET_REPORTING_EMPLOYEE_LOGS_FAILURE,
 } from "../constants/employeeConstants";
 
 export interface Employee {
@@ -43,7 +46,9 @@ interface EmployeeState {
   managers: Employee[];
   currentUserDetails: Employee | null;
   userLogs: any[];
-  count:number
+  reportingEmployeeLogs: any[];
+  userLogscount: number;
+  repEmpLogsCount: number;
 }
 
 const initialState: EmployeeState = {
@@ -55,7 +60,9 @@ const initialState: EmployeeState = {
   managers: [],
   currentUserDetails: null,
   userLogs: [],
-  count:0
+  userLogscount: 0,
+  reportingEmployeeLogs: [],
+  repEmpLogsCount: 0,
 };
 
 export const employeeReducer = (
@@ -148,10 +155,22 @@ export const employeeReducer = (
       return {
         ...state,
         loading: false,
-        userLogs: [...state.userLogs, action.payload.logs],
-        count:action.payload.count
+        userLogs: action.payload.logs,
+        userLogscount: action.payload.count,
       };
     case GET_VISIBLE_LOGS_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+
+    case GET_REPORTING_EMPLOYEE_LOGS_REQUEST:
+      return { ...state, loading: true, error: null };
+    case GET_REPORTING_EMPLOYEE_LOGS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        reportingEmployeeLogs: action.payload.logs,
+        repEmpLogsCount: action.payload.count,
+      };
+    case GET_REPORTING_EMPLOYEE_LOGS_FAILURE:
       return { ...state, loading: false, error: action.payload };
     default:
       return state;

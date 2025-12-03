@@ -39,7 +39,6 @@ const EmployeeFormPage = () => {
   );
   const { businessUnits } = useSelector((state: RootState) => state.admin);
   const { managers } = useSelector((state: RootState) => state.employee);
-
   const [form, setForm] = useState({
     employeeId: "",
     employeeName: "",
@@ -59,6 +58,7 @@ const EmployeeFormPage = () => {
     currentProjects: "",
     skills: [{ skillName: "", proficiencyLevel: "", experience: "" }],
   });
+  console.log("form", form.managerId);
 
   useEffect(() => {
     dispatch(getCurrentEmployee() as any);
@@ -98,10 +98,15 @@ const EmployeeFormPage = () => {
   }, [currentUser]);
 
   const handleChange = (e: any) => {
+    console.log("name, value", e.target.value, e.target.name);
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSkillChange = (index: number, key: keyof Skill, value: string) => {
+  const handleSkillChange = (
+    index: number,
+    key: keyof Skill,
+    value: string
+  ) => {
     const updated = [...form.skills];
     updated[index][key] = value;
     setForm({ ...form, skills: updated });
@@ -110,7 +115,10 @@ const EmployeeFormPage = () => {
   const addSkill = () => {
     setForm({
       ...form,
-      skills: [...form.skills, { skillName: "", proficiencyLevel: "", experience: "" }],
+      skills: [
+        ...form.skills,
+        { skillName: "", proficiencyLevel: "", experience: "" },
+      ],
     });
   };
 
@@ -167,27 +175,73 @@ const EmployeeFormPage = () => {
 
         <Grid container spacing={2}>
           <Grid item xs={4}>
-            <TextField className="mui-field" label="Employee ID" name="employeeId" fullWidth required value={form.employeeId} onChange={handleChange} />
+            <TextField
+              className="mui-field"
+              label="Employee ID"
+              name="employeeId"
+              fullWidth
+              required
+              value={form.employeeId}
+              onChange={handleChange}
+            />
           </Grid>
 
           <Grid item xs={4}>
-            <TextField className="mui-field" label="Employee Name" name="employeeName" fullWidth required value={form.employeeName} onChange={handleChange} />
+            <TextField
+              className="mui-field"
+              label="Employee Name"
+              name="employeeName"
+              fullWidth
+              required
+              value={form.employeeName}
+              onChange={handleChange}
+            />
           </Grid>
 
           <Grid item xs={4}>
-            <TextField className="mui-field" label="Employee Email" fullWidth name="employeeEmail" disabled value={form.employeeEmail} />
+            <TextField
+              className="mui-field"
+              label="Employee Email"
+              fullWidth
+              name="employeeEmail"
+              disabled
+              value={form.employeeEmail}
+            />
           </Grid>
 
           <Grid item xs={4}>
-            <TextField className="mui-field" label="Contact Number" name="contactNumber" fullWidth value={form.contactNumber} onChange={handleChange} />
+            <TextField
+              className="mui-field"
+              label="Contact Number"
+              name="contactNumber"
+              fullWidth
+              value={form.contactNumber}
+              onChange={handleChange}
+            />
           </Grid>
 
           <Grid item xs={4}>
-            <TextField className="mui-field" type="date" label="Date of Birth" fullWidth InputLabelProps={{ shrink: true }} name="dob" value={form.dob} onChange={handleChange} />
+            <TextField
+              className="mui-field"
+              type="date"
+              label="Date of Birth"
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              name="dob"
+              value={form.dob}
+              onChange={handleChange}
+            />
           </Grid>
 
           <Grid item xs={4}>
-            <TextField className="mui-field" label="Work Location" name="workLocation" fullWidth value={form.workLocation} onChange={handleChange} />
+            <TextField
+              className="mui-field"
+              label="Work Location"
+              name="workLocation"
+              fullWidth
+              value={form.workLocation}
+              onChange={handleChange}
+            />
           </Grid>
         </Grid>
 
@@ -197,33 +251,87 @@ const EmployeeFormPage = () => {
         </Typography>
 
         <Grid container spacing={2}>
-          <Grid item xs={2.4}>
-            <FormControl fullWidth className="mui-field">
-              <InputLabel>Emp Type</InputLabel>
-              <Select name="employmentType" value={form.employmentType} onChange={handleChange}>
-                <MenuItem className="mui-menu-item" value="Full Time">Full Time</MenuItem>
-                <MenuItem className="mui-menu-item" value="Part Time">Part Time</MenuItem>
-                <MenuItem className="mui-menu-item" value="Contract">Contract</MenuItem>
+          <Grid item xs={2.4} minWidth={180}>
+            <FormControl fullWidth className="mui-field" >
+              <InputLabel>Employment Type</InputLabel>
+              <Select
+                name="employmentType"
+                value={form.employmentType}
+                onChange={handleChange}
+              >
+                <MenuItem className="mui-menu-item" value="Full Time">
+                  Full Time
+                </MenuItem>
+                <MenuItem className="mui-menu-item" value="Part Time">
+                  Part Time
+                </MenuItem>
+                <MenuItem className="mui-menu-item" value="Contract">
+                  Contract
+                </MenuItem>
               </Select>
             </FormControl>
           </Grid>
 
           <Grid item xs={2.4}>
-            <TextField className="mui-field" label="Role" name="role" fullWidth value={form.role} onChange={handleChange} />
+            <TextField
+              className="mui-field"
+              label="Role"
+              name="role"
+              fullWidth
+              value={form.role}
+              onChange={handleChange}
+            />
           </Grid>
 
           <Grid item xs={2.4}>
-            <TextField className="mui-field" label="Department" name="department" fullWidth value={form.department} onChange={handleChange} />
+            <TextField
+              className="mui-field"
+              label="Department"
+              name="department"
+              fullWidth
+              value={form.department}
+              onChange={handleChange}
+            />
           </Grid>
 
           <Grid item xs={2.4}>
-            <TextField className="mui-field" label="Team" name="team" fullWidth value={form.team} onChange={handleChange} />
+            <TextField
+              className="mui-field"
+              label="Team"
+              name="team"
+              fullWidth
+              value={form.team}
+              onChange={handleChange}
+            />
           </Grid>
 
-          <Grid item xs={2.4}>
-            <FormControl fullWidth className="mui-field">
+          <Grid item xs={2.4} minWidth={180}>
+            {/* <FormControl fullWidth className="mui-field">
               <InputLabel>Reporting Manager</InputLabel>
               <Select native name="managerId" value={form.managerId} onChange={handleChange}>
+                {managers.length === 0 ? (
+                  <option disabled>No Managers Found</option>
+                ) : (
+                  managers.map((m: any) => (
+                    <option key={m._id} value={m._id}>
+                      {`${m.employeeName} (${m.employeeId})`}
+                    </option>
+                  ))
+                )}
+              </Select>
+            </FormControl> */}
+            <FormControl fullWidth className="mui-field">
+              <InputLabel>Reporting Manager</InputLabel>
+
+              <Select
+                native
+                name="managerId"
+                value={form.managerId ?? ""} // stays empty initially
+                onChange={handleChange}
+              >
+                {/* Hidden placeholder – not selectable */}
+                <option value="" disabled hidden></option>
+
                 {managers.length === 0 ? (
                   <option disabled>No Managers Found</option>
                 ) : (
@@ -237,10 +345,15 @@ const EmployeeFormPage = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={2.4}>
+          <Grid item xs={2.4} minWidth={180}>
             <FormControl fullWidth className="mui-field">
               <InputLabel>Business Unit</InputLabel>
-              <Select native name="businessUnitId" value={form.businessUnitId} onChange={handleChange}>
+              <Select
+                native
+                name="businessUnitId"
+                value={form.businessUnitId}
+                onChange={handleChange}
+              >
                 {businessUnits.length === 0 ? (
                   <option disabled>No Business Units Found</option>
                 ) : (
@@ -262,19 +375,47 @@ const EmployeeFormPage = () => {
 
         <Grid container spacing={2}>
           <Grid item xs={4}>
-            <TextField className="mui-field" label="Total Experience" name="totalExperience" fullWidth value={form.totalExperience} onChange={handleChange} />
+            <TextField
+              className="mui-field"
+              label="Total Experience"
+              name="totalExperience"
+              fullWidth
+              value={form.totalExperience}
+              onChange={handleChange}
+            />
           </Grid>
 
           <Grid item xs={4}>
-            <TextField className="mui-field" label="Previous Projects" name="previousProjects" fullWidth value={form.previousProjects} onChange={handleChange} />
+            <TextField
+              className="mui-field"
+              label="Previous Projects"
+              name="previousProjects"
+              fullWidth
+              value={form.previousProjects}
+              onChange={handleChange}
+            />
           </Grid>
 
           <Grid item xs={4}>
-            <TextField className="mui-field" label="Previous Companies" name="previousCompanies" fullWidth value={form.previousCompanies} onChange={handleChange} />
+            <TextField
+              className="mui-field"
+              label="Previous Companies"
+              name="previousCompanies"
+              fullWidth
+              value={form.previousCompanies}
+              onChange={handleChange}
+            />
           </Grid>
 
           <Grid item xs={4}>
-            <TextField className="mui-field" label="Current Projects" name="currentProjects" fullWidth value={form.currentProjects} onChange={handleChange} />
+            <TextField
+              className="mui-field"
+              label="Current Projects"
+              name="currentProjects"
+              fullWidth
+              value={form.currentProjects}
+              onChange={handleChange}
+            />
           </Grid>
         </Grid>
 
@@ -286,32 +427,68 @@ const EmployeeFormPage = () => {
         {form.skills.map((skill, index) => (
           <Grid container spacing={2} key={index} mb={1}>
             <Grid item xs={4}>
-              <TextField className="mui-field" label="Skill Name" fullWidth value={skill.skillName} onChange={(e) => handleSkillChange(index, "skillName", e.target.value)} />
+              <TextField
+                className="mui-field"
+                label="Skill Name"
+                fullWidth
+                value={skill.skillName}
+                onChange={(e) =>
+                  handleSkillChange(index, "skillName", e.target.value)
+                }
+              />
             </Grid>
 
             <Grid item xs={4}>
-              <TextField className="mui-field" label="Proficiency Level" fullWidth value={skill.proficiencyLevel} onChange={(e) => handleSkillChange(index, "proficiencyLevel", e.target.value)} />
+              <TextField
+                className="mui-field"
+                label="Proficiency Level"
+                fullWidth
+                value={skill.proficiencyLevel}
+                onChange={(e) =>
+                  handleSkillChange(index, "proficiencyLevel", e.target.value)
+                }
+              />
             </Grid>
 
             <Grid item xs={3}>
-              <TextField className="mui-field" label="Experience (Years)" type="number" fullWidth value={skill.experience} onChange={(e) => handleSkillChange(index, "experience", e.target.value)} />
+              <TextField
+                className="mui-field"
+                label="Experience (Years)"
+                type="number"
+                fullWidth
+                value={skill.experience}
+                onChange={(e) =>
+                  handleSkillChange(index, "experience", e.target.value)
+                }
+              />
             </Grid>
 
             <Grid item xs={1} display="flex" alignItems="center">
-              <IconButton className="remove-icon" onClick={() => removeSkill(index)}>
+              <IconButton
+                className="remove-icon"
+                onClick={() => removeSkill(index)}
+              >
                 <RemoveCircleIcon />
               </IconButton>
             </Grid>
           </Grid>
         ))}
 
-        <Button startIcon={<AddCircleIcon />} onClick={addSkill} className="add-skill-btn">
+        <Button
+          startIcon={<AddCircleIcon />}
+          onClick={addSkill}
+          className="add-skill-btn"
+        >
           Add Skill
         </Button>
 
         {/* SUBMIT */}
         <Box textAlign="center" mt={4}>
-          <Button variant="contained" className="submit-btn" onClick={handleSubmit}>
+          <Button
+            variant="contained"
+            className="submit-btn"
+            onClick={handleSubmit}
+          >
             Submit
           </Button>
         </Box>

@@ -22,6 +22,9 @@ import {
   GET_VISIBLE_LOGS_REQUEST,
   GET_VISIBLE_LOGS_SUCCESS,
   GET_VISIBLE_LOGS_FAILURE,
+   GET_REPORTING_EMPLOYEE_LOGS_REQUEST,
+   GET_REPORTING_EMPLOYEE_LOGS_SUCCESS,
+   GET_REPORTING_EMPLOYEE_LOGS_FAILURE,
 } from "../constants/employeeConstants";
 
 // ---------- CREATE OR UPDATE EMPLOYEE ----------
@@ -191,6 +194,29 @@ export const getVisibleLogs = () => async (dispatch: Dispatch) => {
 
     dispatch({
       type: GET_VISIBLE_LOGS_FAILURE,
+      payload: message,
+    });
+
+    return { success: false, data: message };
+  }
+};
+
+export const getReportingEmployeeLogs = () => async (dispatch: Dispatch) => {
+  dispatch({ type: GET_REPORTING_EMPLOYEE_LOGS_REQUEST });
+  try {
+    const res = await axios.get("/api/employee/getReportingEmployeeLogs");
+    dispatch({
+      type:  GET_REPORTING_EMPLOYEE_LOGS_SUCCESS,
+      payload: res.data,
+    });
+    console.log("res", res);
+    return { success: true, data: res.data.log };
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || "Failed to load employee details";
+
+    dispatch({
+      type:  GET_REPORTING_EMPLOYEE_LOGS_FAILURE,
       payload: message,
     });
 
