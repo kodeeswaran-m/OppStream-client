@@ -11,16 +11,16 @@ type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
 const ReportingManagerDashboard = () => {
   const { user, accessToken } = useSelector((state: RootState) => state.auth);
-  const { userLogs, userLogscount, reportingEmployeeLogs, repEmpLogsCount } =
-    useSelector((state: RootState) => state.employee);
+  // const { userLogs, userLogscount, reportingEmployeeLogs, repEmpLogsCount } =
+  //   useSelector((state: RootState) => state.employee);
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  console.log("access token", accessToken);
+  // console.log("access token", accessToken);
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
   };
-  console.log("Dashboard", userLogs, userLogscount, reportingEmployeeLogs, repEmpLogsCount);
+  // console.log("Dashboard", userLogs, userLogscount, reportingEmployeeLogs, repEmpLogsCount);
   useEffect(() => {
     dispatch(getVisibleLogs());
     dispatch(getReportingEmployeeLogs());
