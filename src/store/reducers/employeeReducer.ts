@@ -28,14 +28,50 @@ import {
 
 export interface Employee {
   _id: string;
+  userId: string;
+
   employeeId: string;
   employeeName: string;
   employeeEmail: string;
-  role: string;
-  businessUnitId: string;
+
+  contactNumber?: string;
+  dob?: string;
+
+  workLocation?: string;
+
+  employmentType?: "Full Time" | "Intern" | "Contract";
+
+  role: "EMP" | "RM" | "AM" | "BUH";
+
   managerId?: string;
+
   ancestors?: string[];
+
+  businessUnitId: string;
+
+  department?: string;
+  team?: string;
+
+  skills?: {
+    skillName: string;
+    proficiencyLevel: string;
+    experience: number;
+  }[];
+
+  totalExperience?: number;
+
+  previousProjects?: string[];
+  previousCompanies?: string[];
+  currentProjects?: string[];
+
+  isAvailable?: boolean;
+
+  resumeFile?: string;
+
+  createdAt?: string;
+  updatedAt?: string;
 }
+
 
 interface EmployeeState {
   loading: boolean;

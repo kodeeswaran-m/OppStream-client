@@ -59,7 +59,8 @@ export const getEmployees = () => async (dispatch: Dispatch) => {
 
   try {
     const res = await axios.get("/api/employee/getEmpByRole");
-
+    console.log("Data" , res.data);
+    
     dispatch({
       type: GET_EMP_SUCCESS,
       payload: res.data.employees,
@@ -85,6 +86,8 @@ export const getEmployeeById = (id: string) => async (dispatch: Dispatch) => {
 
   try {
     const res = await axios.get(`/api/employees/${id}`);
+    
+    
 
     dispatch({
       type: GET_SINGLE_EMP_SUCCESS,

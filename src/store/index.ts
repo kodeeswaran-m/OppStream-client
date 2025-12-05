@@ -1,18 +1,20 @@
-import { createStore, applyMiddleware } from "redux";
-import {thunk} from "redux-thunk";
-import { combineReducers } from "redux";
+import { createStore, applyMiddleware, combineReducers } from "redux";
+import { thunk } from "redux-thunk";
+import {employeeReducer} from "./reducers/employeeReducer";
+import {adminReducer} from "./reducers/adminReducer";
 import authReducer from "./reducers/authReducer";
-import { adminReducer } from "./reducers/adminReducer";
-import { employeeReducer } from "./reducers/employeeReducer";
 
 const rootReducer = combineReducers({
+  employee: employeeReducer,
+  admin: adminReducer,
   auth: authReducer,
-  admin:adminReducer,
-  employee:employeeReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+export const store = createStore(rootReducer, applyMiddleware(thunk));
 
+export type AppDispatch = typeof store.dispatch;
+
+// ✅ Add default export so `import store from ...` works
 export default store;
