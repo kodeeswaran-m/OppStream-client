@@ -8,8 +8,9 @@ import AdminDashboard from "../pages/admin/AdminDashboard";
 import CreateBusinessUnit from "../pages/admin/CreateBusinessUnit";
 import EmployeeFormPage from "../pages/EmployeeFormPages";
 import LogPage from "../pages/common/LogPage";
-import EmployeeLogsTable from "../pages/EmployeeLogsTable";
 import LogTables from "../pages/reportingManager/LogTables";
+import UserLogsTable from "../pages/common/UserLogsTable";
+import LogDetailsPageWrapper from "../pages/common/LogDetailsPageWrapper";
 
 export const routeConfig: Record<UserRole, AppRoute[]> = {
   employee: [
@@ -23,7 +24,7 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
     {
       path: "/employee/logTable",
       label: "Log Table",
-      element: <EmployeeLogsTable />,
+      element: <UserLogsTable />,
     },
   ],
 
@@ -40,6 +41,11 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
     },
     { path: "/manager/logForm", label: "Log Form", element: <LogPage /> },
     { path: "/manager/logTables", label: "Table", element: <LogTables /> },
+    {
+      path: "/manager/logDetails/:id",
+      // label: "Log Details",
+      element: <LogDetailsPageWrapper />,
+    },
   ],
 
   "associate manager": [
@@ -51,6 +57,11 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
     { path: "/associate/form", label: "Form", element: <EmployeeFormPage /> },
     { path: "/associate/logForm", label: "Log Form", element: <LogPage /> },
     { path: "/associate/logTables", label: "Table", element: <LogTables /> },
+    {
+      path: "/associate/logDetails/:id",
+      // label: "Log Details",
+      element: <LogDetailsPageWrapper />,
+    },
   ],
 
   VP: [
@@ -58,6 +69,11 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
     { path: "/vp/form", label: "Form", element: <EmployeeFormPage /> },
     { path: "/vp/logForm", label: "Log Form", element: <LogPage /> },
     { path: "/vp/logTables", label: "Table", element: <LogTables /> },
+    {
+      path: "/vp/logDetails/:id",
+      // label: "Log Details",
+      element: <LogDetailsPageWrapper />,
+    },
   ],
 
   admin: [

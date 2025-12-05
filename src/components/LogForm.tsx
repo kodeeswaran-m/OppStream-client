@@ -178,7 +178,6 @@ const LOGForm = () => {
     background: "#F7F5FF",     // lighter landscape
     display: "flex",
     justifyContent: "center",
-    mt: 10,                     // pushes everything further down
   }}
 >
 

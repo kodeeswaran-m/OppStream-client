@@ -24,6 +24,15 @@ import {
   GET_REPORTING_EMPLOYEE_LOGS_REQUEST,
   GET_REPORTING_EMPLOYEE_LOGS_SUCCESS,
   GET_REPORTING_EMPLOYEE_LOGS_FAILURE,
+  UPDATE_APPROVAL_STATUS_REQUEST,
+  UPDATE_APPROVAL_STATUS_SUCCESS,
+  UPDATE_APPROVAL_STATUS_FAILURE,
+  GET_PENDING_APPROVAL_LOGS_REQUEST,
+  GET_PENDING_APPROVAL_LOGS_SUCCESS,
+  GET_PENDING_APPROVAL_LOGS_FAILURE,
+  GET_APPROVED_OR_REJECTED_LOGS_REQUEST,
+  GET_APPROVED_OR_REJECTED_LOGS_SUCCESS,
+  GET_APPROVED_OR_REJECTED_LOGS_FAILURE,
 } from "../constants/employeeConstants";
 
 export interface Employee {
@@ -85,6 +94,10 @@ interface EmployeeState {
   reportingEmployeeLogs: any[];
   userLogscount: number;
   repEmpLogsCount: number;
+  pendingApprovalLogs: any[];
+  pendingApprovalLogsCount: number;
+  approvedOrRejectedLogs: any[];
+  approvedOrRejectedLogsCount: number;
 }
 
 const initialState: EmployeeState = {
@@ -99,6 +112,10 @@ const initialState: EmployeeState = {
   userLogscount: 0,
   reportingEmployeeLogs: [],
   repEmpLogsCount: 0,
+  pendingApprovalLogs: [],
+  pendingApprovalLogsCount: 0,
+  approvedOrRejectedLogs: [],
+  approvedOrRejectedLogsCount: 0,
 };
 
 export const employeeReducer = (
@@ -208,6 +225,44 @@ export const employeeReducer = (
       };
     case GET_REPORTING_EMPLOYEE_LOGS_FAILURE:
       return { ...state, loading: false, error: action.payload };
+
+    case UPDATE_APPROVAL_STATUS_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case UPDATE_APPROVAL_STATUS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        message: action.payload.message,
+      };
+
+    case UPDATE_APPROVAL_STATUS_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+
+    case GET_PENDING_APPROVAL_LOGS_REQUEST:
+      return { ...state, loading: true, error: null };
+    case GET_PENDING_APPROVAL_LOGS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        pendingApprovalLogs: action.payload.logs,
+        pendingApprovalLogsCount: action.payload.count,
+      };
+    case GET_PENDING_APPROVAL_LOGS_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+
+    case GET_APPROVED_OR_REJECTED_LOGS_REQUEST:
+      return { ...state, loading: true, error: null };
+    case GET_APPROVED_OR_REJECTED_LOGS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        approvedOrRejectedLogs: action.payload.logs,
+        approvedOrRejectedLogsCount: action.payload.count,
+      };
+    case GET_APPROVED_OR_REJECTED_LOGS_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+
     default:
       return state;
   }

@@ -22,9 +22,18 @@ import {
   GET_VISIBLE_LOGS_REQUEST,
   GET_VISIBLE_LOGS_SUCCESS,
   GET_VISIBLE_LOGS_FAILURE,
-   GET_REPORTING_EMPLOYEE_LOGS_REQUEST,
-   GET_REPORTING_EMPLOYEE_LOGS_SUCCESS,
-   GET_REPORTING_EMPLOYEE_LOGS_FAILURE,
+  GET_REPORTING_EMPLOYEE_LOGS_REQUEST,
+  GET_REPORTING_EMPLOYEE_LOGS_SUCCESS,
+  GET_REPORTING_EMPLOYEE_LOGS_FAILURE,
+  UPDATE_APPROVAL_STATUS_REQUEST,
+  UPDATE_APPROVAL_STATUS_SUCCESS,
+  UPDATE_APPROVAL_STATUS_FAILURE,
+  GET_PENDING_APPROVAL_LOGS_REQUEST,
+  GET_PENDING_APPROVAL_LOGS_SUCCESS,
+  GET_PENDING_APPROVAL_LOGS_FAILURE,
+  GET_APPROVED_OR_REJECTED_LOGS_REQUEST,
+  GET_APPROVED_OR_REJECTED_LOGS_SUCCESS,
+  GET_APPROVED_OR_REJECTED_LOGS_FAILURE,
 } from "../constants/employeeConstants";
 
 // ---------- CREATE OR UPDATE EMPLOYEE ----------
@@ -107,7 +116,6 @@ export const getEmployeeById = (id: string) => async (dispatch: Dispatch) => {
   }
 };
 
-// -------------------- GET MANAGERS LIST --------------------
 export const getManagersList = () => async (dispatch: Dispatch) => {
   dispatch({ type: GET_MANAGERS_REQUEST });
 
@@ -209,7 +217,7 @@ export const getReportingEmployeeLogs = () => async (dispatch: Dispatch) => {
   try {
     const res = await axios.get("/api/employee/getReportingEmployeeLogs");
     dispatch({
-      type:  GET_REPORTING_EMPLOYEE_LOGS_SUCCESS,
+      type: GET_REPORTING_EMPLOYEE_LOGS_SUCCESS,
       payload: res.data,
     });
     console.log("res", res);
@@ -219,10 +227,86 @@ export const getReportingEmployeeLogs = () => async (dispatch: Dispatch) => {
       error.response?.data?.message || "Failed to load employee details";
 
     dispatch({
-      type:  GET_REPORTING_EMPLOYEE_LOGS_FAILURE,
+      type: GET_REPORTING_EMPLOYEE_LOGS_FAILURE,
       payload: message,
     });
 
     return { success: false, data: message };
   }
 };
+
+export const updateApprovalStatus = (logId:string,status: "APPROVED"|"REJECTED"|"PENDING") => async (dispatch: Dispatch) => {
+  dispatch({ type: UPDATE_APPROVAL_STATUS_REQUEST });
+
+  try {
+    const res = await axios.post(`/api/employee/${logId}/approval`, {status});
+
+    dispatch({
+      type: UPDATE_APPROVAL_STATUS_SUCCESS,
+      payload: res.data,
+    });
+
+    return { success: true, data: res.data };
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || "Failed to save employee details";
+
+    dispatch({
+      type: UPDATE_APPROVAL_STATUS_FAILURE,
+      payload: message,
+    });
+
+    return { success: false, data: message };
+  }
+};
+
+export const getPendingApprovalLogs = () => async (dispatch: Dispatch) => {
+  dispatch({ type: GET_PENDING_APPROVAL_LOGS_REQUEST });
+
+  try {
+    const res = await axios.get("/api/employee/getPendingApprovalLogs");
+
+    dispatch({
+      type: GET_PENDING_APPROVAL_LOGS_SUCCESS,
+      payload: res.data,
+    });
+
+    return { success: true, data: res.data.logs };
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || "Failed to fetch logs";
+
+    dispatch({
+      type: GET_PENDING_APPROVAL_LOGS_FAILURE,
+      payload: message,
+    });
+
+    return { success: false, data: message };
+  }
+};
+
+export const getApprovedOrRejectedLogs = () => async (dispatch: Dispatch) => {
+  dispatch({ type: GET_APPROVED_OR_REJECTED_LOGS_REQUEST });
+
+  try {
+    const res = await axios.get("/api/employee/getApprovedOrRejectedLogs");
+
+    dispatch({
+      type: GET_APPROVED_OR_REJECTED_LOGS_SUCCESS,
+      payload: res.data,
+    });
+console.log("res", res.data.logs);
+    return { success: true, data: res.data.logs };
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || "Failed to fetch logs";
+
+    dispatch({
+      type: GET_APPROVED_OR_REJECTED_LOGS_FAILURE,
+      payload: message,
+    });
+
+    return { success: false, data: message };
+  }
+};
+
