@@ -113,54 +113,76 @@ const Dashboard = () => {
       </Grid>
 
       {/* --------------------- EMPLOYEE SUMMARY CARDS --------------------- */}
-      <Typography variant="h5" fontWeight="bold" mb={2} >
-        Employee Summary
-      </Typography>
-
-      <Grid container spacing={3}>
-        {employeeCardList.map((emp) => (
-          <Grid item xs={12} md={6} lg={4} key={emp._id} width={300}>
-            <Paper
-              elevation={4}
-              sx={{
-                p: 3,
-                
-                borderRadius: 4,
-                transition: "0.3s",
-                "&:hover": { transform: "scale(1.03)" },
-              }}
-            >
-              <Typography variant="h6" fontWeight="700">
-                {emp.employeeName}
-              </Typography>
-
-              <Typography variant="body2" color="gray" mt={0.5}>
-                {emp.employeeId} • {emp.department}
-              </Typography>
-
-              <Stack direction="column" spacing={1} mt={2}>
-                <Typography>
-                  <strong>Experience:</strong> {emp.totalExperience} yrs
+   
+      <Paper elevation={0} sx={{ p: 3, bgcolor: "white", mt: 3 }}>
+        <Typography variant="h6" sx={{ mb: 3, color: "#1a237e" }}>
+          Employee Summary
+        </Typography>
+        <Grid container spacing={2}>
+          {employees.map((employee) => (
+            <Grid item xs={12} sm={6} md={4} key={employee._id}>
+              <Box
+                sx={{
+                  p: 2,
+                  border: "1px solid #e0e0e0",
+                  borderRadius: 2,
+                  transition: "all 0.2s",
+                  "&:hover": {
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                    borderColor: "#8347AD",
+                  },
+                }}
+              >
+                {/* Employee Name */}
+                <Typography variant="subtitle1" sx={{ color: "#1976d2", mb: 1 , fontSize:15}}>
+                  {employee.employeeName}
                 </Typography>
-
-                <Typography>
-                  <strong>Location:</strong> {emp.workLocation}
+ 
+                {/* Employee ID + Department */}
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  {employee.employeeId} • {employee.department}
                 </Typography>
+ 
+                {/* Colored Chips */}
+                <Stack direction="row" spacing={1} flexWrap="wrap" gap={0.5}>
+                  <Chip
+                    label={employee.role}
+                    size="small"
+                    sx={{ bgcolor: "#d0f0c0", color: "#2e7d32", fontWeight: "normal", fontSize:10 }}
+                  />
+                  <Chip
+                    label={`${employee.totalExperience} yrs`}
+                    size="small"
+                    sx={{ bgcolor: "#cce5ff", color: "#1976d2", fontWeight: "normal", fontSize:10 }}
+                  />
+                  <Chip
+                    label={employee.workLocation}
+                    size="small"
+                    sx={{ bgcolor: "#fff3e0", color: "#ed6c02", fontWeight: "normal", fontSize:10 }}
+                  />
+                  <Chip
+                    label={employee.employmentType}
+                    size="small"
+                    sx={{ bgcolor: "#f3e5f5", color: "#9c27b0", fontWeight: "normal", fontSize:10 }}
+                  />
+                  {/* <Chip
+                    label={employee.status}
+                    size="small"
+                    sx={{
+                      bgcolor: employee.status === "Available" ? "#f3e5f5" : "#ffebee",
+                      color: employee.status === "Available" ? "#9c27b0" : "#d32f2f",
+                      fontWeight: "normal",
+                    }}
+                  /> */}
+                </Stack>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      </Paper>
+        
 
-                <Typography>
-                  <strong>Employment Type:</strong> {emp.employmentType}
-                </Typography>
-
-                <Chip
-                  label={emp.status}
-                  color={emp.status === "Available" ? "success" : "warning"}
-                  sx={{ width: "fit-content", fontWeight: "bold" }}
-                />
-              </Stack>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
+    
     </Box>
   );
 };
