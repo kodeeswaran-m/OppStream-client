@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { getApprovedOrRejectedLogs } from "../../store/actions/employeeActions";
 import type { RootState } from "../../store";
 import { useNavigate } from "react-router-dom";
-import RoleRoute from "../../routes/others/RoleRoute";
+import { getRouteRole } from "../../utils/getRouteRole";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -40,16 +40,10 @@ const columns = [
 ];
 
 const ApprovalStatusLogsTable = () => {
-  const {
-    approvedOrRejectedLogs,
-    approvedOrRejectedLogsCount,
-  } = useSelector((state: RootState) => state.employee);
-  const {
-    user
-  } = useSelector((state: RootState) => state.auth);
-  const [routeRole, setRouteRole] = useState<"manager" | "associate" | "vp">(
-    "manager"
+  const { approvedOrRejectedLogs, approvedOrRejectedLogsCount } = useSelector(
+    (state: RootState) => state.employee
   );
+  const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   console.log("approvedOrRejectedLogs", approvedOrRejectedLogs);
   const dispatch: AppDispatch = useDispatch();
@@ -58,12 +52,6 @@ const ApprovalStatusLogsTable = () => {
     console.log("de");
     dispatch(getApprovedOrRejectedLogs());
   }, []);
-
-  useEffect(() => {
-    if (user?.role === "reporting manager") setRouteRole("manager");
-    else if (user?.role === "associate manager") setRouteRole("associate");
-    else setRouteRole("vp");
-  }, [user]);
 
   const getWaitingFor = (log: any) => {
     if (!log.approvals || log.approvals.length === 0) return "-";
@@ -168,7 +156,10 @@ const ApprovalStatusLogsTable = () => {
             {approvedOrRejectedLogs.map((log: any) => (
               <TableRow
                 key={log._id}
-                onClick={() => navigate(`/${routeRole}/logDetails/${log._id}`)}
+                onClick={() => {
+                  const routeRole = getRouteRole(user?.role);
+                  navigate(`/${routeRole}/logDetails/${log._id}`);
+                }}
                 sx={{
                   "&:hover": {
                     backgroundColor: "#e3e3e3ff",

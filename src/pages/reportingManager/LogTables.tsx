@@ -62,18 +62,18 @@ const LogTables = () => {
         </Tabs>
 
         {/* Tab Panels */}
-        <Box hidden={value !== 0}>
+        <Box sx={{padding:2}} hidden={value !== 0}>
           <PendingApprovalLogsTable />
         </Box>
 
-        <Box hidden={value !== 1}>
+        <Box sx={{padding:2}} hidden={value !== 1}>
           <ApprovalStatusLogsTable />
         </Box>
-        <Box hidden={value !== 2}>
+        <Box sx={{padding:2}} hidden={value !== 2}>
           <EmployeeLogsTable />
         </Box>
 
-        <Box hidden={value !== 3}>
+        <Box sx={{padding:2}} hidden={value !== 3}>
           <UserLogsTable />
         </Box>
       </Paper>

@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import Login from "./components/LoginPage";
 import Signup from "./components/SignupPage";
 import PublicRoute from "./routes/PublicRoute";
@@ -17,6 +23,7 @@ import type { AnyAction } from "redux";
 
 function AppContent() {
   const location = useLocation();
+  // const { showMessage } = useSnackbar();
 
   const hideNavbarRoutes = ["/"]; // Hide navbar on welcome page
 
@@ -49,7 +56,11 @@ function AppContent() {
         {Object.entries(routeConfig).map(([role, routes]) => (
           <Route key={role} element={<ProtectedLayout allowedRoles={[role]} />}>
             {routes.map((route) => (
-              <Route key={route.path} path={route.path} element={route.element} />
+              <Route
+                key={route.path}
+                path={route.path}
+                element={route.element}
+              />
             ))}
           </Route>
         ))}

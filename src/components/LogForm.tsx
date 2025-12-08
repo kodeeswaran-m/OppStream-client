@@ -16,8 +16,8 @@ import {
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import { createUserLog } from "../store/actions/employeeActions";
-import { useDispatch } from "react-redux";
+import { createUserLog, getCurrentEmployee } from "../store/actions/employeeActions";
+import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch } from "redux-thunk";
 import type { RootState } from "../store";
 import type { AnyAction } from "redux";
@@ -25,8 +25,9 @@ import type { AnyAction } from "redux";
 import "./LogFormType";
 import { reducer } from "./LogFormActionReducer";
 import { Padding } from "@mui/icons-material";
-
-
+import { useSnackbar } from "../context/SnackbarContext";
+import { getRouteRole } from "../utils/getRouteRole";
+import { useNavigate } from "react-router-dom";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -35,24 +36,23 @@ const fieldStyle = {
   "& .MuiOutlinedInput-root": {
     height: "45px",
     borderRadius: "10px",
-    fontSize: "13px",     // 👈 Smaller input text
+    fontSize: "13px", // 👈 Smaller input text
   },
   "& .MuiInputLabel-root": {
-    fontSize: "12px",     // 👈 Smaller label text
+    fontSize: "12px", // 👈 Smaller label text
   },
   "& .MuiSelect-select": {
-    fontSize: "13px",     // 👈 Smaller select menu text
+    fontSize: "13px", // 👈 Smaller select menu text
     padding: "12px",
   },
   "& input": {
-    fontSize: "13px",     // 👈 TextField input size
+    fontSize: "13px", // 👈 TextField input size
     padding: "12px",
   },
   "& .MuiMenuItem-root": {
-    fontSize: "13px",     // 👈 Dropdown menu items
+    fontSize: "13px", // 👈 Dropdown menu items
   },
 };
-
 
 // --------------------- INITIAL STATE ---------------------
 const initialState: State = {
@@ -96,16 +96,24 @@ const initialState: State = {
 const LOGForm = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const thunkDispatch: AppDispatch = useDispatch();
+  const { showMessage } = useSnackbar();
+  const {currentUserDetails}=useSelector((state:RootState)=>state.employee)
+  const { user } = useSelector((state: RootState) => state.auth);
+  const navigate=useNavigate();
+console.log("empllllllll", currentUserDetails);
 
   // ---------------------- AUTO-FILL USER DATA ----------------------
+  useEffect(()=>{
+    thunkDispatch(getCurrentEmployee());
+  },[]);
   useEffect(() => {
     const user = {
-      employeeId: "EMP101",
-      employeeName: "John Doe",
-      employeeEmail: "john@company.com",
-      department: "IT",
-      team: "Frontend",
-      manager: "Sam",
+      employeeId: currentUserDetails?.employeeId,
+      employeeName: currentUserDetails?.employeeName,
+      employeeEmail: currentUserDetails?.employeeEmail,
+      department: currentUserDetails?.department,
+      team: currentUserDetails?.team,
+      manager: currentUserDetails?.managerId?.employeeName,
     };
 
     for (const key in user) {
@@ -118,7 +126,7 @@ const LOGForm = () => {
   }, []);
 
   // ---------------------- SUBMIT ----------------------
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const payload = {
       requirementType: state.requirementType,
 
@@ -164,28 +172,34 @@ const LOGForm = () => {
       },
     };
 
-    thunkDispatch(createUserLog(payload));
+    const result = await thunkDispatch(createUserLog(payload));
+    if (result.success) {
+      showMessage("Log created successfully.");
+      const routeRole = getRouteRole(user?.role);
+      navigate(`/${routeRole}/dashboard`);
+    } else {
+      showMessage("Error.");
+    }
   };
 
   const canAddMoreRows = () =>
     state.techRows.length < state.selectedTechnologies.length;
 
   return (
- <Box
-  sx={{
-    minHeight: "100vh",
-    p: 6,                      // more spacing around the page
-    background: "#F7F5FF",     // lighter landscape
-    display: "flex",
-    justifyContent: "center",
-  }}
->
-
+    <Box
+      sx={{
+        minHeight: "100vh",
+        p: 6, // more spacing around the page
+        background: "#F7F5FF", // lighter landscape
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
       <Paper
         sx={{
           p: 4,
           borderRadius: 4,
-           mt: 4,   // added
+          mt: 4, // added
           width: "100%",
           maxWidth: "1100px",
           boxShadow: "0px 4px 20px rgba(0,0,0,0.08)",
@@ -276,13 +290,10 @@ const LOGForm = () => {
           </>
         )}
 
-        <Divider sx={{marginTop:4}}/>
-
-       
+        <Divider sx={{ marginTop: 4 }} />
 
         {/* ───────────────────── OPP FROM (EE/EN only) ───────────────────── */}
-        {(state.requirementType === "EE" ||
-          state.requirementType === "EN") && (
+        {(state.requirementType === "EE" || state.requirementType === "EN") && (
           <>
             <Typography mt={4} variant="h6">
               Opp. From
@@ -358,82 +369,82 @@ const LOGForm = () => {
                 </TextField>
               </Grid>
 
-             {/* Date */}
-<Grid item xs={12} md={4} minWidth={300}>
-  <TextField
-    type="date"
-    fullWidth
-    label="Date of Discussion"
-    sx={fieldStyle}
-    InputLabelProps={{ shrink: true }}
-    value={state.callDate}
-    onChange={(e) =>
-      dispatch({
-        type: "SET_FIELD",
-        field: "callDate",
-        value: e.target.value,
-      })
-    }
-  />
-</Grid>
+              {/* Date */}
+              <Grid item xs={12} md={4} minWidth={300}>
+                <TextField
+                  type="date"
+                  fullWidth
+                  label="Date of Discussion"
+                  sx={fieldStyle}
+                  InputLabelProps={{ shrink: true }}
+                  value={state.callDate}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "SET_FIELD",
+                      field: "callDate",
+                      value: e.target.value,
+                    })
+                  }
+                />
+              </Grid>
 
-{/* Spacing row */}
-<Grid item xs={12} />
+              {/* Spacing row */}
+              <Grid item xs={12} />
 
-{/* People Present */}
-<Grid item xs={12}>
-  <Typography fontWeight="bold" mt={2}>
-    People Present
-  </Typography>
+              {/* People Present */}
+              <Grid item xs={12}>
+                <Typography fontWeight="bold" mt={2}>
+                  People Present
+                </Typography>
 
-  {state.peoplePresent.map((p, i) => (
-    <Grid
-      container
-      spacing={1}
-      key={i}
-      alignItems="center"
-      sx={{ mt: 1 }}
-    >
-      <Grid item xs={12} md={4}>
-        <TextField
-          fullWidth
-          label="Name"
-          sx={fieldStyle}
-          value={p.name}
-          onChange={(e) =>
-            dispatch({
-              type: "UPDATE_PEOPLE",
-              index: i,
-              value: e.target.value,
-            })
-          }
-        />
-      </Grid>
+                {state.peoplePresent.map((p, i) => (
+                  <Grid
+                    container
+                    spacing={1}
+                    key={i}
+                    alignItems="center"
+                    sx={{ mt: 1 }}
+                  >
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        fullWidth
+                        label="Name"
+                        sx={fieldStyle}
+                        value={p.name}
+                        onChange={(e) =>
+                          dispatch({
+                            type: "UPDATE_PEOPLE",
+                            index: i,
+                            value: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
 
-      <Grid item>
-        <IconButton
-          color="error"
-          onClick={() =>
-            dispatch({ type: "REMOVE_PEOPLE", index: i })
-          }
-          disabled={state.peoplePresent.length === 1}
-        >
-          <RemoveCircleIcon />
-        </IconButton>
-      </Grid>
-    </Grid>
-  ))}
+                    <Grid item>
+                      <IconButton
+                        color="error"
+                        onClick={() =>
+                          dispatch({ type: "REMOVE_PEOPLE", index: i })
+                        }
+                        disabled={state.peoplePresent.length === 1}
+                      >
+                        <RemoveCircleIcon />
+                      </IconButton>
+                    </Grid>
+                  </Grid>
+                ))}
 
-  <Button
-    startIcon={<AddCircleIcon />}
-    onClick={() => dispatch({ type: "ADD_PEOPLE" })}
-  >
-    Add Person
-  </Button>
-</Grid>
-</Grid>
+                <Button
+                  startIcon={<AddCircleIcon />}
+                  onClick={() => dispatch({ type: "ADD_PEOPLE" })}
+                >
+                  Add Person
+                </Button>
+              </Grid>
+            </Grid>
 
-  <Divider sx={{marginTop:4}}/>
+            <Divider sx={{ marginTop: 4 }} />
 
             {/* ───────────────────── OPP TO ───────────────────── */}
             <Typography mt={4} variant="h6">
@@ -553,9 +564,7 @@ const LOGForm = () => {
                 <Grid item>
                   <IconButton
                     color="error"
-                    onClick={() =>
-                      dispatch({ type: "REMOVE_TECH_ROW", index })
-                    }
+                    onClick={() => dispatch({ type: "REMOVE_TECH_ROW", index })}
                   >
                     <RemoveCircleIcon />
                   </IconButton>
@@ -564,12 +573,11 @@ const LOGForm = () => {
             ))}
 
             {/* Category and Notes */}
-            <Grid container spacing={2} mt={3} >
-              <Grid item xs={12} md={4} minWidth={230} >
+            <Grid container spacing={2} mt={3}>
+              <Grid item xs={12} md={4} minWidth={230}>
                 <TextField
                   select
                   fullWidth
-                   
                   label="Opp. Category"
                   sx={fieldStyle}
                   value={state.oppCategory}
@@ -608,7 +616,6 @@ const LOGForm = () => {
                   fullWidth
                   label="Detailed Notes"
                   multiline
-                  
                   rows={1}
                   sx={fieldStyle}
                   value={state.detailedNotes}
@@ -625,7 +632,7 @@ const LOGForm = () => {
           </>
         )}
 
-          <Divider sx={{marginTop:4}}/>
+        <Divider sx={{ marginTop: 4 }} />
 
         {/* ───────────────────── TIMELINE ───────────────────── */}
         <Typography mt={4} variant="h6">
@@ -651,7 +658,7 @@ const LOGForm = () => {
             />
           </Grid>
 
-          <Grid item xs={12}  md={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               type="date"
               fullWidth

@@ -25,6 +25,7 @@ import {
 } from "../../store/actions/employeeActions";
 import type { RootState } from "../../store";
 import { useNavigate } from "react-router-dom";
+import { getRouteRole } from "../../utils/getRouteRole";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -49,16 +50,8 @@ const PendingApprovalLogsTable = () => {
   );
   const { user } = useSelector((state: RootState) => state.auth);
 
-  const [routeRole, setRouteRole] = useState<"manager" | "associate" | "vp">(
-    "manager"
-  );
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user?.role === "reporting manager") setRouteRole("manager");
-    else if (user?.role === "associate manager") setRouteRole("associate");
-    else setRouteRole("vp");
-  }, [user]);
   const dispatch: AppDispatch = useDispatch();
   console.log("pendingApprovalLogs", pendingApprovalLogs);
   // Track edited status per row
@@ -161,7 +154,10 @@ const PendingApprovalLogsTable = () => {
             {pendingApprovalLogs.map((log: any) => (
               <TableRow
                 key={log._id}
-                onClick={() => navigate(`/${routeRole}/logDetails/${log._id}`)}
+                onClick={() => {
+                  const routeRole = getRouteRole(user?.role);
+                  navigate(`/${routeRole}/logDetails/${log._id}`);
+                }}
                 sx={{
                   "&:hover": { backgroundColor: "#e3e3e3ff" },
                 }}
@@ -175,7 +171,9 @@ const PendingApprovalLogsTable = () => {
                           size="small"
                           defaultValue="PENDING"
                           //   value={editedStatus[log._id] ?? log.approvalStatus}
-                          onClick={(e)=>{e.stopPropagation()}}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
                           onChange={(e) => {
                             e.stopPropagation();
                             setEditedStatus((prev) => ({

@@ -35,6 +35,11 @@ import {
   GET_APPROVED_OR_REJECTED_LOGS_FAILURE,
 } from "../constants/employeeConstants";
 
+interface Manager{
+  employeeEmail:string,
+  employeeName: string,
+  role:string
+}
 export interface Employee {
   _id: string;
   userId: string;
@@ -52,7 +57,7 @@ export interface Employee {
 
   role: "EMP" | "RM" | "AM" | "BUH";
 
-  managerId?: string;
+  managerId?: Manager;
 
   ancestors?: string[];
 
