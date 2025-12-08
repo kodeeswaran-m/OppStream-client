@@ -11,7 +11,8 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
         sx={{
           p: 2.5,
           borderRadius: 3,
-          minWidth: 280,
+          minWidth: 320,
+          cursor:"pointer",
           backgroundColor: "white",
           transition: "all 0.3s ease",
           border: "1px solid #e8e8e8",

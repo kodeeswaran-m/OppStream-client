@@ -3,6 +3,12 @@ import { getEmployeeCounts } from "../../services/logService";
 
 import { Box, Typography, Paper, CircularProgress, Grid } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../../store";
+import { getCurrentEmployee } from "../../store/actions/employeeActions";
+import type { ThunkDispatch } from "redux-thunk";
+import type { AnyAction } from "redux";
+type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
 const EmployeeDetailsChart = () => {
   const [counts, setCounts] = useState({
@@ -11,9 +17,23 @@ const EmployeeDetailsChart = () => {
     reportingManager: 0,
     employee: 0,
   });
+  const dispatch: AppDispatch = useDispatch();
 
+  const { currentUserDetails } = useSelector(
+    (state: RootState) => state.employee
+  );
   const [loading, setLoading] = useState<boolean>(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+  useEffect(() => {
+    const onResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    dispatch(getCurrentEmployee());
+  }, []);
   useEffect(() => {
     const fetchCounts = async () => {
       try {
@@ -41,12 +61,15 @@ const EmployeeDetailsChart = () => {
     { name: "total", labelName: "Total", color: "#6A1B9A" },
     { name: "associateManager", labelName: "AM", color: "#283593" },
     { name: "reportingManager", labelName: "RM", color: "#0277BD" },
-    { name: "employee", labelName: "Employees", color: "#2E7D32" },
-  ];
+    { name: "employee", labelName: "Employee", color: "#2E7D32" },
+  ].filter(
+    (item) =>
+      item.labelName.toLowerCase() !== currentUserDetails?.role?.toLowerCase()
+  );
 
   return (
     <Box
-      sx={{ backgroundColor: "#f4f2f5ff", paddingTop: 0.2, height: "100vh" }}
+      sx={{ backgroundColor: "#f4f2f5ff", paddingTop: 0.2 }}
     >
       <Grid
         container
@@ -81,8 +104,8 @@ const EmployeeDetailsChart = () => {
                     p: 3,
                     textAlign: "center",
                     borderRadius: 3,
-                    width: 100,
-                    height: 90,
+                    width: 90,
+                    height: 80,
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
@@ -123,7 +146,8 @@ const EmployeeDetailsChart = () => {
               <CircularProgress />
             ) : (
               <PieChart
-                height={220}
+                key={windowWidth} // 👈 Important
+                height={200}
                 margin={{ top: -10, bottom: -90 }}
                 series={[
                   {
@@ -135,13 +159,13 @@ const EmployeeDetailsChart = () => {
                     data: pieData,
 
                     highlightScope: { fade: "global", highlight: "item" },
-                    highlighted: { additionalRadius: 4 }, // expands arc
+                    highlighted: { additionalRadius: 3 }, // expands arc
                     cornerRadius: 4, // rounded edges
                     fade: true,
 
                     // Optional labels (enable if needed)
                     // arcLabel: (item) => `${item.value}`,
-                    // arcLabelRadius: "70%",
+                    arcLabelRadius: "70%",
                   },
                 ]}
                 sx={{

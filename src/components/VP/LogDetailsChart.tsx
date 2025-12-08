@@ -13,6 +13,14 @@ const LogDetailsChart = () => {
   });
   console.log("counts", counts);
   const [loading, setLoading] = useState<boolean>(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const onResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   useEffect(() => {
     const fetchCounts = async () => {
       try {
@@ -43,7 +51,7 @@ const LogDetailsChart = () => {
 
   return (
     <Box
-      sx={{ backgroundColor: "#f4f2f5ff", paddingTop: 0.2, height: "100vh" }}
+      sx={{ backgroundColor: "#f4f2f5ff", paddingTop: 0.2}}
     >
       <Grid
         container
@@ -67,6 +75,7 @@ const LogDetailsChart = () => {
               <CircularProgress />
             ) : (
               <PieChart
+                key={windowWidth}   // 👈 Important
                 height={200}
                 margin={{
                   top: -10,
@@ -117,8 +126,8 @@ const LogDetailsChart = () => {
                   p: 3,
                   textAlign: "center",
                   borderRadius: 3,
-                  width: 100,
-                  height: 90,
+                  width: 90,
+                  height: 80,
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",

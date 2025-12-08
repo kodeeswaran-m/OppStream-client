@@ -36,7 +36,7 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
     },
     {
       path: "/manager/profileForm",
-      
+
       element: <EmployeeFormPage />,
     },
     { path: "/manager/logForm", label: "Log Form", element: <LogPage /> },
@@ -52,9 +52,10 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
     {
       path: "/associate/dashboard",
       label: "Dashboard",
-      element: <AssociateManagerDashboard />,
+      element: <VPDashboard />,
+      // element: <AssociateManagerDashboard />,
     },
-    { path: "/associate/form",  element: <EmployeeFormPage /> },
+    { path: "/associate/form", element: <EmployeeFormPage /> },
     { path: "/associate/logForm", label: "Log Form", element: <LogPage /> },
     { path: "/associate/logTables", label: "Table", element: <LogTables /> },
     {
@@ -66,7 +67,7 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
 
   VP: [
     { path: "/vp/dashboard", label: "Dashboard", element: <VPDashboard /> },
-    { path: "/vp/form",  element: <EmployeeFormPage /> },
+    { path: "/vp/form", element: <EmployeeFormPage /> },
     { path: "/vp/logForm", label: "Log Form", element: <LogPage /> },
     { path: "/vp/logTables", label: "Table", element: <LogTables /> },
     {
