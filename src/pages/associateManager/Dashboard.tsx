@@ -1,81 +1,51 @@
-// AMDashboard.tsx
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Box,
-  Grid,
-  Typography,
-  Paper,
-  Chip,
-  Stack,
-} from "@mui/material";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-} from "recharts";
+import { Box, Grid, Typography, Paper, Chip, Stack } from "@mui/material";
+import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 
 import type { RootState, AppDispatch } from "../../store";
 import { getEmployees } from "../../store/actions/employeeActions";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28"]; // FullTime, Intern, Contract
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]; // Chart colors
 
-const Dashboard = () => {
+const AMDashboard = () => {
   const dispatch: AppDispatch = useDispatch();
-
   const { employees } = useSelector((state: RootState) => state.employee);
-  const { user } = useSelector((state: RootState) => state.auth); // logged-in AM
 
   useEffect(() => {
     dispatch(getEmployees());
   }, [dispatch]);
 
-  console.log("Logged AM:", user);
-  console.log("All Employees:", employees);
+  const totalEmployees = employees.length;
 
-  // 1️⃣ FILTER employees under the AM
-  const teamEmployees = useMemo(() => {
-    if (!user?._id) return [];
-
-    const filtered = employees.filter(
-      (emp) => String(emp.managerId) === String(user._id)
-    );
-
-    console.log("Employees under AM:", filtered);
-    return filtered;
-  }, [employees, user]);
-
-  // 2️⃣ COUNT CARD
-  const totalTeamEmployees = teamEmployees.length;
-
-  // 3️⃣ DONUT CHART - EMPLOYMENT TYPE
   const employeeTypeData = useMemo(() => {
-    const map: any = {};
-
-    teamEmployees.forEach((emp) => {
+    const typeMap: Record<string, number> = {};
+    employees.forEach((emp) => {
       const type = emp.employmentType || "Unknown";
-      map[type] = (map[type] || 0) + 1;
+      typeMap[type] = (typeMap[type] || 0) + 1;
     });
+    return Object.keys(typeMap).map((key) => ({ name: key, value: typeMap[key] }));
+  }, [employees]);
 
-    return Object.keys(map).map((key) => ({
-      name: key,
-      value: map[key],
-    }));
-  }, [teamEmployees]);
-
-  console.log("AM EmploymentType Data:", employeeTypeData);
+  const roleData = useMemo(() => {
+    const roleMap: Record<string, number> = {};
+    employees.forEach((emp) => {
+      const role = emp.role || "Unknown";
+      roleMap[role] = (roleMap[role] || 0) + 1;
+    });
+    return Object.keys(roleMap).map((key) => ({ name: key, value: roleMap[key] }));
+  }, [employees]);
 
   return (
     <Box p={4}>
-      {/* --------------------- HEADER --------------------- */}
-      <Typography variant="h4" fontWeight="bold" mb={4} textAlign="center">
-        Associate Manager Dashboard
+      {/* Header */}
+      <Typography variant="h4" fontWeight="bold" mb={4} textAlign="center" mt={5}>
+        Employee Analytics Dashboard
       </Typography>
 
-      {/* --------------------- CARDS --------------------- */}
-      <Grid container spacing={3} mb={4}>
+      {/* Top Row: Total Employees + Charts */}
+      <Grid container spacing={3} mb={5}>
+        {/* Total Employees */}
         <Grid item xs={12} md={4}>
           <Paper
             elevation={5}
@@ -85,108 +55,144 @@ const Dashboard = () => {
               textAlign: "center",
               background: "linear-gradient(135deg, #42a5f5, #1e88e5)",
               color: "white",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
             }}
           >
-            <Typography variant="h5">Your Team Members</Typography>
+            <Typography variant="h5">Total Employees</Typography>
             <Typography variant="h3" fontWeight="bold" mt={1}>
-              {totalTeamEmployees}
+              {totalEmployees}
             </Typography>
           </Paper>
         </Grid>
-      </Grid>
 
-      {/* --------------------- DONUT CHART --------------------- */}
-      <Grid container spacing={3} mb={5}>
-        <Grid item xs={12} md={6}>
+        {/* Employment Type Chart */}
+        <Grid item xs={12} md={4}>
           <Paper elevation={4} sx={{ p: 3, borderRadius: 4 }}>
             <Typography variant="h6" fontWeight="600" mb={2}>
-              Employment Type Distribution
+              Employment Type
             </Typography>
-
-            <PieChart width={380} height={350}>
+            <PieChart width={300} height={300}>
               <Pie
                 data={employeeTypeData}
                 cx="50%"
                 cy="50%"
-                innerRadius={60}
-                outerRadius={100}
+                innerRadius={50}
+                outerRadius={90}
                 paddingAngle={5}
                 dataKey="value"
                 nameKey="name"
+                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
               >
                 {employeeTypeData.map((_, idx) => (
                   <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
                 ))}
               </Pie>
-
               <Tooltip />
-              <Legend />
+              <Legend verticalAlign="bottom" height={36} />
+            </PieChart>
+          </Paper>
+        </Grid>
+
+        {/* Role Distribution Chart */}
+        <Grid item xs={12} md={4}>
+          <Paper elevation={4} sx={{ p: 3, borderRadius: 4 }}>
+            <Typography variant="h6" fontWeight="600" mb={2}>
+              Role Distribution
+            </Typography>
+            <PieChart width={300} height={300}>
+              <Pie
+                data={roleData}
+                cx="50%"
+                cy="50%"
+                innerRadius={50}
+                outerRadius={90}
+                paddingAngle={5}
+                dataKey="value"
+                nameKey="name"
+                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+              >
+                {roleData.map((_, idx) => (
+                  <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend verticalAlign="bottom" height={36} />
             </PieChart>
           </Paper>
         </Grid>
       </Grid>
 
-      {/* --------------------- EMPLOYEE SUMMARY --------------------- */}
-      <Typography variant="h5" fontWeight="bold" mb={2}>
-        Team Employee Summary
-      </Typography>
-
-      <Grid container spacing={3}>
-        {teamEmployees.map((emp) => (
-          <Grid item xs={12} md={6} lg={4} key={emp._id}>
-            <Paper
-              elevation={4}
-              sx={{
-                p: 3,
-                borderRadius: 4,
-                transition: "0.3s",
-                "&:hover": { transform: "scale(1.03)" },
-              }}
-            >
-              <Typography variant="h6" fontWeight="700">
-                {emp.employeeName}
-              </Typography>
-
-              <Typography variant="body2" color="gray" mt={0.5}>
-                {emp.employeeId} • {emp.department}
-              </Typography>
-
-              <Stack direction="column" spacing={1} mt={2}>
-                <Typography>
-                  <strong>Experience:</strong> {emp.totalExperience} yrs
+      {/* Employee Summary Cards */}
+      <Paper elevation={0} sx={{ p: 3, bgcolor: "white", mt: 3 }}>
+        <Typography variant="h6" sx={{ mb: 3, color: "#1a237e" }}>
+          Employee Summary
+        </Typography>
+        <Grid container spacing={2}>
+          {employees.map((employee) => (
+            <Grid item xs={12} sm={6} md={4} key={employee._id}>
+              <Box
+                sx={{
+                  p: 2,
+                  border: "1px solid #e0e0e0",
+                  borderRadius: 2,
+                  transition: "all 0.2s",
+                  "&:hover": {
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                    borderColor: "#8347AD",
+                  },
+                }}
+              >
+                {/* Employee Name */}
+                <Typography variant="subtitle1" sx={{ color: "#1976d2", mb: 1 , fontSize:15}}>
+                  {employee.employeeName}
                 </Typography>
 
-                <Typography>
-                  <strong>Location:</strong> {emp.workLocation}
+                {/* Employee ID + Department */}
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  {employee.employeeId} • {employee.department}
                 </Typography>
 
-                <Typography>
-                  <strong>Employment Type:</strong> {emp.employmentType}
-                </Typography>
-
-                <Typography>
-                  <strong>Team:</strong> {emp.team}
-                </Typography>
-
-                {emp.skills?.length > 0 && (
-                  <Typography>
-                    <strong>Skill:</strong> {emp.skills[0].skillName} (
-                    {emp.skills[0].experience} yrs)
-                  </Typography>
-                )}
-
-                <Chip
-                  label={emp.isAvailable ? "Available" : "Not Available"}
-                  color={emp.isAvailable ? "success" : "warning"}
-                  sx={{ width: "fit-content", fontWeight: "bold" }}
-                />
-              </Stack>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
+                {/* Colored Chips */}
+                <Stack direction="row" spacing={1} flexWrap="wrap" gap={0.5}>
+                  <Chip
+                    label={employee.role}
+                    size="small"
+                    sx={{ bgcolor: "#d0f0c0", color: "#2e7d32", fontWeight: "normal", fontSize:10 }}
+                  />
+                  <Chip
+                    label={`${employee.totalExperience} yrs`}
+                    size="small"
+                    sx={{ bgcolor: "#cce5ff", color: "#1976d2", fontWeight: "normal", fontSize:10 }}
+                  />
+                  <Chip
+                    label={employee.workLocation}
+                    size="small"
+                    sx={{ bgcolor: "#fff3e0", color: "#ed6c02", fontWeight: "normal", fontSize:10 }}
+                  />
+                  <Chip
+                    label={employee.employmentType}
+                    size="small"
+                    sx={{ bgcolor: "#f3e5f5", color: "#9c27b0", fontWeight: "normal", fontSize:10 }}
+                  />
+                  {/* <Chip
+                    label={employee.status}
+                    size="small"
+                    sx={{
+                      bgcolor: employee.status === "Available" ? "#f3e5f5" : "#ffebee",
+                      color: employee.status === "Available" ? "#9c27b0" : "#d32f2f",
+                      fontWeight: "normal",
+                    }}
+                  /> */}
+                </Stack>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      </Paper>
     </Box>
   );
 };
 
-export default Dashboard;
+export default AMDashboard;
