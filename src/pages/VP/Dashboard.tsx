@@ -1,27 +1,38 @@
-import { Box, Typography } from "@mui/material";
+
+import { Box, Divider, Typography } from "@mui/material";
 import LogDetailsChart from "../../components/VP/LogDetailsChart";
 import EmployeeDetailsChart from "../../components/VP/EmployeeDetailsChart";
 import EmployeeList from "../../components/VP/EmployeeList";
 
 const VPDashboard = () => {
   return (
-    <Box sx={{ backgroundColor: "#f4f2f5ff" }}>
+    <Box sx={{ backgroundColor: "#f4f2f5ff", minHeight: "100vh" }}>
+      
+      {/* Charts Section */}
       <Box
         sx={{
           display: "flex",
-          alignItems: "center",
+          flexWrap: "wrap",
+          // gap: 2,
           justifyContent: "center",
-          backgroundColor: "#f4f2f5ff",
-          paddingTop: 4,
-          height: "100vh",
+          alignItems: "center",
+          pt: 4,
         }}
       >
         <LogDetailsChart />
         <EmployeeDetailsChart />
       </Box>
-      <EmployeeList />
+
+      {/* Divider Section */}
+      <Divider sx={{ my: 1, borderColor: "#bfbfbf" }} />
+
+      {/* Employee List */}
+      <Box sx={{ px: 2 }}>
+        <EmployeeList />
+      </Box>
     </Box>
   );
 };
 
 export default VPDashboard;
+

@@ -27,7 +27,7 @@ const EmployeeList = () => {
         Employee Directory
       </Typography>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={3} sx={{display:"flex", alignItems:"center", justifyContent:"center"}}>
         {employees.map((employee: Employee) => (
           <EmployeeCard key={employee._id} employee={employee} />
         ))}
