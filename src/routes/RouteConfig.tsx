@@ -2,7 +2,6 @@
 import type { UserRole, AppRoute } from "./routeTypes";
 import EmployeeDashboard from "../pages/employee/Dashboard";
 import ReportingManagerDashboard from "../pages/reportingManager/Dashboard";
-import AssociateManagerDashboard from "../pages/associateManager/Dashboard";
 import VPDashboard from "../pages/VP/Dashboard";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import CreateBusinessUnit from "../pages/admin/CreateBusinessUnit";
@@ -11,6 +10,9 @@ import LogPage from "../pages/common/LogPage";
 import LogTables from "../pages/reportingManager/LogTables";
 import UserLogsTable from "../pages/common/UserLogsTable";
 import LogDetailsPageWrapper from "../pages/common/LogDetailsPageWrapper";
+import CreateUser from "../pages/VP/CreateUser";
+import UsersTable from "../pages/admin/UsersTable";
+import UpdateUserPage from "../pages/admin/UpdateUserPage";
 
 export const routeConfig: Record<UserRole, AppRoute[]> = {
   employee: [
@@ -87,6 +89,21 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
       path: "/admin/createBU",
       label: "Create BU",
       element: <CreateBusinessUnit />,
+    },
+    {
+      path: "/admin/createUser",
+      label: "Create User",
+      element: <CreateUser />,
+    },
+    {
+      path: "/admin/usersTable",
+      label: "Users Table",
+      element: <UsersTable />,
+    },
+    {
+      path: "/admin/update-user/:userId",
+      // label: "Users Table",
+      element: <UpdateUserPage />,
     },
   ],
 };

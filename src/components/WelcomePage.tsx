@@ -12,7 +12,7 @@ export default function WelcomePage() {
 
   return (
     <div className="welcome-container">
-      <h1 className="welcome-title">Welcome to Data Logger</h1>
+      <h1 className="welcome-title">Welcome to Opportunity Logger</h1>
 
       <p className="welcome-subtitle">
         Monitor. Track. Analyze. Your Data in One Place.
@@ -28,10 +28,10 @@ export default function WelcomePage() {
             : navigate("/login");
         }}
       >
-        {user && user?.role !== null ? "Dashboard" : "Login"}
+        {user && user?.role !== null ? "Explore" : "Login"}
       </Button>
 
-      <div className="footer-text">© 2025 Data Logger Application</div>
+      <div className="footer-text">© 2025 Opportunity Logger Application</div>
     </div>
   );
 }

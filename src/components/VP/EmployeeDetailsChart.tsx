@@ -146,7 +146,7 @@ const EmployeeDetailsChart = () => {
               <CircularProgress />
             ) : (
               <PieChart
-                key={windowWidth} // 👈 Important
+                key={windowWidth} 
                 height={200}
                 margin={{ top: -10, bottom: -90 }}
                 series={[

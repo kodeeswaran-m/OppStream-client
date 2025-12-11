@@ -1,4 +1,4 @@
-import { Box, Grid, Paper, Stack, Typography, Chip } from "@mui/material";
+import {  Grid, Paper, Stack, Typography, Chip } from "@mui/material";
 import type { Employee } from "../../store/reducers/employeeReducer";
 interface EmployeeCardProps {
   employee: Employee;
