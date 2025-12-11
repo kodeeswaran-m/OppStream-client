@@ -19,6 +19,8 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import DeblurIcon from "@mui/icons-material/Deblur";
+import LensBlurIcon from "@mui/icons-material/LensBlur";
+import BubbleChartIcon from "@mui/icons-material/BubbleChart";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../store";
 import type { UserRole } from "../../routes/routeTypes";
@@ -93,42 +95,50 @@ const Navbar = () => {
               cursor: "pointer",
             }}
           >
-            <DeblurIcon fontSize="large" onClick={() => navigate("/")} />
+            {/* --- ICON WITH HOVER ANIMATION --- */}
+            <BubbleChartIcon
+              fontSize="large"
+              onClick={() => navigate("/")}
+              sx={{
+                marginRight: 0.6,
+                transition: "transform 0.25s ease-out, color 0.25s ease-out",
+                "&:hover": {
+                  transform: "scale(1.2)",
+                  color: "#4c216dff", // purple shade
+                },
+              }}
+            />
+
+            {/* --- TEXT WITH HOVER ANIMATION --- */}
             <Typography
-              variant="h10"
-              to="/"
+              variant="h6"
+              onClick={() => navigate("/")}
               style={{
-                color: "white",
+                color: "#4c216dff",
+                backgroundColor: "white",
                 textDecoration: "none",
-                border: "2px solid white",
-                padding: " 1px 0px 1px 2px ",
                 fontWeight: "bold",
+                fontSize: "14px",
+                border: "2px solid white",
+                borderRadius: "4px",
+                padding: "0px 3px",
+                display: "inline-block",
+                transition: "transform 0.2s ease-out, color 0.2s ease-out",
+              }}
+              onMouseEnter={(e:React.MouseEvent<HTMLElement>) => {
+                e.currentTarget.style.transform = "scale(1.04)";
+                e.currentTarget.style.color = "#5e2a87";
+              }}
+              onMouseLeave={(e:React.MouseEvent<HTMLElement>) => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.color = "#8347AD";
               }}
             >
-              <span style={{ padding: "1px 3px 1px 1px" }}>O</span>
-              <span
-                style={{
-                  color: "#7347AD",
-                  backgroundColor: "white",
-                  padding: "5px 2px 4px 2px",
-                }}
-              >
-                pp
+              <span style={{ paddingRight: "3px" }}>
+                O<span>pp</span>
               </span>
-              <span style={{ padding: "1px 4px 1px 1px" }}> X</span>
-              <span
-                style={{ borderLeft: "2px solid white", padding: "4px 0px" }}
-              ></span>
-              <span style={{ padding: "1px 3px 1px 4px" }}>L</span>
-              <span
-                style={{
-                  color: "#7347AD",
-                  backgroundColor: "white",
-                  padding: "5px 4px 4px 2px",
-                }}
-              >
-                og
-              </span>
+              <span style={{ fontSize: "16px" }}>X</span>
+              <span style={{ paddingLeft: "3px" }}>Log</span>
             </Typography>
           </Box>
 
@@ -176,7 +186,6 @@ const Navbar = () => {
                   </Button>
                 ))}
 
-              {/* PROFILE ICON */}
               {isLoggedIn && (
                 <>
                   <IconButton sx={{ color: "white" }} onClick={handleClick}>
@@ -199,7 +208,8 @@ const Navbar = () => {
                       </Box>
                     </MenuItem>
 
-                    <MenuItem
+                    {
+                      user?.role!=="admin"?<MenuItem
                       onClick={() => {
                         handleClose();
                         const routeRole = getRouteRole(user?.role);
@@ -207,7 +217,8 @@ const Navbar = () => {
                       }}
                     >
                       Update Profile
-                    </MenuItem>
+                    </MenuItem>:""
+                    }
 
                     <MenuItem
                       onClick={() => {
@@ -312,3 +323,48 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+{
+  /* <LensBlurIcon fontSize="large" onClick={() => navigate("/")} /> */
+}
+{
+  /* <DeblurIcon fontSize="large" onClick={() => navigate("/")} /> */
+}
+{
+  /* <Typography
+              variant="h10"
+              to="/"
+              style={{
+                color: "white",
+                textDecoration: "none",
+                border: "2px solid white",
+                padding: " 1px 0px 1px 2px ",
+                fontWeight: "bold",
+              }}
+            >
+              <span style={{ padding: "1px 3px 1px 1px" }}>O</span>
+              <span
+                style={{
+                  color: "#7347AD",
+                  backgroundColor: "white",
+                  padding: "5px 2px 4px 2px",
+                }}
+              >
+                pp
+              </span>
+              <span style={{ padding: "1px 4px 1px 1px" }}> X</span>
+              <span
+                style={{ borderLeft: "2px solid white", padding: "4px 0px" }}
+              ></span>
+              <span style={{ padding: "1px 3px 1px 4px" }}>L</span>
+              <span
+                style={{
+                  color: "#7347AD",
+                  backgroundColor: "white",
+                  padding: "5px 4px 4px 2px",
+                }}
+              >
+                og
+              </span>
+            </Typography> */
+}

@@ -1,19 +1,34 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store";
-import { createBusinessUnit, getBusinessUnits } from "../../store/actions/adminActions";
+import {
+  createBusinessUnit,
+  getBusinessUnits,
+} from "../../store/actions/adminActions";
+
+import {
+  Grid,
+  Box,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Alert,
+  CircularProgress,
+} from "@mui/material";
 
 const CreateBusinessUnit = () => {
   const dispatch = useDispatch();
-  const { loading, message, error, businessUnits } = useSelector(
+  const { loading, message, error } = useSelector(
     (state: RootState) => state.admin
   );
-console.log("business unit", businessUnits);
+
   const [name, setName] = useState("");
-useEffect( ()=>{
-      const res =  dispatch<any>(getBusinessUnits());
-  console.log("BU's", res);
-},[])
+
+  useEffect(() => {
+    dispatch<any>(getBusinessUnits());
+  }, [dispatch]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -25,92 +40,103 @@ useEffect( ()=>{
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "40px auto" }}>
-      <h2>Create Business Unit</h2>
+    <Grid sx={{ backgroundColor: "#EFE6F6" , height:"100vh"}}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          px: 2,
+        }}
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            width: "100%",
+            maxWidth: 450,
+            p: 4,
+            mt: 16,
+            borderRadius: 3,
+          }}
+        >
+          <Typography variant="h6" fontWeight={600} mb={2}>
+            Create Business Unit
+          </Typography>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {message && <p style={{ color: "green" }}>{message}</p>}
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
 
-      <form onSubmit={handleSubmit}>
-        <label>Business Unit Name</label>
-        <input
-          type="text"
-          placeholder="Enter business unit name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+          {message && (
+            <Alert severity="success" sx={{ mb: 2 }}>
+              {message}
+            </Alert>
+          )}
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Creating..." : "Create"}
-        </button>
-      </form>
-    </div>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="Business Unit Name"
+              fullWidth
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              sx={{ mb: 3 }}
+            />
+
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              disabled={loading}
+              sx={{ py: 1, fontSize: "12px" }}
+            >
+              {loading ? (
+                <CircularProgress size={16} color="inherit" />
+              ) : (
+                "Create"
+              )}
+            </Button>
+          </form>
+        </Paper>
+      </Box>
+    </Grid>
   );
 };
 
 export default CreateBusinessUnit;
 
-
-
-
-// import { useState, type FormEvent } from "react";
-// import axios from "axios";
-// import { useSelector } from "react-redux";
+// import { useEffect, useState, type FormEvent } from "react";
+// import { useDispatch, useSelector } from "react-redux";
 // import type { RootState } from "../../store";
+// import { createBusinessUnit, getBusinessUnits } from "../../store/actions/adminActions";
 
 // const CreateBusinessUnit = () => {
-//   const { accessToken } = useSelector((state: RootState) => state.auth);
+//   const dispatch = useDispatch();
+//   const { loading, message, error, businessUnits } = useSelector(
+//     (state: RootState) => state.admin
+//   );
+// console.log("business unit", businessUnits);
 //   const [name, setName] = useState("");
-//   const [loading, setLoading] = useState(false);
-//   const [msg, setMsg] = useState({ type: "", text: "" });
-
+// useEffect( ()=>{
+//       const res =  dispatch<any>(getBusinessUnits());
+//   console.log("BU's", res);
+// },[])
 //   const handleSubmit = async (e: FormEvent) => {
 //     e.preventDefault();
 
-//     if (!name.trim()) {
-//       return setMsg({ type: "error", text: "Business Unit name is required" });
-//     }
+//     if (!name.trim()) return;
 
-//     setLoading(true);
-//     setMsg({ type: "", text: "" });
+//     const res = await dispatch<any>(createBusinessUnit(name));
 
-//     try {
-//       const res = await axios.post(
-//         "http://localhost:5000/api/business-units/create",
-//         { name },
-//         {
-//           headers: {
-//             Authorization: `Bearer ${accessToken}`,
-//           },
-//         }
-//       );
-
-//       setMsg({ type: "success", text: res.data.message });
-//       setName(""); // Clear input
-//     } catch (err: any) {
-//       const errorMessage =
-//         err.response?.data?.message || "Something went wrong";
-
-//       setMsg({ type: "error", text: errorMessage });
-//     } finally {
-//       setLoading(false);
-//     }
+//     if (res.success) setName("");
 //   };
 
 //   return (
 //     <div style={{ maxWidth: 400, margin: "40px auto" }}>
 //       <h2>Create Business Unit</h2>
 
-//       {msg.text && (
-//         <p
-//           style={{
-//             color: msg.type === "error" ? "red" : "green",
-//             marginBottom: 10,
-//           }}
-//         >
-//           {msg.text}
-//         </p>
-//       )}
+//       {error && <p style={{ color: "red" }}>{error}</p>}
+//       {message && <p style={{ color: "green" }}>{message}</p>}
 
 //       <form onSubmit={handleSubmit}>
 //         <label>Business Unit Name</label>
@@ -119,30 +145,10 @@ export default CreateBusinessUnit;
 //           placeholder="Enter business unit name"
 //           value={name}
 //           onChange={(e) => setName(e.target.value)}
-//           style={{
-//             width: "100%",
-//             padding: "10px",
-//             margin: "8px 0 16px",
-//             borderRadius: 5,
-//             border: "1px solid #888",
-//           }}
 //         />
 
-//         <button
-//           type="submit"
-//           disabled={loading}
-//           style={{
-//             width: "100%",
-//             padding: "12px",
-//             background: loading ? "#888" : "#1e90ff",
-//             border: "none",
-//             borderRadius: 5,
-//             color: "white",
-//             fontSize: "16px",
-//             cursor: loading ? "not-allowed" : "pointer",
-//           }}
-//         >
-//           {loading ? "Creating..." : "Create Business Unit"}
+//         <button type="submit" disabled={loading}>
+//           {loading ? "Creating..." : "Create"}
 //         </button>
 //       </form>
 //     </div>

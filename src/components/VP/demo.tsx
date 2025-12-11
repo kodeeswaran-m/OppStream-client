@@ -1,55 +1,77 @@
+// const mongoose = require("mongoose");
+// const { Schema } = mongoose;
+
+// const employeeSchema = new Schema(
+//   {
+//     userId: {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: "User",
+//       required: true,
+//       unique: true,
+//     },
+//     employeeId: { type: String, required: true, unique: true },
+//     employeeName: { type: String, required: true },
+//     employeeEmail: { type: String, required: true, unique: true },
+//     contactNumber: { type: String },
+//     dob: { type: Date },
+//     workLocation: { type: String },
+//     employmentType: {
+//       type: String,
+//       enum: ["Full Time", "Intern", "Contract"],
+//       default: "Full Time",
+//     },
+//     role: {
+//       type: String,
+//       required: true,
+//       enum: ["EMP", "RM", "AM", "BUH"],
+//       default: "EMP",
+//     },
+
+//     managerId: {
+//       type: Schema.Types.ObjectId,
+//       ref: "Employee",
+//       default: null,
+//     },
+
+//     ancestors: [
+//       {
+//         type: Schema.Types.ObjectId,
+//         ref: "Employee",
+//         required: true,
+//       },
+//     ],
+
+//     businessUnitId: {
+//       type: Schema.Types.ObjectId,
+//       ref: "BusinessUnit",
+//       required: true,
+//     },
+
+//     department: { type: String },
+//     team: { type: String },
+//     skills: [
+//       {
+//         skillName: { type: String },
+//         proficiencyLevel: { type: String },
+//         experience: { type: Number },
+//         // certifications: [String]
+//       },
+//     ],
+//     totalExperience: { type: Number },
+//     previousProjects: [{ type: String }],
+//     previousCompanies: [{ type: String }],
+//     currentProjects: [{ type: String }],
+
+//     isAvailable: { type: Boolean, default: true },
+
+//     resumeFile: { type: String }, // Cloudinary / AWS link
+
+//   },
+
+//   { timestamps: true }
+// );
+
+// module.exports = mongoose.model("Employee", employeeSchema);
 
 
-
-import React, { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Box, Grid, Typography, Paper, Chip, Stack } from "@mui/material";
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
- 
-import type { RootState, AppDispatch } from "../../store";
-import { getEmployees } from "../../store/actions/employeeActions";
- 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]; // Chart colors
- 
-const AMDashboard = () => {
-  const dispatch: AppDispatch = useDispatch();
-  const { employees } = useSelector((state: RootState) => state.employee);
- 
-  useEffect(() => {
-    dispatch(getEmployees());
-  }, [dispatch]);
- 
-  // 1️⃣ COUNT OF EMPLOYEES
-  const totalEmployees = employees.length;
- 
-  // 2️⃣ EMPLOYMENT TYPE DISTRIBUTION
-  const employeeTypeData = useMemo(() => {
-    const typeMap: Record<string, number> = {};
-    employees.forEach((emp) => {
-      const type = emp.employmentType || "Unknown";
-      typeMap[type] = (typeMap[type] || 0) + 1;
-    });
-    return Object.keys(typeMap).map((key) => ({ name: key, value: typeMap[key] }));
-  }, [employees]);
- 
-  // 3️⃣ ROLE DISTRIBUTION
-  const roleData = useMemo(() => {
-    const roleMap: Record<string, number> = {};
-    employees.forEach((emp) => {
-      const role = emp.role || "Unknown";
-      roleMap[role] = (roleMap[role] || 0) + 1;
-    });
-    return Object.keys(roleMap).map((key) => ({ name: key, value: roleMap[key] }));
-  }, [employees]);
- 
-  // 4️⃣ EMPLOYEE SUMMARY
-  const employeeCardList = employees;
- 
-  return (
-    <Box p={4}>
-      {/* Header */}
-      <Typography variant="h4" fontWeight="bold" mb={4} textAlign="center" mt={5}>
-        Employee Analytics Dashboard
-      </Typography>
- 
-      {/* Top Row: Total Employees Card */}
+// the above is my employee modal i want to create a controller like in the frontend there is a dropdown with all departments , insurance, BFS and JLM. If i select all department i want to send data for pie chart the how many are present in each department(Insurance, BFS, JLM). when Insurance is selected i want data for the pie chart to display the count of employees in each team similarly for BFS and JLM.
