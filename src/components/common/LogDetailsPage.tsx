@@ -42,7 +42,7 @@ const Label = styled("span")(() => ({
 }));
 
 // Purple Stepper
-const PurpleConnector = styled(StepConnector)(({ theme }) => ({
+const PurpleConnector = styled(StepConnector)(() => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
     top: 16,
   },

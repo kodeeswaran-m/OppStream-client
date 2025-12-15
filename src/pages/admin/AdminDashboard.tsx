@@ -46,7 +46,8 @@ export default function AdminDashboard() {
   console.log("BU", businessUnits);
   console.log("Logs", logs);
 
-  const [selectedBU, setSelectedBU] = useState("all");
+  const [selectedBU] = useState("all");
+  // const [selectedBU, setSelectedBU] = useState("all");
   const [search, setSearch] = useState("");
 
   // Column Menu

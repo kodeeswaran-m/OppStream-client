@@ -17,7 +17,7 @@ import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch } from "redux-thunk";
 import { type AnyAction } from "redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { getApprovedOrRejectedLogs } from "../../store/actions/employeeActions";
 import type { RootState } from "../../store";

@@ -26,7 +26,6 @@ import {
 import type { RootState } from "../../store";
 import { useNavigate } from "react-router-dom";
 import { getRouteRole } from "../../utils/getRouteRole";
-import { Scale } from "lucide-react";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 

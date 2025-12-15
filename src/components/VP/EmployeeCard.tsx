@@ -5,7 +5,7 @@ interface EmployeeCardProps {
 }
 const EmployeeCard = ({ employee }: EmployeeCardProps) => {
   return (
-    <Grid item xs={12} sm={6} md={4} lg={3}>
+    <Grid >
       <Paper
         elevation={0}
         sx={{

@@ -91,9 +91,13 @@ const UsersTable = () => {
     fetchUsers();
   }, [searchTerm, roleFilter, currentPage, pageLimit, fetchUsers]);
 
-  const handlePageChange = (e: unknown, newPage: number) => {
-    setCurrentPage(newPage);
-  };
+  const handlePageChange = (
+  _event: React.MouseEvent<HTMLButtonElement> | null,
+  newPage: number
+) => {
+  setCurrentPage(newPage);
+};
+
 
   const handleLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPageLimit(parseInt(e.target.value, 10));

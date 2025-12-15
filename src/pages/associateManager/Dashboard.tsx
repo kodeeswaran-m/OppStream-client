@@ -46,7 +46,7 @@ const AMDashboard = () => {
       {/* Top Row: Total Employees + Charts */}
       <Grid container spacing={3} mb={5}>
         {/* Total Employees */}
-        <Grid item xs={12} md={4}>
+        <Grid>
           <Paper
             elevation={5}
             sx={{
@@ -68,7 +68,7 @@ const AMDashboard = () => {
         </Grid>
 
         {/* Employment Type Chart */}
-        <Grid item xs={12} md={4}>
+        <Grid >
           <Paper elevation={4} sx={{ p: 3, borderRadius: 4 }}>
             <Typography variant="h6" fontWeight="600" mb={2}>
               Employment Type
@@ -83,7 +83,7 @@ const AMDashboard = () => {
                 paddingAngle={5}
                 dataKey="value"
                 nameKey="name"
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent=0 }) => `${name} ${(percent * 100).toFixed(0)}%`}
               >
                 {employeeTypeData.map((_, idx) => (
                   <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
@@ -96,7 +96,7 @@ const AMDashboard = () => {
         </Grid>
 
         {/* Role Distribution Chart */}
-        <Grid item xs={12} md={4}>
+        <Grid >
           <Paper elevation={4} sx={{ p: 3, borderRadius: 4 }}>
             <Typography variant="h6" fontWeight="600" mb={2}>
               Role Distribution
@@ -111,7 +111,7 @@ const AMDashboard = () => {
                 paddingAngle={5}
                 dataKey="value"
                 nameKey="name"
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent=0 }) => `${name} ${(percent * 100).toFixed(0)}%`}
               >
                 {roleData.map((_, idx) => (
                   <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
@@ -131,7 +131,7 @@ const AMDashboard = () => {
         </Typography>
         <Grid container spacing={2}>
           {employees.map((employee) => (
-            <Grid item xs={12} sm={6} md={4} key={employee._id}>
+            <Grid key={employee._id}>
               <Box
                 sx={{
                   p: 2,

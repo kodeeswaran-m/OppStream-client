@@ -82,9 +82,6 @@ const EmployeeDetailsChart = () => {
         }}
       >
         <Grid
-          item
-          xs={12}
-          md={9}
           sx={{
             display: "flex",
             gap: 2,
@@ -96,7 +93,7 @@ const EmployeeDetailsChart = () => {
             <CircularProgress />
           ) : (
             roleCards.map((item) => (
-              <Grid item xs={12} sm={6} md={3} key={item.name}>
+              <Grid key={item.name}>
                 <Paper
                   sx={{
                     p: 3,
@@ -134,7 +131,7 @@ const EmployeeDetailsChart = () => {
             ))
           )}
         </Grid>
-        <Grid item xs={12} md={9}>
+        <Grid >
           <Paper sx={{ p: 3, borderRadius: 3 }}>
             <Typography fontWeight={600} mb={2} sx={{ textAlign: "center" }}>
               Employee Distribution
@@ -159,8 +156,6 @@ const EmployeeDetailsChart = () => {
                     highlightScope: { fade: "global", highlight: "item" },
                     highlighted: { additionalRadius: 3 }, // expands arc
                     cornerRadius: 4, // rounded edges
-                    fade: true,
-
                     // Optional labels (enable if needed)
                     // arcLabel: (item) => `${item.value}`,
                     arcLabelRadius: "70%",

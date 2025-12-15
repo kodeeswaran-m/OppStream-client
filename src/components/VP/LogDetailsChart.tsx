@@ -63,7 +63,7 @@ const LogDetailsChart = () => {
           mt: 8,
         }}
       >
-        <Grid item xs={12} md={9}>
+        <Grid >
           <Paper sx={{ p: 3, borderRadius: 3 }}>
             <Typography fontWeight={600} mb={2} sx={{ textAlign: "center" }}>
               Approval Status Overview
@@ -91,7 +91,6 @@ const LogDetailsChart = () => {
                     highlightScope: { fade: "global", highlight: "item" },
                     highlighted: { additionalRadius: 3 },
                     cornerRadius: 4,
-                    fade: true,
                     // arcLabel: (item) => `${item.value}`,
                     arcLabelRadius: "70%",
                   },
@@ -131,13 +130,10 @@ const LogDetailsChart = () => {
           </Paper>
         </Grid>
         <Grid
-          item
-          xs={12}
-          md={9}
           sx={{ display: "flex", gap: 2, justifyContent: "center" }}
         >
           {cards.map((item) => (
-            <Grid item xs={12} sm={6} md={3} key={item.name}>
+            <Grid key={item.name}>
               <Paper
                 sx={{
                   p: 3,
