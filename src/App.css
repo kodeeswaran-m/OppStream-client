@@ -1,0 +1,157 @@
+/* ===============================
+   GLOBAL BASE SCALING
+   =============================== */
+
+/* 1rem = 12px (75% of default 16px) */
+html {
+  font-size: 75%;
+}
+
+/* Smooth font rendering */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  background-color: #f5f5f5;
+  color: #222;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===============================
+   TYPOGRAPHY SCALE
+   =============================== */
+
+h1 {
+  font-size: 2.8rem;
+}
+
+h2 {
+  font-size: 2.4rem;
+}
+
+h3 {
+  font-size: 2.1rem;
+}
+
+h4 {
+  font-size: 1.9rem;
+}
+
+h5 {
+  font-size: 1.7rem;
+}
+
+h6 {
+  font-size: 1.5rem;
+}
+
+p,
+span,
+label,
+div {
+  font-size: 1.4rem;
+}
+
+/* ===============================
+   FORM ELEMENTS
+   =============================== */
+
+input,
+select,
+textarea,
+button {
+  font-size: 1.4rem;
+}
+
+/* ===============================
+   MUI COMPONENT OVERRIDES
+   =============================== */
+
+/* Buttons */
+.MuiButton-root {
+  font-size: 1.4rem;
+  padding: 0.8rem 1.8rem;
+}
+
+/* TextFields / Inputs */
+.MuiInputBase-root {
+  font-size: 1.4rem;
+}
+
+/* Select dropdown */
+.MuiSelect-select {
+  font-size: 1.4rem;
+}
+
+/* ===============================
+   TABLE TEXT (IMPORTANT)
+   =============================== */
+
+/* Table header */
+.MuiTableCell-head {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Table body cells */
+.MuiTableCell-body {
+  font-size: 1.4rem;
+}
+
+/* Table pagination */
+.MuiTablePagination-root {
+  font-size: 1.3rem;
+}
+
+/* ===============================
+   NAVBAR & LAYOUT
+   =============================== */
+
+nav {
+  font-size: 2.9rem;
+}
+
+.MuiAppBar-root {
+  min-height: 4.6rem;
+}
+
+/* ===============================
+   CARDS / PAPERS
+   =============================== */
+
+.MuiPaper-root {
+  border-radius: 1.2rem;
+}
+
+/* ===============================
+   RESPONSIVE ADJUSTMENTS
+   =============================== */
+
+/* Small laptops */
+@media (max-width: 1366px) {
+  html {
+    font-size: 72%;
+  }
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+  html {
+    font-size: 70%;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  html {
+    font-size: 68%;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  html {
+    font-size: 65%;
+  }
+}
