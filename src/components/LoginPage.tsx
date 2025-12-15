@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "../store";
@@ -50,7 +50,7 @@ const Login = () => {
         minWidth="100vw"
         sx={{ backgroundColor: "#f4f6f8" }}
       >
-        <Paper elevation={6} sx={{ padding: 4, width: 380, borderRadius: 3 }}>
+        <Paper elevation={6} sx={{ padding: 4, width: 320, borderRadius: 3 }}>
           <Typography variant="h5" fontWeight={600} textAlign="center" mb={3}>
             Login
           </Typography>

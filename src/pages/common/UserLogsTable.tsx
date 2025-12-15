@@ -78,26 +78,26 @@ const UserLogsTable = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          fontSize: "16px",
+          fontSize: "18px",
           fontWeight: "bold",
           paddingX: 2,
           paddingY: 1,
         }}
       >
-        <Typography variant="h6" sx={{}}>
-          Employee Logs
-        </Typography>
 
         <Typography
           variant="h6"
-          sx={{
-            paddingX: 2,
+            sx={{
+            paddingX: 1,
             paddingY: 0.5,
-            fontSize: "16px",
+            fontSize: "12px",
             backgroundColor: "#EFE6F6",
             border: "1px solid #d6d6d6ff",
             borderRadius: "6px",
-            transition: "all 0.3s ease",
+            "&:hover": {
+              backgroundColor: "#e3e3e3ff",
+              transform: "scale(1.04)",
+            },
           }}
         >
           Count : {userLogscount}

@@ -26,6 +26,7 @@ import {
 import type { RootState } from "../../store";
 import { useNavigate } from "react-router-dom";
 import { getRouteRole } from "../../utils/getRouteRole";
+import { Scale } from "lucide-react";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -118,17 +119,21 @@ const PendingApprovalLogsTable = () => {
           paddingY: 1,
         }}
       >
-        <Typography variant="h6">Employee Logs</Typography>
+        {/* <Typography variant="h6">Employee Logs</Typography> */}
 
         <Typography
           variant="h6"
           sx={{
-            paddingX: 2,
+            paddingX: 1,
             paddingY: 0.5,
-            fontSize: "16px",
+            fontSize: "12px",
             backgroundColor: "#EFE6F6",
             border: "1px solid #d6d6d6ff",
             borderRadius: "6px",
+            "&:hover": {
+              backgroundColor: "#e3e3e3ff",
+              transform: "scale(1.04)",
+            },
           }}
         >
           Count : {pendingApprovalLogsCount}
@@ -137,7 +142,7 @@ const PendingApprovalLogsTable = () => {
 
       {/* TABLE */}
       <TableContainer component={Paper} sx={{ marginTop: 3 }}>
-        <Table>
+        <Table size="small">
           {/* TABLE HEAD */}
           <TableHead sx={{ backgroundColor: "#EFE6F6" }}>
             <TableRow>

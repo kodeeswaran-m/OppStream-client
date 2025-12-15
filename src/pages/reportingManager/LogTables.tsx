@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Tabs, Tab, Typography, Paper } from "@mui/material";
+import { Box, Tabs, Tab, Paper } from "@mui/material";
 import EmployeeLogsTable from "../EmployeeLogsTable";
 import UserLogsTable from "../common/UserLogsTable";
 import PendingApprovalLogsTable from "../common/PendingApprovalLogsTable";
@@ -31,20 +31,21 @@ const LogTables = () => {
           variant="fullWidth"
           TabIndicatorProps={{
             style: {
-              height: "4px",
+              height: "2px",
               borderRadius: "4px",
               backgroundColor: "#8347AD",
             },
           }}
           sx={{
-            marginBottom: 2,
+            marginBottom: 1,
             "& .MuiTab-root": {
               textTransform: "none",
-              fontWeight: "600",
-              fontSize: "16px",
-              paddingY: 1,
+              fontWeight: "900",
+              fontSize: "1rem",
+              paddingY: 0,
               borderRadius: "10px",
-              transition: "0.3s",
+              transition: "0.9s",
+              outline:"none"
             },
             "& .Mui-selected": {
               color: "#8347AD",

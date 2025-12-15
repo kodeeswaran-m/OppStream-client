@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -164,7 +164,7 @@ const EmployeeFormPage = () => {
           backdropFilter: "blur(6px)",
         }}
       >
-        <Typography variant="h4" fontWeight="bold" mb={3} color="#48206F">
+        <Typography variant="h5" fontWeight="bold" mb={3} color="#48206F">
           Employee Details Form
         </Typography>
 
@@ -174,21 +174,23 @@ const EmployeeFormPage = () => {
         </Typography>
 
         <Grid container spacing={2}>
-          <Grid item xs={4}>
+          <Grid>
             <TextField
-              className="mui-field"
+              // className="mui-field"
               label="Employee ID"
               name="employeeId"
               fullWidth
               required
+              size="small"
               value={form.employeeId}
               onChange={handleChange}
             />
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid>
             <TextField
-              className="mui-field"
+              // className="mui-field"
+              size="small"
               label="Employee Name"
               name="employeeName"
               fullWidth
@@ -198,9 +200,10 @@ const EmployeeFormPage = () => {
             />
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid>
             <TextField
-              className="mui-field"
+              // className="mui-field"
+              size="small"
               label="Employee Email"
               fullWidth
               name="employeeEmail"
@@ -209,9 +212,10 @@ const EmployeeFormPage = () => {
             />
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid>
             <TextField
-              className="mui-field"
+              // className="mui-field"
+              size="small"
               label="Contact Number"
               name="contactNumber"
               fullWidth
@@ -220,9 +224,10 @@ const EmployeeFormPage = () => {
             />
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid>
             <TextField
-              className="mui-field"
+              // className="mui-field"
+              size="small"
               type="date"
               label="Date of Birth"
               fullWidth
@@ -233,9 +238,10 @@ const EmployeeFormPage = () => {
             />
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid>
             <TextField
-              className="mui-field"
+              // className="mui-field"
+              size="small"
               label="Work Location"
               name="workLocation"
               fullWidth
@@ -251,8 +257,8 @@ const EmployeeFormPage = () => {
         </Typography>
 
         <Grid container spacing={2}>
-          <Grid item xs={2.4} minWidth={180}>
-            <FormControl fullWidth className="mui-field" >
+          <Grid minWidth={180}>
+            <FormControl fullWidth size="small" >
               <InputLabel>Employment Type</InputLabel>
               <Select
                 name="employmentType"
@@ -272,9 +278,10 @@ const EmployeeFormPage = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={2.4}>
+          <Grid >
             <TextField
-              className="mui-field"
+              // className="mui-field"
+              size="small"
               label="Role"
               name="role"
               fullWidth
@@ -283,9 +290,10 @@ const EmployeeFormPage = () => {
             />
           </Grid>
 
-          <Grid item xs={2.4}>
+          <Grid >
             <TextField
-              className="mui-field"
+              // className="mui-field"
+              size="small"
               label="Department"
               name="department"
               fullWidth
@@ -294,9 +302,10 @@ const EmployeeFormPage = () => {
             />
           </Grid>
 
-          <Grid item xs={2.4}>
+          <Grid >
             <TextField
-              className="mui-field"
+              // className="mui-field"
+              size="small"
               label="Team"
               name="team"
               fullWidth
@@ -305,7 +314,7 @@ const EmployeeFormPage = () => {
             />
           </Grid>
 
-          <Grid item xs={2.4} minWidth={180}>
+          <Grid  minWidth={180}>
             {/* <FormControl fullWidth className="mui-field">
               <InputLabel>Reporting Manager</InputLabel>
               <Select native name="managerId" value={form.managerId} onChange={handleChange}>
@@ -320,7 +329,7 @@ const EmployeeFormPage = () => {
                 )}
               </Select>
             </FormControl> */}
-            <FormControl fullWidth className="mui-field">
+            <FormControl fullWidth size="small">
               <InputLabel>Reporting Manager</InputLabel>
 
               <Select
@@ -345,8 +354,8 @@ const EmployeeFormPage = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={2.4} minWidth={180}>
-            <FormControl fullWidth className="mui-field">
+          <Grid  minWidth={180}>
+            <FormControl fullWidth size="small">
               <InputLabel>Business Unit</InputLabel>
               <Select
                 native
@@ -374,9 +383,10 @@ const EmployeeFormPage = () => {
         </Typography>
 
         <Grid container spacing={2}>
-          <Grid item xs={4}>
+          <Grid>
             <TextField
-              className="mui-field"
+              // className="mui-field"
+              size="small"
               label="Total Experience"
               name="totalExperience"
               fullWidth
@@ -385,9 +395,10 @@ const EmployeeFormPage = () => {
             />
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid>
             <TextField
-              className="mui-field"
+              // className="mui-field"
+              size="small"
               label="Previous Projects"
               name="previousProjects"
               fullWidth
@@ -396,9 +407,10 @@ const EmployeeFormPage = () => {
             />
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid>
             <TextField
-              className="mui-field"
+              // className="mui-field"
+              size="small"
               label="Previous Companies"
               name="previousCompanies"
               fullWidth
@@ -407,9 +419,10 @@ const EmployeeFormPage = () => {
             />
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid>
             <TextField
-              className="mui-field"
+              // className="mui-field"
+              size="small"
               label="Current Projects"
               name="currentProjects"
               fullWidth
@@ -426,9 +439,10 @@ const EmployeeFormPage = () => {
 
         {form.skills.map((skill, index) => (
           <Grid container spacing={2} key={index} mb={1}>
-            <Grid item xs={4}>
+            <Grid>
               <TextField
-                className="mui-field"
+                // className="mui-field"
+                size="small"
                 label="Skill Name"
                 fullWidth
                 value={skill.skillName}
@@ -438,9 +452,10 @@ const EmployeeFormPage = () => {
               />
             </Grid>
 
-            <Grid item xs={4}>
+            <Grid >
               <TextField
-                className="mui-field"
+                // className="mui-field"
+                size="small"
                 label="Proficiency Level"
                 fullWidth
                 value={skill.proficiencyLevel}
@@ -450,9 +465,10 @@ const EmployeeFormPage = () => {
               />
             </Grid>
 
-            <Grid item xs={3}>
+            <Grid >
               <TextField
-                className="mui-field"
+                // className="mui-field"
+                size="small"
                 label="Experience (Years)"
                 type="number"
                 fullWidth
@@ -463,7 +479,7 @@ const EmployeeFormPage = () => {
               />
             </Grid>
 
-            <Grid item xs={1} display="flex" alignItems="center">
+            <Grid  display="flex" alignItems="center">
               <IconButton
                 className="remove-icon"
                 onClick={() => removeSkill(index)}
@@ -486,7 +502,7 @@ const EmployeeFormPage = () => {
         <Box textAlign="center" mt={4}>
           <Button
             variant="contained"
-            className="submit-btn"
+            // className="submit-btn"
             onClick={handleSubmit}
           >
             Submit

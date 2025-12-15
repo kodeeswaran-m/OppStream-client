@@ -50,9 +50,7 @@ const LogDetailsChart = () => {
   ];
 
   return (
-    <Box
-      sx={{ backgroundColor: "#f4f2f5ff", paddingTop: 0.2}}
-    >
+    <Box sx={{ backgroundColor: "#f4f2f5ff", paddingTop: 0.2 }}>
       <Grid
         container
         spacing={3}
@@ -75,7 +73,7 @@ const LogDetailsChart = () => {
               <CircularProgress />
             ) : (
               <PieChart
-                key={windowWidth}   // 👈 Important
+                key={windowWidth} // 👈 Important
                 height={200}
                 margin={{
                   top: -10,
@@ -106,7 +104,26 @@ const LogDetailsChart = () => {
                 slotProps={{
                   legend: {
                     position: { vertical: "top" },
-                    sx: { mt: 6 },
+                    sx: {
+                      mt: 6,
+
+                      // 👇 Legend label text
+                      "& .MuiChartsLegend-label": {
+                        fontSize: "10px",
+                        fontWeight:700
+                      },
+
+                      // 👇 Legend item spacing
+                      "& .MuiChartsLegend-item": {
+                        gap: "4px",
+                      },
+
+                      // 👇 Color marker size
+                      "& .MuiChartsLegend-mark": {
+                        width: 10,
+                        height: 10,
+                      },
+                    },
                   },
                 }}
               />
@@ -147,7 +164,7 @@ const LogDetailsChart = () => {
                 <Typography fontWeight={600} variant="subtitle2">
                   {item.labelName}
                 </Typography>
-                <Typography variant="h4" fontWeight={700} color={item.color}>
+                <Typography variant="h5" fontWeight={700} color={item.color}>
                   {counts[item.name as keyof typeof counts]}
                 </Typography>
               </Paper>

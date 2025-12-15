@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
-  Divider,
-  Grid,
   Paper,
   Stepper,
+  Grid,
   Step,
   StepLabel,
   Stack,
   Card,
   CardContent,
 } from "@mui/material";
-
 import { styled } from "@mui/material/styles";
 import StepConnector, {
   stepConnectorClasses,
@@ -74,6 +73,7 @@ interface Approval {
 
 interface LogDetailsProps {
   log: any;
+  getApprovalCount:any
 }
 
 const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
@@ -186,19 +186,19 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
             <SectionTitle>Opportunity From</SectionTitle>
 
             <Grid container spacing={3}>
-              <Grid item xs={6}>
+              <Grid >
                 <Typography><Label>Project Name:</Label> {log.oppFrom?.projectName}</Typography>
                 <Typography><Label>Client Name:</Label> {log.oppFrom?.clientName}</Typography>
                 <Typography><Label>Project Code:</Label> {log.oppFrom?.projectCode}</Typography>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid >
                 <Typography><Label>Urgency:</Label> {log.oppFrom?.urgency}</Typography>
                 <Typography><Label>Meeting Type:</Label> {log.oppFrom?.meetingType}</Typography>
                 <Typography><Label>Meeting Date:</Label> {log.oppFrom?.meetingDate}</Typography>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid >
                 <Label>People Present:</Label>
                 <Stack direction="row" spacing={2} mt={1}>
                   {log.oppFrom?.peoplePresent?.map((p: any, idx: number) => (
@@ -219,21 +219,21 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
           <SectionTitle>Opportunity To</SectionTitle>
 
           <Grid container spacing={3}>
-            <Grid item xs={6}>
+            <Grid >
               <Typography><Label>Category:</Label> {log.oppTo?.category}</Typography>
               <Typography><Label>Total Persons:</Label> {log.oppTo?.totalPersons}</Typography>
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid >
               <Typography><Label>Short Description:</Label> {log.oppTo?.shortDescription}</Typography>
               <Typography><Label>Technology Required:</Label> {log.oppTo?.technologyRequired?.join(", ")}</Typography>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid >
               <Typography><Label>Detailed Notes:</Label> {log.oppTo?.detailedNotes}</Typography>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid >
               <Label>Tech Rows:</Label>
               <Stack mt={1} spacing={1}>
                 {log.oppTo?.techRows?.map((row: any, i: number) => (

@@ -46,12 +46,12 @@ h6 {
   font-size: 1.5rem;
 }
 
-p,
+/* p,
 span,
 label,
 div {
   font-size: 1.4rem;
-}
+} */
 
 /* ===============================
    FORM ELEMENTS
@@ -68,45 +68,37 @@ button {
    MUI COMPONENT OVERRIDES
    =============================== */
 
-/* Buttons */
-.MuiButton-root {
+/* .MuiButton-root {
   font-size: 1.4rem;
   padding: 0.8rem 1.8rem;
 }
 
-/* TextFields / Inputs */
 .MuiInputBase-root {
   font-size: 1.4rem;
 }
 
-/* Select dropdown */
 .MuiSelect-select {
   font-size: 1.4rem;
-}
+} */
 
 /* ===============================
    TABLE TEXT (IMPORTANT)
    =============================== */
 
-/* Table header */
 .MuiTableCell-head {
   font-size: 1.5rem;
   font-weight: 600;
 }
 
-/* Table body cells */
 .MuiTableCell-body {
   font-size: 1.4rem;
 }
 
-/* Table pagination */
 .MuiTablePagination-root {
   font-size: 1.3rem;
 }
 
-/* ===============================
-   NAVBAR & LAYOUT
-   =============================== */
+
 
 nav {
   font-size: 2.9rem;
@@ -116,42 +108,28 @@ nav {
   min-height: 4.6rem;
 }
 
-/* ===============================
-   CARDS / PAPERS
-   =============================== */
 
-.MuiPaper-root {
-  border-radius: 1.2rem;
-}
-
-/* ===============================
-   RESPONSIVE ADJUSTMENTS
-   =============================== */
-
-/* Small laptops */
+/* 
 @media (max-width: 1366px) {
   html {
     font-size: 72%;
   }
 }
 
-/* Tablets */
 @media (max-width: 1024px) {
   html {
     font-size: 70%;
   }
 }
 
-/* Mobile */
 @media (max-width: 768px) {
   html {
     font-size: 68%;
   }
 }
 
-/* Small mobile */
 @media (max-width: 480px) {
   html {
     font-size: 65%;
   }
-}
+} */

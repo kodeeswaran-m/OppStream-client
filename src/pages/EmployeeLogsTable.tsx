@@ -87,20 +87,23 @@ const EmployeeLogsTable = () => {
           paddingY: 1,
         }}
       >
-        <Typography variant="h6" sx={{}}>
+        {/* <Typography variant="h6" sx={{}}>
           Employee Logs
-        </Typography>
+        </Typography> */}
 
         <Typography
           variant="h6"
           sx={{
-            paddingX: 2,
+            paddingX: 1,
             paddingY: 0.5,
-            fontSize: "16px",
-            backgroundColor:"#EFE6F6",
+            fontSize: "12px",
+            backgroundColor: "#EFE6F6",
             border: "1px solid #d6d6d6ff",
             borderRadius: "6px",
-            transition: "all 0.3s ease",
+            "&:hover": {
+              backgroundColor: "#e3e3e3ff",
+              transform: "scale(1.04)",
+            },
           }}
         >
           Count : {repEmpLogsCount}
@@ -110,8 +113,8 @@ const EmployeeLogsTable = () => {
       <TableContainer component={Paper} sx={{ marginTop: 3 }}>
         <Table>
           {/* TABLE HEAD */}
-          <TableHead sx={{backgroundColor:"#EFE6F6"}}>
-            <TableRow>
+          <TableHead sx={{ backgroundColor: "#EFE6F6" }}>
+            <TableRow sx={{ height: 40 }}>
               {columns.map((col) => (
                 <TableCell key={col.key}>
                   <strong>{col.label}</strong>
@@ -127,6 +130,8 @@ const EmployeeLogsTable = () => {
                 key={log._id}
                 sx={{
                   cursor: "pointer",
+                  height: 40,
+                  padding: 1,
                   "&:hover": {
                     backgroundColor: "#e3e3e3ff",
                     // cursor: "pointer",

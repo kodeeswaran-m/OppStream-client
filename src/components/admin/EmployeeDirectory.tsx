@@ -1,5 +1,5 @@
 import {
-    Box,
+  Box,
   Checkbox,
   IconButton,
   ListItemText,
@@ -10,8 +10,9 @@ import {
   Typography,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import {MoreVertical } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import React from "react";
+import type { ColumnVisibility } from "../../pages/admin/AdminDashboard";
 export interface EmployeeDirectoryProps {
   handleColumnMenuOpen: (e: React.MouseEvent<HTMLButtonElement>) => void;
   columnMenuAnchor: HTMLElement | null;
@@ -24,7 +25,7 @@ export interface EmployeeDirectoryProps {
     renderCell?: (params: any) => React.ReactNode;
   }>;
 
-  toggleColumn: (field: string) => void;
+  toggleColumn: (field: keyof ColumnVisibility) => void;
 
   columnVisibility: Record<string, boolean>;
 
@@ -66,12 +67,22 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({
             open={Boolean(columnMenuAnchor)}
             onClose={handleColumnMenuClose}
           >
-            {allColumns.map((col) => (
+            {/* {allColumns.map((col) => (
               <MenuItem key={col.field} onClick={() => toggleColumn(col.field)}>
                 <Checkbox checked={columnVisibility[col.field]} />
                 <ListItemText primary={col.headerName} />
               </MenuItem>
-            ))}
+            ))} */}
+            {allColumns.map((col) => {
+              const field = col.field as keyof ColumnVisibility;
+
+              return (
+                <MenuItem key={field} onClick={() => toggleColumn(field)}>
+                  <Checkbox checked={columnVisibility[field]} />
+                  <ListItemText primary={col.headerName} />
+                </MenuItem>
+              );
+            })}
           </Menu>
 
           <Box sx={{ maxWidth: 320, mb: 2, mt: 2 }}>

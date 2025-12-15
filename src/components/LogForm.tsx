@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import  { useEffect, useReducer } from "react";
 import {
   Box,
   Typography,
@@ -16,43 +16,23 @@ import {
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import { createUserLog, getCurrentEmployee } from "../store/actions/employeeActions";
+import {
+  createUserLog,
+  getCurrentEmployee,
+} from "../store/actions/employeeActions";
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch } from "redux-thunk";
 import type { RootState } from "../store";
 import type { AnyAction } from "redux";
-
 import "./LogFormType";
 import { reducer } from "./LogFormActionReducer";
-import { Padding } from "@mui/icons-material";
 import { useSnackbar } from "../context/SnackbarContext";
 import { getRouteRole } from "../utils/getRouteRole";
 import { useNavigate } from "react-router-dom";
+import type { State } from "./LogFormType";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
-// --------------------- FIELD STYLE (GLOBAL) ---------------------
-const fieldStyle = {
-  "& .MuiOutlinedInput-root": {
-    height: "45px",
-    borderRadius: "10px",
-    fontSize: "13px", // 👈 Smaller input text
-  },
-  "& .MuiInputLabel-root": {
-    fontSize: "12px", // 👈 Smaller label text
-  },
-  "& .MuiSelect-select": {
-    fontSize: "13px", // 👈 Smaller select menu text
-    padding: "12px",
-  },
-  "& input": {
-    fontSize: "13px", // 👈 TextField input size
-    padding: "12px",
-  },
-  "& .MuiMenuItem-root": {
-    fontSize: "13px", // 👈 Dropdown menu items
-  },
-};
 
 // --------------------- INITIAL STATE ---------------------
 const initialState: State = {
@@ -97,15 +77,19 @@ const LOGForm = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const thunkDispatch: AppDispatch = useDispatch();
   const { showMessage } = useSnackbar();
-  const {currentUserDetails}=useSelector((state:RootState)=>state.employee)
+  const { currentUserDetails } = useSelector(
+    (state: RootState) => state.employee
+  );
+
+  console.log("state", state.techRows);
   const { user } = useSelector((state: RootState) => state.auth);
-  const navigate=useNavigate();
-console.log("empllllllll", currentUserDetails);
+  const navigate = useNavigate();
+  console.log("empllllllll", currentUserDetails);
 
   // ---------------------- AUTO-FILL USER DATA ----------------------
-  useEffect(()=>{
+  useEffect(() => {
     thunkDispatch(getCurrentEmployee());
-  },[]);
+  }, []);
   useEffect(() => {
     const user = {
       employeeId: currentUserDetails?.employeeId,
@@ -205,12 +189,12 @@ console.log("empllllllll", currentUserDetails);
           boxShadow: "0px 4px 20px rgba(0,0,0,0.08)",
         }}
       >
-        <Typography variant="h4" fontWeight="bold" mb={3} color="#48206F">
-          LOG Form
+        <Typography variant="h5" fontWeight="bold" mb={3} color="#48206F">
+          Log Form
         </Typography>
 
         {/* ───────────────────── EMPLOYEE DETAILS ───────────────────── */}
-        <Typography variant="h6" mb={2}>
+        <Typography variant="h6" fontWeight={"bold"} mb={2}>
           Employee Details
         </Typography>
 
@@ -221,26 +205,29 @@ console.log("empllllllll", currentUserDetails);
             ["Employee Email", "employeeEmail"],
             ["Department", "department"],
             ["Team", "team"],
-            ["Reporting Manager", "manager"],
+            // ["Reporting Manager", "manager"],
           ].map(([label, field]) => (
-            <Grid item xs={12} md={4} key={field}>
-              <TextField
-                fullWidth
-                label={label}
-                value={state[field as keyof State]}
-                sx={fieldStyle}
-                disabled
-              />
-            </Grid>
+            // <Grid key={field}>
+            <TextField
+              key={field}
+              // fullWidth
+              label={label}
+              size="small"
+              value={state[field as keyof State]}
+              // sx={fieldStyle}
+              disabled
+            />
+            // </Grid>
           ))}
 
           {/* Requirement Type */}
-          <Grid item xs={12} md={4} minWidth={190}>
+          <Grid minWidth={190}>
             <TextField
               select
               label="Requirement Type"
+              size="small"
               fullWidth
-              sx={fieldStyle}
+              // sx={fieldStyle}
               value={state.requirementType}
               onChange={(e) =>
                 dispatch({
@@ -260,7 +247,7 @@ console.log("empllllllll", currentUserDetails);
         {/* ───────────────────── NN SECTION ───────────────────── */}
         {state.requirementType === "NN" && (
           <>
-            <Typography mt={4} variant="h6">
+            <Typography mt={4}  fontWeight={"bold"} variant="h6">
               NN Details
             </Typography>
             <Grid container spacing={2} mt={1}>
@@ -270,11 +257,12 @@ console.log("empllllllll", currentUserDetails);
                 ["Source", "nnSource"],
                 ["Opp. From", "nnOppFrom"],
               ].map(([label, field]) => (
-                <Grid item xs={12} md={6} key={field}>
+                <Grid key={field}>
                   <TextField
                     fullWidth
                     label={label}
-                    sx={fieldStyle}
+                    // sx={fieldStyle}
+                    size="small"
                     value={state[field as keyof State]}
                     onChange={(e) =>
                       dispatch({
@@ -295,7 +283,7 @@ console.log("empllllllll", currentUserDetails);
         {/* ───────────────────── OPP FROM (EE/EN only) ───────────────────── */}
         {(state.requirementType === "EE" || state.requirementType === "EN") && (
           <>
-            <Typography mt={4} variant="h6">
+            <Typography mt={4}  fontWeight={"bold"} variant="h6">
               Opp. From
             </Typography>
 
@@ -306,11 +294,12 @@ console.log("empllllllll", currentUserDetails);
                 ["Client Name", "clientName"],
                 ["Project Code", "projectCode"],
               ].map(([label, field]) => (
-                <Grid item xs={12} md={4} key={field} width={300}>
+                <Grid key={field} size={3}>
                   <TextField
                     fullWidth
                     label={label}
-                    sx={fieldStyle}
+                    size="small"
+                    // sx={fieldStyle}
                     value={state[field as keyof State]}
                     onChange={(e) =>
                       dispatch({
@@ -324,12 +313,13 @@ console.log("empllllllll", currentUserDetails);
               ))}
 
               {/* Urgency */}
-              <Grid item xs={12} md={4} minWidth={300}>
+              <Grid size={3}>
                 <TextField
                   select
                   fullWidth
+                  size="small"
                   label="Urgency Level"
-                  sx={fieldStyle}
+                  // sx={fieldStyle}
                   value={state.urgency}
                   onChange={(e) =>
                     dispatch({
@@ -346,12 +336,13 @@ console.log("empllllllll", currentUserDetails);
               </Grid>
 
               {/* Meeting Type */}
-              <Grid item xs={12} md={4} minWidth={300}>
+              <Grid size={3}>
                 <TextField
                   select
                   fullWidth
                   label="Meeting Type"
-                  sx={fieldStyle}
+                  // sx={fieldStyle}
+                  size="small"
                   value={state.meetingType}
                   onChange={(e) =>
                     dispatch({
@@ -370,12 +361,13 @@ console.log("empllllllll", currentUserDetails);
               </Grid>
 
               {/* Date */}
-              <Grid item xs={12} md={4} minWidth={300}>
+              <Grid size={3}>
                 <TextField
                   type="date"
                   fullWidth
                   label="Date of Discussion"
-                  sx={fieldStyle}
+                  // sx={fieldStyle}
+                  size="small"
                   InputLabelProps={{ shrink: true }}
                   value={state.callDate}
                   onChange={(e) =>
@@ -389,72 +381,73 @@ console.log("empllllllll", currentUserDetails);
               </Grid>
 
               {/* Spacing row */}
-              <Grid item xs={12} />
+              <Grid />
+            </Grid>
+            {/* People Present */}
+            <Grid>
+              <Typography fontWeight="bold" mt={2}>
+                People Present
+              </Typography>
 
-              {/* People Present */}
-              <Grid item xs={12}>
-                <Typography fontWeight="bold" mt={2}>
-                  People Present
-                </Typography>
-
-                {state.peoplePresent.map((p, i) => (
-                  <Grid
-                    container
-                    spacing={1}
-                    key={i}
-                    alignItems="center"
-                    sx={{ mt: 1 }}
-                  >
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        fullWidth
-                        label="Name"
-                        sx={fieldStyle}
-                        value={p.name}
-                        onChange={(e) =>
-                          dispatch({
-                            type: "UPDATE_PEOPLE",
-                            index: i,
-                            value: e.target.value,
-                          })
-                        }
-                      />
-                    </Grid>
-
-                    <Grid item>
-                      <IconButton
-                        color="error"
-                        onClick={() =>
-                          dispatch({ type: "REMOVE_PEOPLE", index: i })
-                        }
-                        disabled={state.peoplePresent.length === 1}
-                      >
-                        <RemoveCircleIcon />
-                      </IconButton>
-                    </Grid>
-                  </Grid>
-                ))}
-
-                <Button
-                  startIcon={<AddCircleIcon />}
-                  onClick={() => dispatch({ type: "ADD_PEOPLE" })}
+              {state.peoplePresent.map((p:{name:string}, i:number) => (
+                <Grid
+                  container
+                  spacing={1}
+                  key={i}
+                  alignItems="center"
+                  sx={{ mt: 1 }}
                 >
-                  Add Person
-                </Button>
-              </Grid>
+                  <Grid>
+                    <TextField
+                      fullWidth
+                      label="Name"
+                      // sx={fieldStyle}
+                      size="small"
+                      value={p.name}
+                      onChange={(e) =>
+                        dispatch({
+                          type: "UPDATE_PEOPLE",
+                          index: i,
+                          value: e.target.value,
+                        })
+                      }
+                    />
+                  </Grid>
+
+                  <Grid>
+                    <IconButton
+                      color="error"
+                      onClick={() =>
+                        dispatch({ type: "REMOVE_PEOPLE", index: i })
+                      }
+                      disabled={state.peoplePresent.length === 1}
+                    >
+                      <RemoveCircleIcon />
+                    </IconButton>
+                  </Grid>
+                </Grid>
+              ))}
+
+              <Button
+                sx={{ mt: 2, border: "1px solid #8347ad" }}
+                startIcon={<AddCircleIcon />}
+                onClick={() => dispatch({ type: "ADD_PEOPLE" })}
+              >
+                Add Person
+              </Button>
             </Grid>
 
             <Divider sx={{ marginTop: 4 }} />
 
             {/* ───────────────────── OPP TO ───────────────────── */}
-            <Typography mt={4} variant="h6">
+            <Typography mt={4} fontWeight={"bold"} variant="h6">
               Opp. To
             </Typography>
 
             <Grid container spacing={2} mt={3}>
               {/* Tech Select */}
-              <Grid item xs={12} md={6} minWidth={230}>
-                <FormControl fullWidth sx={{ ...fieldStyle }}>
+              <Grid minWidth={230}>
+                <FormControl fullWidth size="small">
                   <InputLabel>Technologies Required</InputLabel>
                   <Select
                     multiple
@@ -466,7 +459,6 @@ console.log("empllllllll", currentUserDetails);
                       })
                     }
                     input={<OutlinedInput label="Technologies Required" />}
-                    sx={{ borderRadius: "12px" }}
                   >
                     {["React", "Angular", "Python", "Java", "Node"].map(
                       (tech) => (
@@ -480,12 +472,12 @@ console.log("empllllllll", currentUserDetails);
               </Grid>
 
               {/* Total Persons */}
-              <Grid item xs={12} md={3} minWidth={230}>
+              <Grid minWidth={230}>
                 <TextField
                   label="Total Persons"
                   value={state.totalPersons}
                   fullWidth
-                  sx={fieldStyle}
+                  size="small"
                   disabled
                 />
               </Grid>
@@ -498,14 +490,14 @@ console.log("empllllllll", currentUserDetails);
                 startIcon={<AddCircleIcon />}
                 disabled={!canAddMoreRows()}
                 onClick={() => dispatch({ type: "ADD_TECH_ROW" })}
-                sx={{ borderRadius: "10px" }}
+                sx={{ mb: 2 }}
               >
                 Add Technology Row
               </Button>
             </Box>
 
             {/* Dynamic Tech Rows */}
-            {state.techRows.map((row, index) => (
+            {state.techRows.map((row:{technology:string, count:number}, index:number) => (
               <Grid
                 container
                 spacing={2}
@@ -513,12 +505,13 @@ console.log("empllllllll", currentUserDetails);
                 key={index}
                 sx={{ mt: 1 }}
               >
-                <Grid item xs={12} mt={3} md={4} minWidth={230}>
+                <Grid minWidth={230}>
                   <TextField
                     select
                     fullWidth
                     label="Technology"
-                    sx={fieldStyle}
+                    // sx={fieldStyle}
+                    size="small"
                     value={row.technology}
                     onChange={(e) =>
                       dispatch({
@@ -531,11 +524,11 @@ console.log("empllllllll", currentUserDetails);
                   >
                     {state.selectedTechnologies
                       .filter(
-                        (tech) =>
+                        (tech:string) =>
                           tech === row.technology ||
-                          !state.techRows.some((r) => r.technology === tech)
+                          !state.techRows.some((r:{technology:string, count:number}) => r.technology === tech)
                       )
-                      .map((tech) => (
+                      .map((tech:string) => (
                         <MenuItem key={tech} value={tech}>
                           {tech}
                         </MenuItem>
@@ -543,13 +536,15 @@ console.log("empllllllll", currentUserDetails);
                   </TextField>
                 </Grid>
 
-                <Grid item xs={12} mt={3} md={3} minWidth={230}>
+                <Grid minWidth={230}>
                   <TextField
                     fullWidth
                     label="Count"
                     type="number"
-                    sx={fieldStyle}
+                    // sx={fieldStyle}
+                    size="small"
                     value={row.count}
+                    inputProps={{ min: 0 }} // 👈 prevents -ve input
                     onChange={(e) =>
                       dispatch({
                         type: "UPDATE_TECH_ROW",
@@ -561,9 +556,10 @@ console.log("empllllllll", currentUserDetails);
                   />
                 </Grid>
 
-                <Grid item>
+                <Grid>
                   <IconButton
                     color="error"
+                    sx={{outline:"none"}}
                     onClick={() => dispatch({ type: "REMOVE_TECH_ROW", index })}
                   >
                     <RemoveCircleIcon />
@@ -574,12 +570,13 @@ console.log("empllllllll", currentUserDetails);
 
             {/* Category and Notes */}
             <Grid container spacing={2} mt={3}>
-              <Grid item xs={12} md={4} minWidth={230}>
+              <Grid minWidth={230}>
                 <TextField
                   select
                   fullWidth
                   label="Opp. Category"
-                  sx={fieldStyle}
+                  // sx={fieldStyle}
+                  size="small"
                   value={state.oppCategory}
                   onChange={(e) =>
                     dispatch({
@@ -595,11 +592,12 @@ console.log("empllllllll", currentUserDetails);
                 </TextField>
               </Grid>
 
-              <Grid item xs={12} md={4} minWidth={230}>
+              <Grid minWidth={230}>
                 <TextField
                   fullWidth
                   label="Short Description"
-                  sx={fieldStyle}
+                  // sx={fieldStyle}
+                  size="small"
                   value={state.shortDescription}
                   onChange={(e) =>
                     dispatch({
@@ -611,13 +609,14 @@ console.log("empllllllll", currentUserDetails);
                 />
               </Grid>
 
-              <Grid item xs={12} md={4} minWidth={230}>
+              <Grid minWidth={230}>
                 <TextField
                   fullWidth
                   label="Detailed Notes"
                   multiline
                   rows={1}
-                  sx={fieldStyle}
+                  // sx={fieldStyle}
+                  size="small"
                   value={state.detailedNotes}
                   onChange={(e) =>
                     dispatch({
@@ -635,17 +634,18 @@ console.log("empllllllll", currentUserDetails);
         <Divider sx={{ marginTop: 4 }} />
 
         {/* ───────────────────── TIMELINE ───────────────────── */}
-        <Typography mt={4} variant="h6">
+        <Typography mt={4} fontWeight={"bold"} variant="h6">
           Expected Timeline
         </Typography>
 
         <Grid container spacing={2} mt={1}>
-          <Grid item xs={12} md={4}>
+          <Grid minWidth={230}>
             <TextField
               type="date"
               fullWidth
               label="Expected Start Date"
-              sx={fieldStyle}
+              // sx={fieldStyle}
+              size="small"
               InputLabelProps={{ shrink: true }}
               value={state.expectedStart}
               onChange={(e) =>
@@ -658,12 +658,13 @@ console.log("empllllllll", currentUserDetails);
             />
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid minWidth={230}>
             <TextField
               type="date"
               fullWidth
               label="Expected End Date"
-              sx={fieldStyle}
+              // sx={fieldStyle}
+              size="small"
               InputLabelProps={{ shrink: true }}
               value={state.expectedEnd}
               onChange={(e) =>
@@ -682,12 +683,12 @@ console.log("empllllllll", currentUserDetails);
           <Button
             variant="contained"
             sx={{
-              px: 4,
-              py: 1.2,
-              borderRadius: "12px",
+              px: 2,
+              py: 0.2,
               background: "#7E57C2",
-              fontSize: "16px",
+              fontSize: "1rem",
             }}
+            size="small"
             onClick={handleSubmit}
           >
             Submit
