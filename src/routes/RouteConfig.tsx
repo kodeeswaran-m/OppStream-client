@@ -10,7 +10,7 @@ import LogPage from "../pages/common/LogPage";
 import LogTables from "../pages/reportingManager/LogTables";
 import UserLogsTable from "../pages/common/UserLogsTable";
 import LogDetailsPageWrapper from "../pages/common/LogDetailsPageWrapper";
-import CreateUser from "../pages/VP/CreateUser";
+import CreateUser from "../pages/admin/CreateUser";
 import UsersTable from "../pages/admin/UsersTable";
 import UpdateUserPage from "../pages/admin/UpdateUserPage";
 
@@ -37,7 +37,7 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
       element: <ReportingManagerDashboard />,
     },
     {
-      path: "/manager/profileForm",
+      path: "/manager/form",
 
       element: <EmployeeFormPage />,
     },

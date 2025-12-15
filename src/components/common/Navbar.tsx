@@ -18,8 +18,6 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import DeblurIcon from "@mui/icons-material/Deblur";
-import LensBlurIcon from "@mui/icons-material/LensBlur";
 import BubbleChartIcon from "@mui/icons-material/BubbleChart";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../store";
@@ -125,11 +123,11 @@ const Navbar = () => {
                 display: "inline-block",
                 transition: "transform 0.2s ease-out, color 0.2s ease-out",
               }}
-              onMouseEnter={(e:React.MouseEvent<HTMLElement>) => {
+              onMouseEnter={(e: React.MouseEvent<HTMLElement>) => {
                 e.currentTarget.style.transform = "scale(1.04)";
                 e.currentTarget.style.color = "#5e2a87";
               }}
-              onMouseLeave={(e:React.MouseEvent<HTMLElement>) => {
+              onMouseLeave={(e: React.MouseEvent<HTMLElement>) => {
                 e.currentTarget.style.transform = "scale(1)";
                 e.currentTarget.style.color = "#8347AD";
               }}
@@ -208,17 +206,20 @@ const Navbar = () => {
                       </Box>
                     </MenuItem>
 
-                    {
-                      user?.role!=="admin"?<MenuItem
-                      onClick={() => {
-                        handleClose();
-                        const routeRole = getRouteRole(user?.role);
-                        navigate(`/${routeRole}/form`);
-                      }}
-                    >
-                      Update Profile
-                    </MenuItem>:""
-                    }
+                    {user?.role !== "admin" ? (
+                      <MenuItem
+                        onClick={() => {
+                          const routeRole = getRouteRole(user?.role);
+                          console.log("routerole", routeRole);
+                          navigate(`/${routeRole}/form`);
+                          handleClose();
+                        }}
+                      >
+                        Update Profile
+                      </MenuItem>
+                    ) : (
+                      ""
+                    )}
 
                     <MenuItem
                       onClick={() => {
@@ -323,48 +324,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-{
-  /* <LensBlurIcon fontSize="large" onClick={() => navigate("/")} /> */
-}
-{
-  /* <DeblurIcon fontSize="large" onClick={() => navigate("/")} /> */
-}
-{
-  /* <Typography
-              variant="h10"
-              to="/"
-              style={{
-                color: "white",
-                textDecoration: "none",
-                border: "2px solid white",
-                padding: " 1px 0px 1px 2px ",
-                fontWeight: "bold",
-              }}
-            >
-              <span style={{ padding: "1px 3px 1px 1px" }}>O</span>
-              <span
-                style={{
-                  color: "#7347AD",
-                  backgroundColor: "white",
-                  padding: "5px 2px 4px 2px",
-                }}
-              >
-                pp
-              </span>
-              <span style={{ padding: "1px 4px 1px 1px" }}> X</span>
-              <span
-                style={{ borderLeft: "2px solid white", padding: "4px 0px" }}
-              ></span>
-              <span style={{ padding: "1px 3px 1px 4px" }}>L</span>
-              <span
-                style={{
-                  color: "#7347AD",
-                  backgroundColor: "white",
-                  padding: "5px 4px 4px 2px",
-                }}
-              >
-                og
-              </span>
-            </Typography> */
-}

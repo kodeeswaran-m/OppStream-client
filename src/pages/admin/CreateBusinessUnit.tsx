@@ -13,16 +13,17 @@ import {
   Typography,
   TextField,
   Button,
-  Alert,
+  // Alert,
   CircularProgress,
 } from "@mui/material";
+import { useSnackbar } from "../../context/SnackbarContext";
 
 const CreateBusinessUnit = () => {
   const dispatch = useDispatch();
-  const { loading, message, error } = useSelector(
+  const { loading } = useSelector(
     (state: RootState) => state.admin
   );
-
+  const { showMessage } = useSnackbar();
   const [name, setName] = useState("");
 
   useEffect(() => {
@@ -35,12 +36,18 @@ const CreateBusinessUnit = () => {
     if (!name.trim()) return;
 
     const res = await dispatch<any>(createBusinessUnit(name));
-
-    if (res.success) setName("");
+    // console.log("res.err", res);
+    if (res.success) {
+      setName("");
+      // console.log("succ", res);
+      showMessage(res.data.message);
+    } else {
+      showMessage(res.data);
+    }
   };
 
   return (
-    <Grid sx={{ backgroundColor: "#EFE6F6" , height:"100vh"}}>
+    <Grid sx={{ backgroundColor: "#EFE6F6", height: "100vh" }}>
       <Box
         sx={{
           display: "flex",
@@ -62,7 +69,7 @@ const CreateBusinessUnit = () => {
             Create Business Unit
           </Typography>
 
-          {error && (
+          {/* {error && (
             <Alert severity="error" sx={{ mb: 2 }}>
               {error}
             </Alert>
@@ -72,7 +79,7 @@ const CreateBusinessUnit = () => {
             <Alert severity="success" sx={{ mb: 2 }}>
               {message}
             </Alert>
-          )}
+          )} */}
 
           <form onSubmit={handleSubmit}>
             <TextField
@@ -104,55 +111,3 @@ const CreateBusinessUnit = () => {
 };
 
 export default CreateBusinessUnit;
-
-// import { useEffect, useState, type FormEvent } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import type { RootState } from "../../store";
-// import { createBusinessUnit, getBusinessUnits } from "../../store/actions/adminActions";
-
-// const CreateBusinessUnit = () => {
-//   const dispatch = useDispatch();
-//   const { loading, message, error, businessUnits } = useSelector(
-//     (state: RootState) => state.admin
-//   );
-// console.log("business unit", businessUnits);
-//   const [name, setName] = useState("");
-// useEffect( ()=>{
-//       const res =  dispatch<any>(getBusinessUnits());
-//   console.log("BU's", res);
-// },[])
-//   const handleSubmit = async (e: FormEvent) => {
-//     e.preventDefault();
-
-//     if (!name.trim()) return;
-
-//     const res = await dispatch<any>(createBusinessUnit(name));
-
-//     if (res.success) setName("");
-//   };
-
-//   return (
-//     <div style={{ maxWidth: 400, margin: "40px auto" }}>
-//       <h2>Create Business Unit</h2>
-
-//       {error && <p style={{ color: "red" }}>{error}</p>}
-//       {message && <p style={{ color: "green" }}>{message}</p>}
-
-//       <form onSubmit={handleSubmit}>
-//         <label>Business Unit Name</label>
-//         <input
-//           type="text"
-//           placeholder="Enter business unit name"
-//           value={name}
-//           onChange={(e) => setName(e.target.value)}
-//         />
-
-//         <button type="submit" disabled={loading}>
-//           {loading ? "Creating..." : "Create"}
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default CreateBusinessUnit;
