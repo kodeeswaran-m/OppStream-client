@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -73,24 +72,34 @@ interface Approval {
 
 interface LogDetailsProps {
   log: any;
-  getApprovalCount:any
+  getApprovalCount: any;
 }
 
 const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
   const [activeStep, setActiveStep] = useState(0);
 
-  const hasAnyAction = log.approvals.some(
-    (a: Approval) => a.status !== "PENDING"
-  );
+  // const hasAnyAction = log.approvals.some(
+  //   (a: Approval) => a.status !== "PENDING"
+  // );
 
-  const finalActiveStepIndex = log.approvals.findIndex(
+  // const finalActiveStepIndex = log.approvals.findIndex(
+  //   (a: Approval) => a.status === "PENDING"
+  // );
+
+  // const finalStep =
+  //   finalActiveStepIndex === -1
+  //     ? log.approvals.length
+  //     : finalActiveStepIndex;
+  const approvals = Array.isArray(log?.approvals) ? log.approvals : [];
+
+  const hasAnyAction = approvals.some((a: Approval) => a.status !== "PENDING");
+
+  const finalActiveStepIndex = approvals.findIndex(
     (a: Approval) => a.status === "PENDING"
   );
 
   const finalStep =
-    finalActiveStepIndex === -1
-      ? log.approvals.length
-      : finalActiveStepIndex;
+    finalActiveStepIndex === -1 ? approvals.length : finalActiveStepIndex;
 
   useEffect(() => {
     if (!hasAnyAction) return;
@@ -107,8 +116,13 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
   }, []);
 
   return (
-    <PageContainer sx={{ backgroundColor:"#ede9f0ff"}}>
-      <Typography variant="h4" fontWeight={700} color="primary" sx={{ mb: 3, mt:6 }}>
+    <PageContainer sx={{ backgroundColor: "#ede9f0ff" }}>
+      <Typography
+        variant="h4"
+        fontWeight={700}
+        color="primary"
+        sx={{ mb: 3, mt: 6 }}
+      >
         Log Details
       </Typography>
 
@@ -171,10 +185,18 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
         <SectionCard>
           <CardContent>
             <SectionTitle>NN Details</SectionTitle>
-            <Typography><Label>Description:</Label> {log.nnDetails?.description}</Typography>
-            <Typography><Label>Client Name:</Label> {log.nnDetails?.clientName}</Typography>
-            <Typography><Label>Source:</Label> {log.nnDetails?.source}</Typography>
-            <Typography><Label>Opportunity From:</Label> {log.nnDetails?.oppFrom}</Typography>
+            <Typography>
+              <Label>Description:</Label> {log.nnDetails?.description}
+            </Typography>
+            <Typography>
+              <Label>Client Name:</Label> {log.nnDetails?.clientName}
+            </Typography>
+            <Typography>
+              <Label>Source:</Label> {log.nnDetails?.source}
+            </Typography>
+            <Typography>
+              <Label>Opportunity From:</Label> {log.nnDetails?.oppFrom}
+            </Typography>
           </CardContent>
         </SectionCard>
       )}
@@ -186,19 +208,31 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
             <SectionTitle>Opportunity From</SectionTitle>
 
             <Grid container spacing={3}>
-              <Grid >
-                <Typography><Label>Project Name:</Label> {log.oppFrom?.projectName}</Typography>
-                <Typography><Label>Client Name:</Label> {log.oppFrom?.clientName}</Typography>
-                <Typography><Label>Project Code:</Label> {log.oppFrom?.projectCode}</Typography>
+              <Grid>
+                <Typography>
+                  <Label>Project Name:</Label> {log.oppFrom?.projectName}
+                </Typography>
+                <Typography>
+                  <Label>Client Name:</Label> {log.oppFrom?.clientName}
+                </Typography>
+                <Typography>
+                  <Label>Project Code:</Label> {log.oppFrom?.projectCode}
+                </Typography>
               </Grid>
 
-              <Grid >
-                <Typography><Label>Urgency:</Label> {log.oppFrom?.urgency}</Typography>
-                <Typography><Label>Meeting Type:</Label> {log.oppFrom?.meetingType}</Typography>
-                <Typography><Label>Meeting Date:</Label> {log.oppFrom?.meetingDate}</Typography>
+              <Grid>
+                <Typography>
+                  <Label>Urgency:</Label> {log.oppFrom?.urgency}
+                </Typography>
+                <Typography>
+                  <Label>Meeting Type:</Label> {log.oppFrom?.meetingType}
+                </Typography>
+                <Typography>
+                  <Label>Meeting Date:</Label> {log.oppFrom?.meetingDate}
+                </Typography>
               </Grid>
 
-              <Grid >
+              <Grid>
                 <Label>People Present:</Label>
                 <Stack direction="row" spacing={2} mt={1}>
                   {log.oppFrom?.peoplePresent?.map((p: any, idx: number) => (
@@ -219,25 +253,39 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
           <SectionTitle>Opportunity To</SectionTitle>
 
           <Grid container spacing={3}>
-            <Grid >
-              <Typography><Label>Category:</Label> {log.oppTo?.category}</Typography>
-              <Typography><Label>Total Persons:</Label> {log.oppTo?.totalPersons}</Typography>
+            <Grid>
+              <Typography>
+                <Label>Category:</Label> {log.oppTo?.category}
+              </Typography>
+              <Typography>
+                <Label>Total Persons:</Label> {log.oppTo?.totalPersons}
+              </Typography>
             </Grid>
 
-            <Grid >
-              <Typography><Label>Short Description:</Label> {log.oppTo?.shortDescription}</Typography>
-              <Typography><Label>Technology Required:</Label> {log.oppTo?.technologyRequired?.join(", ")}</Typography>
+            <Grid>
+              <Typography>
+                <Label>Short Description:</Label> {log.oppTo?.shortDescription}
+              </Typography>
+              <Typography>
+                <Label>Technology Required:</Label>{" "}
+                {log.oppTo?.technologyRequired?.join(", ")}
+              </Typography>
             </Grid>
 
-            <Grid >
-              <Typography><Label>Detailed Notes:</Label> {log.oppTo?.detailedNotes}</Typography>
+            <Grid>
+              <Typography>
+                <Label>Detailed Notes:</Label> {log.oppTo?.detailedNotes}
+              </Typography>
             </Grid>
 
-            <Grid >
+            <Grid>
               <Label>Tech Rows:</Label>
               <Stack mt={1} spacing={1}>
                 {log.oppTo?.techRows?.map((row: any, i: number) => (
-                  <Paper key={i} sx={{ p: 2, borderRadius: 3, background: "#F1F1F1" }}>
+                  <Paper
+                    key={i}
+                    sx={{ p: 2, borderRadius: 3, background: "#F1F1F1" }}
+                  >
                     {row.technology} — {row.count}
                   </Paper>
                 ))}
@@ -251,8 +299,12 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
       <SectionCard>
         <CardContent>
           <SectionTitle>Timeline</SectionTitle>
-          <Typography><Label>Expected Start:</Label> {log.timeline?.expectedStart}</Typography>
-          <Typography><Label>Expected End:</Label> {log.timeline?.expectedEnd}</Typography>
+          <Typography>
+            <Label>Expected Start:</Label> {log.timeline?.expectedStart}
+          </Typography>
+          <Typography>
+            <Label>Expected End:</Label> {log.timeline?.expectedEnd}
+          </Typography>
         </CardContent>
       </SectionCard>
     </PageContainer>
@@ -260,5 +312,3 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
 };
 
 export default LogDetailsPage;
-
-
