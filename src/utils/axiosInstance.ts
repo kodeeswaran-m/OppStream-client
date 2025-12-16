@@ -3,7 +3,7 @@ import store  from '../store/index';  // Import your Redux store
 
 // Create Axios instance
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5000',  // Your backend API URL
+  baseURL: 'https://oppstream-server.onrender.com/',  // Your backend API URL
   withCredentials: true,  // To send cookies with requests
 });
 

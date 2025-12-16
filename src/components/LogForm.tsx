@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import  { useEffect, useReducer } from "react";
 import {
   Box,
   Typography,
@@ -24,7 +24,7 @@ import type { AnyAction } from "redux";
 
 import "./LogFormType";
 import { reducer } from "./LogFormActionReducer";
-import { Padding } from "@mui/icons-material";
+
 import { useSnackbar } from "../context/SnackbarContext";
 import { getRouteRole } from "../utils/getRouteRole";
 import { useNavigate } from "react-router-dom";
@@ -34,25 +34,50 @@ type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 // --------------------- FIELD STYLE (GLOBAL) ---------------------
 const fieldStyle = {
   "& .MuiOutlinedInput-root": {
-    height: "45px",
-    borderRadius: "10px",
-    fontSize: "13px", // 👈 Smaller input text
+    height: "36px",
+    borderRadius: "6px",
+    fontSize: "12px",
+    padding: 0,
   },
+
+  /* uniform border */
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderWidth: "1px",
+  },
+
+  /* 🔥 remove extra notch spacing (key fix) */
+  "& legend": {
+    width: "auto",
+    padding: "0 6px",
+    maxWidth: "100%",
+  },
+
+  /* label positioning – same for ALL fields */
   "& .MuiInputLabel-root": {
-    fontSize: "12px", // 👈 Smaller label text
+    fontSize: "11px",
+    top: "-4px",
+    lineHeight: 1,
   },
+
+  /* input text spacing */
+  "& .MuiInputBase-input": {
+    padding: "6px 10px",
+    fontSize: "12px",
+  },
+
+  /* Select input consistency */
   "& .MuiSelect-select": {
-    fontSize: "13px", // 👈 Smaller select menu text
-    padding: "12px",
+    padding: "6px 10px",
+    fontSize: "12px",
   },
-  "& input": {
-    fontSize: "13px", // 👈 TextField input size
-    padding: "12px",
-  },
-  "& .MuiMenuItem-root": {
-    fontSize: "13px", // 👈 Dropdown menu items
+
+  /* Disabled fields look same */
+  "& .Mui-disabled": {
+    WebkitTextFillColor: "#555",
   },
 };
+
+
 
 // --------------------- INITIAL STATE ---------------------
 const initialState: State = {
@@ -306,7 +331,7 @@ console.log("empllllllll", currentUserDetails);
                 ["Client Name", "clientName"],
                 ["Project Code", "projectCode"],
               ].map(([label, field]) => (
-                <Grid item xs={12} md={4} key={field} width={300}>
+                <Grid item xs={12} md={4} key={field} width={190}>
                   <TextField
                     fullWidth
                     label={label}
@@ -324,7 +349,7 @@ console.log("empllllllll", currentUserDetails);
               ))}
 
               {/* Urgency */}
-              <Grid item xs={12} md={4} minWidth={300}>
+              <Grid item xs={12} md={4} minWidth={190}>
                 <TextField
                   select
                   fullWidth
@@ -346,7 +371,7 @@ console.log("empllllllll", currentUserDetails);
               </Grid>
 
               {/* Meeting Type */}
-              <Grid item xs={12} md={4} minWidth={300}>
+              <Grid item xs={12} md={4} minWidth={190}>
                 <TextField
                   select
                   fullWidth
@@ -370,7 +395,7 @@ console.log("empllllllll", currentUserDetails);
               </Grid>
 
               {/* Date */}
-              <Grid item xs={12} md={4} minWidth={300}>
+              <Grid item xs={12} md={4} minWidth={190}>
                 <TextField
                   type="date"
                   fullWidth
@@ -387,12 +412,12 @@ console.log("empllllllll", currentUserDetails);
                   }
                 />
               </Grid>
-
-              {/* Spacing row */}
-              <Grid item xs={12} />
+</Grid>
+               
 
               {/* People Present */}
-              <Grid item xs={12}>
+              <Grid item xs={12} minWidth={190}>
+                
                 <Typography fontWeight="bold" mt={2}>
                   People Present
                 </Typography>
@@ -442,7 +467,7 @@ console.log("empllllllll", currentUserDetails);
                   Add Person
                 </Button>
               </Grid>
-            </Grid>
+            
 
             <Divider sx={{ marginTop: 4 }} />
 
@@ -453,7 +478,7 @@ console.log("empllllllll", currentUserDetails);
 
             <Grid container spacing={2} mt={3}>
               {/* Tech Select */}
-              <Grid item xs={12} md={6} minWidth={230}>
+              <Grid item xs={12} md={6} minWidth={190}>
                 <FormControl fullWidth sx={{ ...fieldStyle }}>
                   <InputLabel>Technologies Required</InputLabel>
                   <Select
@@ -480,7 +505,7 @@ console.log("empllllllll", currentUserDetails);
               </Grid>
 
               {/* Total Persons */}
-              <Grid item xs={12} md={3} minWidth={230}>
+              <Grid item xs={12} md={3} minWidth={190}>
                 <TextField
                   label="Total Persons"
                   value={state.totalPersons}
@@ -513,7 +538,7 @@ console.log("empllllllll", currentUserDetails);
                 key={index}
                 sx={{ mt: 1 }}
               >
-                <Grid item xs={12} mt={3} md={4} minWidth={230}>
+                <Grid item xs={12} mt={3} md={4} minWidth={190}>
                   <TextField
                     select
                     fullWidth
@@ -543,7 +568,7 @@ console.log("empllllllll", currentUserDetails);
                   </TextField>
                 </Grid>
 
-                <Grid item xs={12} mt={3} md={3} minWidth={230}>
+                <Grid item xs={12} mt={3} md={3} minWidth={190}>
                   <TextField
                     fullWidth
                     label="Count"
@@ -574,7 +599,7 @@ console.log("empllllllll", currentUserDetails);
 
             {/* Category and Notes */}
             <Grid container spacing={2} mt={3}>
-              <Grid item xs={12} md={4} minWidth={230}>
+              <Grid item xs={12} md={4} minWidth={190}>
                 <TextField
                   select
                   fullWidth
@@ -595,7 +620,7 @@ console.log("empllllllll", currentUserDetails);
                 </TextField>
               </Grid>
 
-              <Grid item xs={12} md={4} minWidth={230}>
+              <Grid item xs={12} md={4} minWidth={190}>
                 <TextField
                   fullWidth
                   label="Short Description"
@@ -611,7 +636,7 @@ console.log("empllllllll", currentUserDetails);
                 />
               </Grid>
 
-              <Grid item xs={12} md={4} minWidth={230}>
+              <Grid item xs={12} md={4} minWidth={190}>
                 <TextField
                   fullWidth
                   label="Detailed Notes"
@@ -640,7 +665,7 @@ console.log("empllllllll", currentUserDetails);
         </Typography>
 
         <Grid container spacing={2} mt={1}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={4} minWidth={190}>
             <TextField
               type="date"
               fullWidth
@@ -658,7 +683,7 @@ console.log("empllllllll", currentUserDetails);
             />
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={4} minWidth={190}>
             <TextField
               type="date"
               fullWidth
