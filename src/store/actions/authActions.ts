@@ -23,7 +23,7 @@ export const login =
       dispatch({ type: LOGIN_SUCCESS, payload: response.data });
       return { success: true, data: response.data };
     } catch (error: any) {
-      console.log("error", error.response.data.message);
+      console.log("error", error);
       dispatch({ type: LOGIN_FAILURE, payload: error.response.data.message });
       return { success: false, data: error?.response.data.message };
     }
