@@ -91,7 +91,7 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
   //     ? log.approvals.length
   //     : finalActiveStepIndex;
 
-    const approvals = Array.isArray(log?.approvals) ? log.approvals : [];
+  const approvals = Array.isArray(log?.approvals) ? log.approvals : [];
 
   const hasAnyAction = approvals.some((a: Approval) => a.status !== "PENDING");
 
@@ -117,15 +117,27 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
   }, []);
 
   return (
-    <PageContainer sx={{ backgroundColor:"#ede9f0ff"}}>
-      <Typography variant="h4" fontWeight={700} color="primary" sx={{ mb: 3, mt:6 }}>
+    <PageContainer sx={{ backgroundColor: "#ede9f0ff" }}>
+      <Typography
+        variant="h5"
+        fontWeight={700}
+        color="primary"
+        sx={{ mb: 3, mt: 6 }}
+      >
         Log Details
       </Typography>
 
       {/* SECTION: CREATOR */}
+      <Grid container spacing={4}>
+        <Grid size={{ xs: 12, md: 6 }}></Grid>
+      </Grid>
       <SectionCard>
         <CardContent>
-          <SectionTitle>Created By</SectionTitle>
+          <SectionTitle>
+            <Typography variant="h6" fontWeight={700} color="primary">
+              Created By
+            </Typography>
+          </SectionTitle>
           <Typography>
             <Label>Name:</Label> {log.createdBy?.employeeName}
           </Typography>
@@ -138,7 +150,12 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
       {/* SECTION: APPROVAL FLOW */}
       <SectionCard>
         <CardContent>
-          <SectionTitle>Approval Flow</SectionTitle>
+          <SectionTitle>
+            {" "}
+            <Typography variant="h6" fontWeight={700} color="primary">
+              Approval Flow
+            </Typography>
+          </SectionTitle>
 
           <Stepper
             activeStep={activeStep}
@@ -169,7 +186,11 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
       {/* REQUIREMENT TYPE */}
       <SectionCard>
         <CardContent>
-          <SectionTitle>Requirement</SectionTitle>
+          <SectionTitle>
+            <Typography variant="h6" fontWeight={700} color="primary">
+              Requirement{" "}
+            </Typography>
+          </SectionTitle>
           <Typography>
             <Label>Requirement Type:</Label> {log.requirementType}
           </Typography>
@@ -180,11 +201,24 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
       {log.requirementType === "NN" && (
         <SectionCard>
           <CardContent>
-            <SectionTitle>NN Details</SectionTitle>
-            <Typography><Label>Description:</Label> {log.nnDetails?.description}</Typography>
-            <Typography><Label>Client Name:</Label> {log.nnDetails?.clientName}</Typography>
-            <Typography><Label>Source:</Label> {log.nnDetails?.source}</Typography>
-            <Typography><Label>Opportunity From:</Label> {log.nnDetails?.oppFrom}</Typography>
+            <SectionTitle>
+              NN Details{" "}
+              <Typography variant="h6" fontWeight={700} color="primary">
+                Created By
+              </Typography>
+            </SectionTitle>
+            <Typography>
+              <Label>Description:</Label> {log.nnDetails?.description}
+            </Typography>
+            <Typography>
+              <Label>Client Name:</Label> {log.nnDetails?.clientName}
+            </Typography>
+            <Typography>
+              <Label>Source:</Label> {log.nnDetails?.source}
+            </Typography>
+            <Typography>
+              <Label>Opportunity From:</Label> {log.nnDetails?.oppFrom}
+            </Typography>
           </CardContent>
         </SectionCard>
       )}
@@ -193,19 +227,36 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
       {(log.requirementType === "EE" || log.requirementType === "EN") && (
         <SectionCard>
           <CardContent>
-            <SectionTitle>Opportunity From</SectionTitle>
+            <SectionTitle>
+              Opportunity From{" "}
+              <Typography variant="h6" fontWeight={700} color="primary">
+                Created By
+              </Typography>
+            </SectionTitle>
 
             <Grid container spacing={3}>
-              <Grid >
-                <Typography><Label>Project Name:</Label> {log.oppFrom?.projectName}</Typography>
-                <Typography><Label>Client Name:</Label> {log.oppFrom?.clientName}</Typography>
-                <Typography><Label>Project Code:</Label> {log.oppFrom?.projectCode}</Typography>
+              <Grid>
+                <Typography>
+                  <Label>Project Name:</Label> {log.oppFrom?.projectName}
+                </Typography>
+                <Typography>
+                  <Label>Client Name:</Label> {log.oppFrom?.clientName}
+                </Typography>
+                <Typography>
+                  <Label>Project Code:</Label> {log.oppFrom?.projectCode}
+                </Typography>
               </Grid>
 
-              <Grid >
-                <Typography><Label>Urgency:</Label> {log.oppFrom?.urgency}</Typography>
-                <Typography><Label>Meeting Type:</Label> {log.oppFrom?.meetingType}</Typography>
-                <Typography><Label>Meeting Date:</Label> {log.oppFrom?.meetingDate}</Typography>
+              <Grid>
+                <Typography>
+                  <Label>Urgency:</Label> {log.oppFrom?.urgency}
+                </Typography>
+                <Typography>
+                  <Label>Meeting Type:</Label> {log.oppFrom?.meetingType}
+                </Typography>
+                <Typography>
+                  <Label>Meeting Date:</Label> {log.oppFrom?.meetingDate}
+                </Typography>
               </Grid>
 
               <Grid>
@@ -226,28 +277,46 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
       {/* OPP TO SECTION */}
       <SectionCard>
         <CardContent>
-          <SectionTitle>Opportunity To</SectionTitle>
+          <SectionTitle>
+            <Typography variant="h6" fontWeight={700} color="primary">
+              Opportunity To{" "}
+            </Typography>
+          </SectionTitle>
 
           <Grid container spacing={3}>
-            <Grid >
-              <Typography><Label>Category:</Label> {log.oppTo?.category}</Typography>
-              <Typography><Label>Total Persons:</Label> {log.oppTo?.totalPersons}</Typography>
+            <Grid>
+              <Typography>
+                <Label>Category:</Label> {log.oppTo?.category}
+              </Typography>
+              <Typography>
+                <Label>Total Persons:</Label> {log.oppTo?.totalPersons}
+              </Typography>
             </Grid>
 
-            <Grid >
-              <Typography><Label>Short Description:</Label> {log.oppTo?.shortDescription}</Typography>
-              <Typography><Label>Technology Required:</Label> {log.oppTo?.technologyRequired?.join(", ")}</Typography>
+            <Grid>
+              <Typography>
+                <Label>Short Description:</Label> {log.oppTo?.shortDescription}
+              </Typography>
+              <Typography>
+                <Label>Technology Required:</Label>{" "}
+                {log.oppTo?.technologyRequired?.join(", ")}
+              </Typography>
             </Grid>
 
-            <Grid >
-              <Typography><Label>Detailed Notes:</Label> {log.oppTo?.detailedNotes}</Typography>
+            <Grid>
+              <Typography>
+                <Label>Detailed Notes:</Label> {log.oppTo?.detailedNotes}
+              </Typography>
             </Grid>
 
-            <Grid >
+            <Grid>
               <Label>Tech Rows:</Label>
               <Stack mt={1} spacing={1}>
                 {log.oppTo?.techRows?.map((row: any, i: number) => (
-                  <Paper key={i} sx={{ p: 2, borderRadius: 3, background: "#F1F1F1" }}>
+                  <Paper
+                    key={i}
+                    sx={{ p: 2, borderRadius: 3, background: "#F1F1F1" }}
+                  >
                     {row.technology} — {row.count}
                   </Paper>
                 ))}
@@ -260,9 +329,17 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
       {/* TIMELINE */}
       <SectionCard>
         <CardContent>
-          <SectionTitle>Timeline</SectionTitle>
-          <Typography><Label>Expected Start:</Label> {log.timeline?.expectedStart}</Typography>
-          <Typography><Label>Expected End:</Label> {log.timeline?.expectedEnd}</Typography>
+          <SectionTitle>
+            <Typography variant="h6" fontWeight={700} color="primary">
+              Timeline{" "}
+            </Typography>
+          </SectionTitle>
+          <Typography>
+            <Label>Expected Start:</Label> {log.timeline?.expectedStart}
+          </Typography>
+          <Typography>
+            <Label>Expected End:</Label> {log.timeline?.expectedEnd}
+          </Typography>
         </CardContent>
       </SectionCard>
     </PageContainer>
@@ -270,5 +347,3 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
 };
 
 export default LogDetailsPage;
-
-

@@ -9,12 +9,20 @@ import {
   Chip,
 } from "@mui/material";
 import type { Employee } from "../../store/reducers/employeeReducer";
+import { useNavigate } from "react-router-dom";
+import { getRouteRole } from "../../utils/getRouteRole";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
 
 interface EmployeeCardProps {
   employees: Employee[];
 }
 
 const EmployeeCard = ({ employees }: EmployeeCardProps) => {
+  console.log("employees", employees);
+  const navigate = useNavigate();
+  const { user } = useSelector((state: RootState) => state.auth);
+      const routeRole = getRouteRole(user?.role);
   return (
     <TableContainer
       component={Paper}
@@ -50,6 +58,9 @@ const EmployeeCard = ({ employees }: EmployeeCardProps) => {
                   backgroundColor: "#faf5ff",
                 },
               }}
+              onClick={() =>
+                navigate(`/${routeRole}/employee-logs/${employee?._id}`)
+              }
             >
               <TableCell sx={{ fontWeight: 600, color: "#4a148c" }}>
                 {employee.employeeName}

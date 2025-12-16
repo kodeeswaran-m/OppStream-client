@@ -13,6 +13,7 @@ import LogDetailsPageWrapper from "../pages/common/LogDetailsPageWrapper";
 import CreateUser from "../pages/admin/CreateUser";
 import UsersTable from "../pages/admin/UsersTable";
 import UpdateUserPage from "../pages/admin/UpdateUserPage";
+import EmployeeLogsList from "../pages/common/EmplopyeeLogsList";
 
 export const routeConfig: Record<UserRole, AppRoute[]> = {
   employee: [
@@ -48,6 +49,10 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
       // label: "Log Details",
       element: <LogDetailsPageWrapper />,
     },
+         {
+    path: "/manager/employee-logs/:id",
+    element: <EmployeeLogsList />,
+  },
   ],
 
   "associate manager": [
@@ -65,6 +70,10 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
       // label: "Log Details",
       element: <LogDetailsPageWrapper />,
     },
+         {
+    path: "/associate/employee-logs/:id",
+    element: <EmployeeLogsList />,
+  },
   ],
 
   VP: [
@@ -76,7 +85,12 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
       path: "/vp/logDetails/:id",
       // label: "Log Details",
       element: <LogDetailsPageWrapper />,
+      
     },
+      {
+    path: "/vp/employee-logs/:id",
+    element: <EmployeeLogsList />,
+  },
   ],
 
   admin: [

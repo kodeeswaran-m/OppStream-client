@@ -12,3 +12,11 @@ export const getEmployeeCounts = async () => {
   const response = await axios.get(`/api/employee/getEmployeeCounts`);
   return response.data;
 };
+
+export const getLogsByEmployeeId = async (id: string) => {
+  const response = await axios.get(
+    `/api/employee/getLogsByEmployeeId/${id}`
+  );
+  console.log("eee", response.data);
+  return response.data;
+};

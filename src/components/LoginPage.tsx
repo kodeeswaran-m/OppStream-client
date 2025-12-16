@@ -21,8 +21,8 @@ import {
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
 const Login = () => {
-  const [email, setEmail] = useState<string>("sam@gmail.com");
-  const [password, setPassword] = useState<string>("Sam@123");
+  const [email, setEmail] = useState<string>("buh@gmail.com");
+  const [password, setPassword] = useState<string>("Pass@123");
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
