@@ -78,18 +78,29 @@ interface LogDetailsProps {
 const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
   const [activeStep, setActiveStep] = useState(0);
 
-  const hasAnyAction = log.approvals.some(
-    (a: Approval) => a.status !== "PENDING"
-  );
+  // const hasAnyAction = log.approvals.some(
+  //   (a: Approval) => a.status !== "PENDING"
+  // );
 
-  const finalActiveStepIndex = log.approvals.findIndex(
+  // const finalActiveStepIndex = log.approvals.findIndex(
+  //   (a: Approval) => a.status === "PENDING"
+  // );
+
+  // const finalStep =
+  //   finalActiveStepIndex === -1
+  //     ? log.approvals.length
+  //     : finalActiveStepIndex;
+
+    const approvals = Array.isArray(log?.approvals) ? log.approvals : [];
+
+  const hasAnyAction = approvals.some((a: Approval) => a.status !== "PENDING");
+
+  const finalActiveStepIndex = approvals.findIndex(
     (a: Approval) => a.status === "PENDING"
   );
 
   const finalStep =
-    finalActiveStepIndex === -1
-      ? log.approvals.length
-      : finalActiveStepIndex;
+    finalActiveStepIndex === -1 ? approvals.length : finalActiveStepIndex;
 
   useEffect(() => {
     if (!hasAnyAction) return;
