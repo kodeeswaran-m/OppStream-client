@@ -17,7 +17,7 @@ import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch } from "redux-thunk";
 import { type AnyAction } from "redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { getApprovedOrRejectedLogs } from "../../store/actions/employeeActions";
 import type { RootState } from "../../store";
@@ -127,12 +127,16 @@ const ApprovalStatusLogsTable = () => {
         <Typography
           variant="h6"
           sx={{
-            paddingX: 2,
+            paddingX: 1,
             paddingY: 0.5,
-            fontSize: "16px",
+            fontSize: "12px",
             backgroundColor: "#EFE6F6",
             border: "1px solid #d6d6d6ff",
             borderRadius: "6px",
+            "&:hover": {
+              backgroundColor: "#e3e3e3ff",
+              transform: "scale(1.04)",
+            },
           }}
         >
           Count : {approvedOrRejectedLogsCount}
@@ -141,7 +145,7 @@ const ApprovalStatusLogsTable = () => {
 
       {/* Table */}
       <TableContainer component={Paper} sx={{ marginTop: 3 }}>
-        <Table>
+        <Table >
           <TableHead sx={{ backgroundColor: "#EFE6F6" }}>
             <TableRow>
               {columns.map((col) => (
@@ -161,6 +165,7 @@ const ApprovalStatusLogsTable = () => {
                   navigate(`/${routeRole}/logDetails/${log._id}`);
                 }}
                 sx={{
+                  height:30,
                   "&:hover": {
                     backgroundColor: "#e3e3e3ff",
                   },

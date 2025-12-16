@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createUser, getBusinessUnits } from "../../store/actions/adminActions";
 

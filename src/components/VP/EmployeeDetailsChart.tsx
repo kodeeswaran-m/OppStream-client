@@ -68,9 +68,7 @@ const EmployeeDetailsChart = () => {
   );
 
   return (
-    <Box
-      sx={{ backgroundColor: "#f4f2f5ff", paddingTop: 0.2 }}
-    >
+    <Box sx={{ backgroundColor: "#f4f2f5ff", paddingTop: 0.2 }}>
       <Grid
         container
         spacing={3}
@@ -84,9 +82,6 @@ const EmployeeDetailsChart = () => {
         }}
       >
         <Grid
-          item
-          xs={12}
-          md={9}
           sx={{
             display: "flex",
             gap: 2,
@@ -98,7 +93,7 @@ const EmployeeDetailsChart = () => {
             <CircularProgress />
           ) : (
             roleCards.map((item) => (
-              <Grid item xs={12} sm={6} md={3} key={item.name}>
+              <Grid key={item.name}>
                 <Paper
                   sx={{
                     p: 3,
@@ -125,7 +120,7 @@ const EmployeeDetailsChart = () => {
                     {item.labelName}
                   </Typography>
                   <Typography
-                    variant="h4"
+                    variant="h5"
                     fontWeight={700}
                     sx={{ color: item.color }}
                   >
@@ -136,7 +131,7 @@ const EmployeeDetailsChart = () => {
             ))
           )}
         </Grid>
-        <Grid item xs={12} md={9}>
+        <Grid >
           <Paper sx={{ p: 3, borderRadius: 3 }}>
             <Typography fontWeight={600} mb={2} sx={{ textAlign: "center" }}>
               Employee Distribution
@@ -146,7 +141,7 @@ const EmployeeDetailsChart = () => {
               <CircularProgress />
             ) : (
               <PieChart
-                key={windowWidth} 
+                key={windowWidth}
                 height={200}
                 margin={{ top: -10, bottom: -90 }}
                 series={[
@@ -161,8 +156,6 @@ const EmployeeDetailsChart = () => {
                     highlightScope: { fade: "global", highlight: "item" },
                     highlighted: { additionalRadius: 3 }, // expands arc
                     cornerRadius: 4, // rounded edges
-                    fade: true,
-
                     // Optional labels (enable if needed)
                     // arcLabel: (item) => `${item.value}`,
                     arcLabelRadius: "70%",
@@ -176,7 +169,26 @@ const EmployeeDetailsChart = () => {
                 slotProps={{
                   legend: {
                     position: { vertical: "top" },
-                    sx: { mt: 6 },
+                    sx: {
+                      mt: 6,
+
+                      // 👇 Legend label text
+                      "& .MuiChartsLegend-label": {
+                        fontSize: "10px",
+                        fontWeight: 700,
+                      },
+
+                      // 👇 Legend item spacing
+                      "& .MuiChartsLegend-item": {
+                        gap: "4px",
+                      },
+
+                      // 👇 Color marker size
+                      "& .MuiChartsLegend-mark": {
+                        width: 10,
+                        height: 10,
+                      },
+                    },
                   },
                 }}
               />

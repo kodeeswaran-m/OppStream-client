@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signup } from "../store/actions/authActions";
 import { useNavigate } from "react-router-dom";
@@ -65,7 +65,7 @@ const Signup = () => {
     >
       <Paper
         elevation={6}
-        sx={{ margin: 4, padding: 5, width: 380, borderRadius: 3 }}
+        sx={{ margin: 4, padding: 5, width: 320, borderRadius: 3 }}
       >
         <Typography variant="h5" fontWeight={600} textAlign="center" mb={3}>
           Create Account
@@ -137,10 +137,10 @@ const Signup = () => {
             {loading ? <CircularProgress size={22} /> : "Sign Up"}
           </Button>
 
-          <Typography textAlign="center" mt={2} fontSize={14} color="primary">
+          <Typography textAlign="center" mt={2} fontSize={14} color="black">
             Already have an account?
             <span
-              style={{ cursor: "pointer", textDecoration: "underline" }}
+              style={{ cursor: "pointer", textDecoration: "underline", color:"#8347ad" }}
               onClick={() => navigate("/login")}
             >
               Click here

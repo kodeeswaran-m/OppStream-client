@@ -1,5 +1,5 @@
 
-import { Box, Divider, Typography } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import LogDetailsChart from "../../components/VP/LogDetailsChart";
 import EmployeeDetailsChart from "../../components/VP/EmployeeDetailsChart";
 import EmployeeList from "../../components/VP/EmployeeList";

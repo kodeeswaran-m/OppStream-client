@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Box,
   Table,
-  Grid,
   TableHead,
   TableRow,
   TableCell,
@@ -18,7 +17,6 @@ import {
   Stack,
   Typography,
   CircularProgress,
-  Skeleton,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -93,9 +91,13 @@ const UsersTable = () => {
     fetchUsers();
   }, [searchTerm, roleFilter, currentPage, pageLimit, fetchUsers]);
 
-  const handlePageChange = (e: unknown, newPage: number) => {
-    setCurrentPage(newPage);
-  };
+  const handlePageChange = (
+  _event: React.MouseEvent<HTMLButtonElement> | null,
+  newPage: number
+) => {
+  setCurrentPage(newPage);
+};
+
 
   const handleLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPageLimit(parseInt(e.target.value, 10));

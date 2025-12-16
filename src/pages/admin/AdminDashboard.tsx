@@ -10,14 +10,31 @@ import EmployeeDirectory from "../../components/admin/EmployeeDirectory";
 import RecentActivityLogs from "../../components/admin/RecentActivityLogs";
 import CountUp from "react-countup";
 
-const COLORS = [
-  "#3b82f6",
-  "#8b5cf6",
-  "#f59e0b",
-  "#10b981",
-  "#ef4444",
-  "#06b6d4",
-];
+// const COLORS = [
+//   "#3b82f6",
+//   "#8b5cf6",
+//   "#f59e0b",
+//   "#10b981",
+//   "#ef4444",
+//   "#06b6d4",
+// ];
+export type ColumnVisibility = {
+  employeeId: boolean;
+  employeeName: boolean;
+  employeeEmail: boolean;
+  department: boolean;
+  team: boolean;
+  role: boolean;
+  totalExperience: boolean;
+  workLocation: boolean;
+  isAvailable: boolean;
+};
+interface Column {
+  field: keyof ColumnVisibility;
+  headerName: string;
+  width: number;
+  renderCell?: (params: any) => React.ReactNode;
+}
 
 export default function AdminDashboard() {
   const dispatch = useDispatch();
@@ -29,12 +46,13 @@ export default function AdminDashboard() {
   console.log("BU", businessUnits);
   console.log("Logs", logs);
 
-  const [selectedBU, setSelectedBU] = useState("all");
+  const [selectedBU] = useState("all");
+  // const [selectedBU, setSelectedBU] = useState("all");
   const [search, setSearch] = useState("");
 
   // Column Menu
   const [columnMenuAnchor, setColumnMenuAnchor] = useState(null);
-  const [columnVisibility, setColumnVisibility] = useState({
+  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>({
     employeeId: true,
     employeeName: true,
     employeeEmail: true,
@@ -50,8 +68,12 @@ export default function AdminDashboard() {
     dispatch(getAdminDashboardData() as any);
   }, []);
 
-  const toggleColumn = (field: string) =>
-    setColumnVisibility((prev) => ({ ...prev, [field]: !prev[field] }));
+  const toggleColumn = (field: keyof ColumnVisibility) => {
+    setColumnVisibility((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
+  };
 
   const handleColumnMenuOpen = (e: any) => setColumnMenuAnchor(e.currentTarget);
   const handleColumnMenuClose = () => setColumnMenuAnchor(null);
@@ -86,40 +108,41 @@ export default function AdminDashboard() {
   }, [employees, selectedBU, search]);
 
   // TEAM COUNTS
-  const teamCounts = filteredEmployees.reduce((acc: any, emp: any) => {
-    if (emp.team) acc[emp.team] = (acc[emp.team] || 0) + 1;
-    return acc;
-  }, {});
+  // const teamCounts = filteredEmployees.reduce((acc: any, emp: any) => {
+  //   if (emp.team) acc[emp.team] = (acc[emp.team] || 0) + 1;
+  //   return acc;
+  // }, {});
 
   // PIE CHART DATA
-  const combinedPieData = [
-    ...businessUnits.map((bu: any, idx: number) => {
-      const count = employees.filter((emp: any) => {
-        const empBU =
-          typeof emp.businessUnitId === "string"
-            ? emp.businessUnitId
-            : emp.businessUnitId?._id;
-        return empBU === bu._id;
-      }).length;
+  // const combinedPieData = [
+  //   ...businessUnits.map((bu: any, idx: number) => {
+  //     const count = employees.filter((emp: any) => {
+  //       const empBU =
+  //         typeof emp.businessUnitId === "string"
+  //           ? emp.businessUnitId
+  //           : emp.businessUnitId?._id;
+  //       return empBU === bu._id;
+  //     }).length;
 
-      return {
-        name: `BU: ${bu.name}`,
-        value: count,
-        type: "Business Unit",
-        color: COLORS[idx % COLORS.length],
-      };
-    }),
+  //     return {
+  //       name: `BU: ${bu.name}`,
+  //       value: count,
+  //       type: "Business Unit",
+  //       color: COLORS[idx % COLORS.length],
+  //     };
+  //   }),
 
-    ...Object.entries(teamCounts).map(([team, count], idx) => ({
-      name: `Team: ${team}`,
-      value: count,
-      type: "Team",
-      color: COLORS[(idx + 4) % COLORS.length],
-    })),
-  ];
+  //   ...Object.entries(teamCounts).map(([team, count], idx) => ({
+  //     name: `Team: ${team}`,
+  //     value: count,
+  //     type: "Team",
+  //     color: COLORS[(idx + 4) % COLORS.length],
+  //   })),
+  // ];
 
   // TABLE COLUMNS
-  const allColumns = [
+
+  const allColumns: Column[] = [
     { field: "employeeId", headerName: "Employee ID", width: 130 },
     { field: "employeeName", headerName: "Name", width: 150 },
     { field: "employeeEmail", headerName: "Email", width: 200 },
@@ -149,7 +172,9 @@ export default function AdminDashboard() {
     },
   ];
 
-  const visibleColumns = allColumns.filter((c) => columnVisibility[c.field]);
+  const visibleColumns = allColumns.filter(
+    (c: Column) => columnVisibility[c.field]
+  );
 
   // APPROVAL COUNT FUNCTION
   const getApprovalCount = (approvalArr: any[]) => {
@@ -160,7 +185,7 @@ export default function AdminDashboard() {
 
   return (
     <Box sx={{ backgroundColor: "#f4f2f5ff", padding: 4 }}>
-      <Grid container spacing={3} mt={6}>
+      <Grid container spacing={3} mt={6} alignItems="stretch">
         {[
           {
             title: "Total Employees",
@@ -197,11 +222,14 @@ export default function AdminDashboard() {
         ].map((item, idx) => {
           const Icon = item.icon;
           return (
-            <Grid item xs={12} sm={6} md={3} key={idx}>
+            <Grid key={idx}>
               <Paper
                 elevation={0}
                 sx={{
                   p: 3,
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
                   borderRadius: "14px",
                   border: `1px solid ${item.borderColor}`,
                   bgcolor: "white",
@@ -217,6 +245,7 @@ export default function AdminDashboard() {
                   display="flex"
                   alignItems="center"
                   justifyContent="space-between"
+                  width="100%"
                 >
                   <Box>
                     <Typography sx={{ color: "#475569", fontSize: "14px" }}>
@@ -225,7 +254,7 @@ export default function AdminDashboard() {
                     <Typography
                       sx={{
                         mt: 1,
-                        fontSize: "24px",
+                        fontSize: "16px",
                         fontWeight: "bold",
                         color: item.textColor,
                       }}
@@ -233,7 +262,6 @@ export default function AdminDashboard() {
                       <CountUp start={0} end={item.value} duration={2} />
                     </Typography>
                   </Box>
-
                   <Box
                     sx={{
                       p: 1,
@@ -242,8 +270,8 @@ export default function AdminDashboard() {
                       marginLeft: 3,
                     }}
                   >
-                    <Icon size={26} color={item.textColor} />
-                  </Box>
+                    <Icon size={20} color={item.textColor} />
+                  </Box>{" "}
                 </Box>
               </Paper>
             </Grid>
@@ -267,7 +295,7 @@ export default function AdminDashboard() {
         visibleColumns={visibleColumns}
       />
 
-      <RecentActivityLogs logs={logs} getApprovalCount={getApprovalCount} />
+      <RecentActivityLogs log={logs} getApprovalCount={getApprovalCount} />
     </Box>
   );
 }

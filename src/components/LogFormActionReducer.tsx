@@ -1,3 +1,5 @@
+import type { State, TechRow } from "./LogFormType";
+
 // ----------------------------- ACTION TYPES -----------------------------
 export type Action =
   | { type: "SET_FIELD"; field: keyof State; value: any }
@@ -25,13 +27,13 @@ export function reducer(state: State, action: Action): State {
     case "REMOVE_PEOPLE":
       return {
         ...state,
-        peoplePresent: state.peoplePresent.filter((_, i) => i !== action.index),
+        peoplePresent: state.peoplePresent.filter((_:{name:string}, i:number) => i !== action.index),
       };
 
     case "UPDATE_PEOPLE":
       return {
         ...state,
-        peoplePresent: state.peoplePresent.map((p, i) =>
+        peoplePresent: state.peoplePresent.map((p:{name:string}, i:number) =>
           i === action.index ? { name: action.value } : p
         ),
       };
@@ -40,7 +42,7 @@ export function reducer(state: State, action: Action): State {
       return {
         ...state,
         selectedTechnologies: action.value,
-        techRows: state.techRows.filter((row) =>
+        techRows: state.techRows.filter((row:TechRow) =>
           action.value.includes(row.technology)
         ),
       };
@@ -61,16 +63,16 @@ export function reducer(state: State, action: Action): State {
     case "REMOVE_TECH_ROW":
       return {
         ...state,
-        techRows: state.techRows.filter((_, i) => i !== action.index),
+        techRows: state.techRows.filter((_:TechRow, i:number) => i !== action.index),
       };
 
     case "UPDATE_TECH_ROW":
-      const updatedRows = state.techRows.map((row, i) =>
+      const updatedRows = state.techRows.map((row:TechRow, i:number) =>
         i === action.index ? { ...row, [action.field]: action.value } : row
       );
 
       const total = updatedRows.reduce(
-        (sum, r) => sum + Number(r.count || 0),
+        (sum:number, r:TechRow) => sum + Number(r.count || 0),
         0
       );
 
