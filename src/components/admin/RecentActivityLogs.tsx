@@ -150,7 +150,7 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
             connector={<PurpleConnector />}
             sx={{ mt: 3, mb: 1 }}
           >
-            {log.approvals.map((a: Approval, i: number) => (
+            {approvals.map((a: Approval, i: number) => (
               <Step key={i} completed={a.status !== "PENDING"}>
                 <StepLabel
                   error={a.status === "REJECTED"}
