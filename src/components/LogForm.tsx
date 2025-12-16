@@ -284,7 +284,7 @@ const LOGForm = () => {
         {(state.requirementType === "EE" || state.requirementType === "EN") && (
           <>
             <Typography mt={4}  fontWeight={"bold"} variant="h6">
-              Opp. From
+              Opportunity Source
             </Typography>
  
             <Grid container spacing={2} mt={1}>
@@ -318,7 +318,7 @@ const LOGForm = () => {
                   select
                   fullWidth
                   size="small"
-                  label="Urgency Level"
+                  label="Priority Level"
                   // sx={fieldStyle}
                   value={state.urgency}
                   onChange={(e) =>
@@ -386,7 +386,7 @@ const LOGForm = () => {
             {/* People Present */}
             <Grid>
               <Typography fontWeight="bold" mt={2}>
-                People Present
+                Participants
               </Typography>
  
               {state.peoplePresent.map((p:{name:string}, i:number) => (
@@ -441,7 +441,7 @@ const LOGForm = () => {
  
             {/* ───────────────────── OPP TO ───────────────────── */}
             <Typography mt={4} fontWeight={"bold"} variant="h6">
-              Opp. To
+              Opportunity To
             </Typography>
  
             <Grid container spacing={2} mt={3}>
@@ -539,7 +539,7 @@ const LOGForm = () => {
                 <Grid minWidth={230}>
                   <TextField
                     fullWidth
-                    label="Count"
+                    label="Needed Count"
                     type="number"
                     // sx={fieldStyle}
                     size="small"
