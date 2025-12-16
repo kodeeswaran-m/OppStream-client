@@ -58,7 +58,7 @@ const RecentActivityLogs = ({
                   }}
                 >
                   {/* Created By + Role */}
-                  <Grid>
+                  <Grid >
                     <Box
                       display="flex"
                       alignItems="center"
@@ -82,6 +82,7 @@ const RecentActivityLogs = ({
  
                   {/* Requirement Type Chip */}
                   <Grid
+                
                     display="flex"
                     justifyContent={{ xs: "flex-start", sm: "flex-end" }}
                   >
@@ -104,7 +105,7 @@ const RecentActivityLogs = ({
                 {/* Bottom Row */}
                 <Grid container spacing={2} mt={1}>
                   {/* Approvals */}
-                  <Grid >
+                  <Grid>
                     <Box display="flex" alignItems="center" gap={1}>
                       <CheckCircle size={16} color="#16a34a" />
                       <Typography color="text.secondary">
@@ -114,7 +115,7 @@ const RecentActivityLogs = ({
                   </Grid>
  
                   {/* Created Time */}
-                  <Grid >
+                  <Grid>
                     <Box display="flex" alignItems="center" gap={1}>
                       <Clock size={16} color="#ea580c" />
                       <Typography variant="caption">
