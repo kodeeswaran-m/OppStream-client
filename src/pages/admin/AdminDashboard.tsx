@@ -295,7 +295,7 @@ export default function AdminDashboard() {
         visibleColumns={visibleColumns}
       />
 
-      <RecentActivityLogs log={logs} getApprovalCount={getApprovalCount} />
+      <RecentActivityLogs logs={logs} getApprovalCount={getApprovalCount} />
     </Box>
   );
 }
