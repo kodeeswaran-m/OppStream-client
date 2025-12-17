@@ -36,10 +36,6 @@ const EmployeeDashboard = () => {
     dispatch(getCurrentEmployee());
   }, [dispatch]);
 
-  // const handleLogout = () => {
-  //   dispatch(logout());
-  //   navigate("/login");
-  // };
 
   if (loading || !currentUserDetails) {
     return (

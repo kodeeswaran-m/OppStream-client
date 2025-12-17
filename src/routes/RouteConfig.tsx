@@ -24,23 +24,36 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
     {
       path: "/employee/dashboard",
       label: "Dashboard",
+      breadcrumb: "Dashboard",
+
       element: <EmployeeDashboard />,
       icon: <DashboardIcon fontSize="small" />,
     },
-    { path: "/employee/form", element: <EmployeeFormPage /> },
+    {
+      path: "/employee/form",
+      breadcrumb: "Update Profile",
+      parentPath: "/employee/viewProfile",
+      element: <EmployeeFormPage />,
+    },
     {
       path: "/employee/viewProfile",
+      breadcrumb: "View Profile",
+      parentPath: "/employee/dashboard",
+
       element: <ProfilePage />,
     },
     {
       path: "/employee/log",
       icon: <DescriptionIcon fontSize="small" />,
+      breadcrumb: "Log Form",
       label: "Log",
       element: <LogPage />,
     },
     {
       path: "/employee/logTable",
       label: "Log Table",
+      breadcrumb: "Log Tables",
+
       icon: <TableChartIcon fontSize="small" />,
       element: <UserLogsTable />,
     },
@@ -51,6 +64,7 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
       path: "/manager/dashboard",
       label: "Dashboard",
       breadcrumb: "Dashboard",
+      icon: <DashboardIcon fontSize="small" />,
       element: <ReportingManagerDashboard />,
     },
     {
@@ -97,39 +111,100 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
     {
       path: "/associate/dashboard",
       label: "Dashboard",
-      element: <VPDashboard />,
-      // element: <AssociateManagerDashboard />,
-    },
-    { path: "/associate/form", element: <EmployeeFormPage /> },
-    { path: "/associate/viewProfile", element: <ProfilePage /> },
+      breadcrumb: "Dashboard",
 
-    { path: "/associate/logForm", label: "Log Form", element: <LogPage /> },
-    { path: "/associate/logTables", label: "Table", element: <LogTables /> },
+      icon: <DashboardIcon fontSize="small" />,
+      element: <VPDashboard />,
+    },
+    {
+      path: "/associate/form",
+      breadcrumb: "Update Profile",
+      parentPath: "/associate/viewProfile",
+      element: <EmployeeFormPage />,
+    },
+    {
+      path: "/associate/viewProfile",
+      breadcrumb: "View Profile",
+      parentPath: "/associate/dashboard",
+      element: <ProfilePage />,
+    },
+
+    {
+      path: "/associate/logForm",
+      label: "Log Form",
+      breadcrumb: "Log Form",
+      icon: <DescriptionIcon fontSize="small" />,
+      element: <LogPage />,
+    },
+    {
+      path: "/associate/logTables",
+      label: "Table",
+      icon: <TableChartIcon fontSize="small" />,
+      breadcrumb: "Log Tables",
+
+      element: <LogTables />,
+    },
     {
       path: "/associate/logDetails/:id",
       // label: "Log Details",
+      breadcrumb: "Log Details",
+      parentPath: "/associate/logTables",
       element: <LogDetailsPageWrapper />,
     },
     {
       path: "/associate/employee-logs/:id",
+      breadcrumb: "Employee Logs",
+
       element: <EmployeeLogsList />,
     },
   ],
 
   VP: [
-    { path: "/vp/dashboard", label: "Dashboard", element: <VPDashboard /> },
-    { path: "/vp/form", element: <EmployeeFormPage /> },
-    { path: "/vp/viewProfile", element: <ProfilePage /> },
+    {
+      path: "/vp/dashboard",
+      label: "Dashboard",
+      breadcrumb: "Dashboard",
 
-    { path: "/vp/logForm", label: "Log Form", element: <LogPage /> },
-    { path: "/vp/logTables", label: "Table", element: <LogTables /> },
+      icon: <DashboardIcon fontSize="small" />,
+      element: <VPDashboard />,
+    },
+    {
+      path: "/vp/form",
+      breadcrumb: "Update Profile",
+      parentPath: "/vp/viewProfile",
+      element: <EmployeeFormPage />,
+    },
+    {
+      path: "/vp/viewProfile",
+      breadcrumb: "View Profile",
+      parentPath: "/vp/dashboard",
+      element: <ProfilePage />,
+    },
+
+    {
+      path: "/vp/logForm",
+      label: "Log Form",
+      icon: <DescriptionIcon fontSize="small" />,
+      breadcrumb: "Log Form",
+      element: <LogPage />,
+    },
+    {
+      path: "/vp/logTables",
+      label: "Table",
+      icon: <TableChartIcon fontSize="small" />,
+       breadcrumb: "Log Tables",
+      element: <LogTables />,
+    },
     {
       path: "/vp/logDetails/:id",
       // label: "Log Details",
+          breadcrumb: "Log Details",
+      parentPath: "/vp/logTables",
       element: <LogDetailsPageWrapper />,
     },
     {
       path: "/vp/employee-logs/:id",
+      breadcrumb: "Employee Logs",
       element: <EmployeeLogsList />,
     },
   ],
