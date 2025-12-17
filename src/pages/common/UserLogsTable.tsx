@@ -15,6 +15,7 @@ import { type AnyAction } from "redux";
 import { useEffect } from "react";
 import { getVisibleLogs } from "../../store/actions/employeeActions";
 import type { RootState } from "../../store";
+import TableSkeleton from "../../components/common/TableSkeleton";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -29,7 +30,7 @@ const columns = [
 ];
 
 const UserLogsTable = () => {
-  const { userLogs, userLogscount } = useSelector(
+  const { loading, userLogs, userLogscount } = useSelector(
     (state: RootState) => state.employee
   );
 
@@ -70,76 +71,83 @@ const UserLogsTable = () => {
         return "-";
     }
   };
-
+  if (loading) {
+    return <TableSkeleton rows={6} columns={columns.length} />;
+  }
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          fontSize: "18px",
-          fontWeight: "bold",
-          paddingX: 2,
-          paddingY: 1,
-        }}
-      >
-
-        <Typography
-          variant="h6"
+      {userLogs.length !== 0 ? (
+        <>
+          {" "}
+          <Box
             sx={{
-            paddingX: 1,
-            paddingY: 0.5,
-            fontSize: "12px",
-            backgroundColor: "#EFE6F6",
-            border: "1px solid #d6d6d6ff",
-            borderRadius: "6px",
-            "&:hover": {
-              backgroundColor: "#e3e3e3ff",
-              transform: "scale(1.04)",
-            },
-          }}
-        >
-          Count : {userLogscount}
-        </Typography>
-      </Box>
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              fontSize: "18px",
+              fontWeight: "bold",
+              paddingX: 2,
+              paddingY: 1,
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                paddingX: 1,
+                paddingY: 0.5,
+                fontSize: "12px",
+                backgroundColor: "#EFE6F6",
+                border: "1px solid #d6d6d6ff",
+                borderRadius: "6px",
+                "&:hover": {
+                  backgroundColor: "#e3e3e3ff",
+                  transform: "scale(1.04)",
+                },
+              }}
+            >
+              Count : {userLogscount}
+            </Typography>
+          </Box>
+          <TableContainer component={Paper} sx={{ marginTop: 3 }}>
+            <Table>
+              {/* TABLE HEAD */}
+              <TableHead sx={{ backgroundColor: "#EFE6F6" }}>
+                <TableRow>
+                  {columns.map((col) => (
+                    <TableCell key={col.key}>
+                      <strong>{col.label}</strong>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
 
-      <TableContainer component={Paper} sx={{ marginTop: 3 }}>
-        <Table>
-          {/* TABLE HEAD */}
-          <TableHead sx={{ backgroundColor: "#EFE6F6" }}>
-            <TableRow>
-              {columns.map((col) => (
-                <TableCell key={col.key}>
-                  <strong>{col.label}</strong>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-
-          {/* TABLE BODY */}
-          <TableBody>
-            {userLogs.map((log) => (
-              <TableRow
-                key={log._id}
-                sx={{
-                  cursor: "pointer",
-                  "&:hover": {
-                    backgroundColor: "#e3e3e3ff",
-                    // cursor: "pointer",
-                  },
-                }}
-              >
-                {columns.map((col) => (
-                  <TableCell key={col.key}>
-                    {getCellValue(log, col.key)}
-                  </TableCell>
+              {/* TABLE BODY */}
+              <TableBody>
+                {userLogs.map((log) => (
+                  <TableRow
+                    key={log._id}
+                    sx={{
+                      cursor: "pointer",
+                      "&:hover": {
+                        backgroundColor: "#e3e3e3ff",
+                        // cursor: "pointer",
+                      },
+                    }}
+                  >
+                    {columns.map((col) => (
+                      <TableCell key={col.key}>
+                        {getCellValue(log, col.key)}
+                      </TableCell>
+                    ))}
+                  </TableRow>
                 ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </>
+      ) : (
+        <Typography textAlign={"center"}>No logs found.</Typography>
+      )}
     </>
   );
 };

@@ -65,7 +65,7 @@ const EmployeeLogsList = () => {
   if (logs.length === 0) {
     return (
       <Box p={4} textAlign="center">
-        <Typography variant="h6">No logs found</Typography>
+        <Typography  marginTop={5} variant="h6">No logs found</Typography>
       </Box>
     );
   }
@@ -73,9 +73,9 @@ const EmployeeLogsList = () => {
   const employee = logs[0]?.createdBy;
 
   return (
-    <Box p={4} mt={5}>
+    <Box p={4} >
       {/* ---------- Header ---------- */}
-      <Typography variant="h5" fontWeight={600} mb={1}>
+      <Typography variant="h5" fontWeight={600} mt={5} mb={1}>
         Employee Logs
       </Typography>
 

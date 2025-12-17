@@ -4,6 +4,11 @@ import { getUserApprovalCounts } from "../../services/logService";
 import { Box, Typography, Paper, CircularProgress, Grid } from "@mui/material";
 
 import { PieChart } from "@mui/x-charts";
+import LogDetailsChartSkeleton from "../common/LogDetailsChartSkeleton";
+import { useNavigate } from "react-router-dom";
+import { getRouteRole } from "../../utils/getRouteRole";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
 
 const LogDetailsChart = () => {
   const [counts, setCounts] = useState({
@@ -11,10 +16,10 @@ const LogDetailsChart = () => {
     rejected: 0,
     pending: 0,
   });
-  console.log("counts", counts);
   const [loading, setLoading] = useState<boolean>(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
+  const navigate = useNavigate();
+  const { user } = useSelector((state: RootState) => state.auth);
   useEffect(() => {
     const onResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", onResize);
@@ -48,7 +53,7 @@ const LogDetailsChart = () => {
     { name: "rejected", labelName: "Rejected", color: "red" },
     { name: "pending", labelName: "Pending", color: "orange" },
   ];
-
+  if (loading) return <LogDetailsChartSkeleton />;
   return (
     <Box sx={{ backgroundColor: "#f4f2f5ff", paddingTop: 0.2 }}>
       <Grid
@@ -57,84 +62,91 @@ const LogDetailsChart = () => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "top",
+          justifyContent: "flex-start",
+          alignItems: "center",
           margin: 4,
           mt: 8,
         }}
       >
-        <Grid >
+        <Grid>
           <Paper sx={{ p: 3, borderRadius: 3 }}>
             <Typography fontWeight={600} mb={2} sx={{ textAlign: "center" }}>
               Approval Status Overview
             </Typography>
 
-            {loading ? (
-              <CircularProgress />
-            ) : (
-              <PieChart
-                key={windowWidth} // 👈 Important
-                height={200}
-                margin={{
-                  top: -10,
-                  bottom: -90,
-                }}
-                series={[
-                  {
-                    startAngle: -90,
-                    endAngle: 90,
-                    paddingAngle: 0.6,
-                    innerRadius: "60%",
-                    outerRadius: "90%",
-                    data: pieData,
+            <PieChart
+              key={windowWidth} // 👈 Important
+              height={200}
+              margin={{
+                top: -10,
+                bottom: -90,
+              }}
+              series={[
+                {
+                  startAngle: -90,
+                  endAngle: 90,
+                  paddingAngle: 0.6,
+                  innerRadius: "60%",
+                  outerRadius: "90%",
+                  data: pieData,
 
-                    highlightScope: { fade: "global", highlight: "item" },
-                    highlighted: { additionalRadius: 3 },
-                    cornerRadius: 4,
-                    // arcLabel: (item) => `${item.value}`,
-                    arcLabelRadius: "70%",
-                  },
-                ]}
-                sx={{
-                  "& .MuiPieArc-root": {
-                    transition: "all 0.2s ease", // smooth animation
-                  },
-                }}
-                slotProps={{
-                  legend: {
-                    position: { vertical: "top" },
-                    sx: {
-                      mt: 6,
+                  highlightScope: { fade: "global", highlight: "item" },
+                  highlighted: { additionalRadius: 3 },
+                  cornerRadius: 4,
+                  // arcLabel: (item) => `${item.value}`,
+                  arcLabelRadius: "70%",
+                },
+              ]}
+              sx={{
+                "& .MuiPieArc-root": {
+                  transition: "all 0.2s ease", // smooth animation
+                },
+              }}
+              slotProps={{
+                legend: {
+                  position: { vertical: "top" },
+                  sx: {
+                    mt: 6,
 
-                      // 👇 Legend label text
-                      "& .MuiChartsLegend-label": {
-                        fontSize: "10px",
-                        fontWeight:700
-                      },
+                    // 👇 Legend label text
+                    "& .MuiChartsLegend-label": {
+                      fontSize: "10px",
+                      fontWeight: 700,
+                    },
 
-                      // 👇 Legend item spacing
-                      "& .MuiChartsLegend-item": {
-                        gap: "4px",
-                      },
+                    // 👇 Legend item spacing
+                    "& .MuiChartsLegend-item": {
+                      gap: "4px",
+                    },
 
-                      // 👇 Color marker size
-                      "& .MuiChartsLegend-mark": {
-                        width: 10,
-                        height: 10,
-                      },
+                    // 👇 Color marker size
+                    "& .MuiChartsLegend-mark": {
+                      width: 10,
+                      height: 10,
                     },
                   },
-                }}
-              />
-            )}
+                },
+              }}
+            />
           </Paper>
         </Grid>
-        <Grid
-          sx={{ display: "flex", gap: 2, justifyContent: "center" }}
-        >
+        <Grid sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
           {cards.map((item) => (
             <Grid key={item.name}>
               <Paper
+                onClick={() => {
+                  if (item?.name === "accepted" || item?.name === "rejected") {
+                    const roleRoute = getRouteRole(user?.role);
+                    navigate(`/${roleRoute}/logTables`, {
+                      state: { activeTab: 1 },
+                    });
+                  } else if (item?.name === "pending") {
+                    const roleRoute = getRouteRole(user?.role);
+                    navigate(`/${roleRoute}/logTables`, {
+                      state: { activeTab: 0 },
+                    });
+                  }
+                }}
                 sx={{
                   p: 3,
                   textAlign: "center",

@@ -61,12 +61,16 @@ export interface Employee {
 
   ancestors?: string[];
 
-  businessUnitId: string;
+  businessUnitId: {
+    _id:string,
+    name:string
+  };
 
   department?: string;
   team?: string;
 
   skills?: {
+    _id:string,
     skillName: string;
     proficiencyLevel: string;
     experience: number;

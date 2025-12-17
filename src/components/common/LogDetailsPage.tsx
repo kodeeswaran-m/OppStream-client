@@ -117,7 +117,7 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
   }, []);
 
   return (
-    <PageContainer sx={{ backgroundColor: "#ede9f0ff" }}>
+    <PageContainer >
       <Typography
         variant="h5"
         fontWeight={700}

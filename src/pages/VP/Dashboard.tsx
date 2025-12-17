@@ -1,4 +1,3 @@
-
 import { Box, Divider } from "@mui/material";
 import LogDetailsChart from "../../components/VP/LogDetailsChart";
 import EmployeeDetailsChart from "../../components/VP/EmployeeDetailsChart";
@@ -7,20 +6,43 @@ import EmployeeList from "../../components/VP/EmployeeList";
 const VPDashboard = () => {
   return (
     <Box sx={{ backgroundColor: "#f4f2f5ff", minHeight: "100vh" }}>
-      
       {/* Charts Section */}
-      <Box
+      {/* <Box
+        // sx={{
+        //   display: "flex",
+        //   flexWrap: "wrap",
+        //   // gap: 2,
+        //   justifyContent: "center",
+        //   alignItems: "center",
+        //   pt: 4,
+        // }}
+
         sx={{
           display: "flex",
-          flexWrap: "wrap",
-          // gap: 2,
-          justifyContent: "center",
-          alignItems: "center",
+          flexWrap: "nowrap", 
+          justifyContent: "space-evenly",
+          // alignItems: "stretch",
+          gap: 2,
           pt: 4,
         }}
       >
         <LogDetailsChart />
         <EmployeeDetailsChart />
+      </Box> */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent:"space-evenly",
+          flexDirection: { xs: "column", md: "row" },
+          // gap: 4,
+          pt: 4,
+        }}
+      >
+       
+          <LogDetailsChart />
+        
+
+          <EmployeeDetailsChart />
       </Box>
 
       {/* Divider Section */}
@@ -35,4 +57,3 @@ const VPDashboard = () => {
 };
 
 export default VPDashboard;
-
