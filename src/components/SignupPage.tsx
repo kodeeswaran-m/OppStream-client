@@ -27,23 +27,59 @@ const Signup = () => {
     (state: RootState) => state.auth
   );
 
-  const [username, setUsername] = useState("sam");
-  const [role, setRole] = useState("employee");
-  const [email, setEmail] = useState("sam@gmail.com");
-  const [password, setPassword] = useState("Sam@123");
-  const [confirmPassword, setConfirmPassword] = useState("Sam@123");
+  const [username, setUsername] = useState("");
+  const [role, setRole] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  /* =========================
+     VALIDATION FUNCTION
+  ========================= */
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!username.trim()) errors.username = "Username is required";
+    if (!role) errors.role = "Role is required";
+
+    if (!email.trim()) {
+      errors.email = "Email is required";
+    } else if (!emailRegex.test(email)) {
+      errors.email = "Invalid email format";
+    }
+
+    if (!password) {
+      errors.password = "Password is required";
+    } else if (password.length < 6) {
+      errors.password = "Password must be at least 6 characters";
+    }
+
+    if (!confirmPassword) {
+      errors.confirmPassword = "Confirm password is required";
+    } else if (password !== confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  /* =========================
+     SUBMIT HANDLER
+  ========================= */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // dispatch(signup(username, email, password, confirmPassword, role));
+
+    if (!validateForm()) return;
 
     const result = await dispatch(
       signup(username, email, password, confirmPassword, role)
     );
 
-    console.log("Signup result =>", result);
-
-    if (result.success) {
+    if (result?.success) {
       navigate("/login");
     }
   };
@@ -56,7 +92,6 @@ const Signup = () => {
     <Box
       sx={{
         minHeight: "100vh",
-        minWidth: "100vw",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -65,30 +100,34 @@ const Signup = () => {
     >
       <Paper
         elevation={6}
-        sx={{ margin: 4, padding: 5, width: 320, borderRadius: 3 }}
+        sx={{ padding: 5, width: 350, borderRadius: 3 }}
       >
         <Typography variant="h5" fontWeight={600} textAlign="center" mb={3}>
           Create Account
         </Typography>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <TextField
             fullWidth
             label="Username"
-            value={username}
             size="small"
-            sx={{ mb: 2 }}
+            value={username}
             onChange={(e) => setUsername(e.target.value)}
+            error={!!formErrors.username}
+            helperText={formErrors.username}
+            sx={{ mb: 2 }}
           />
 
           <TextField
             select
             fullWidth
             label="Role"
-            value={role}
             size="small"
-            sx={{ mb: 2 }}
+            value={role}
             onChange={(e) => setRole(e.target.value)}
+            error={!!formErrors.role}
+            helperText={formErrors.role}
+            sx={{ mb: 2 }}
           >
             <MenuItem value="employee">Employee</MenuItem>
             <MenuItem value="reporting manager">Reporting Manager</MenuItem>
@@ -100,10 +139,12 @@ const Signup = () => {
           <TextField
             fullWidth
             label="Email"
-            value={email}
             size="small"
-            sx={{ mb: 2 }}
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
+            error={!!formErrors.email}
+            helperText={formErrors.email}
+            sx={{ mb: 2 }}
           />
 
           <TextField
@@ -112,8 +153,10 @@ const Signup = () => {
             label="Password"
             size="small"
             value={password}
-            sx={{ mb: 2 }}
             onChange={(e) => setPassword(e.target.value)}
+            error={!!formErrors.password}
+            helperText={formErrors.password}
+            sx={{ mb: 2 }}
           />
 
           <TextField
@@ -122,28 +165,33 @@ const Signup = () => {
             label="Confirm Password"
             size="small"
             value={confirmPassword}
-            sx={{ mb: 3 }}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            error={!!formErrors.confirmPassword}
+            helperText={formErrors.confirmPassword}
+            sx={{ mb: 3 }}
           />
 
           <Button
             variant="contained"
             fullWidth
             type="submit"
-            size="small"
             disabled={loading}
             sx={{ py: 1.2, fontWeight: 600 }}
           >
             {loading ? <CircularProgress size={22} /> : "Sign Up"}
           </Button>
 
-          <Typography textAlign="center" mt={2} fontSize={14} color="black">
-            Already have an account?
+          <Typography textAlign="center" mt={2} fontSize={14}>
+            Already have an account?{" "}
             <span
-              style={{ cursor: "pointer", textDecoration: "underline", color:"#8347ad" }}
+              style={{
+                cursor: "pointer",
+                textDecoration: "underline",
+                color: "#8347ad",
+              }}
               onClick={() => navigate("/login")}
             >
-              Click here
+              Login
             </span>
           </Typography>
         </form>
