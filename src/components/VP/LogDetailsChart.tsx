@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getUserApprovalCounts } from "../../services/logService";
 
-import { Box, Typography, Paper, CircularProgress, Grid } from "@mui/material";
+import { Box, Typography, Paper, Grid } from "@mui/material";
 
 import { PieChart } from "@mui/x-charts";
 import LogDetailsChartSkeleton from "../common/LogDetailsChartSkeleton";

@@ -1,8 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store";
-import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { logout } from "../../store/actions/authActions";
 import { getCurrentEmployee } from "../../store/actions/employeeActions";
 
 import {
@@ -28,7 +26,7 @@ import {
 
 const EmployeeDashboard = () => {
   const dispatch = useDispatch<any>();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const { currentUserDetails, loading } = useSelector(
     (state: RootState) => state.employee
@@ -38,10 +36,10 @@ const EmployeeDashboard = () => {
     dispatch(getCurrentEmployee());
   }, [dispatch]);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
-  };
+  // const handleLogout = () => {
+  //   dispatch(logout());
+  //   navigate("/login");
+  // };
 
   if (loading || !currentUserDetails) {
     return (
@@ -94,7 +92,7 @@ const EmployeeDashboard = () => {
 
       <Grid container spacing={3}>
         {/* LEFT PROFILE */}
-        <Grid item xs={12} md={2} width={400}>
+        <Grid >
           <Paper sx={{ p: 3, borderRadius: 4 }}>
             <Stack alignItems="center" spacing={1}>
               <Avatar
@@ -125,12 +123,12 @@ const EmployeeDashboard = () => {
               <InfoRow
                 icon={<Phone />}
                 label="Contact"
-                value={emp.contactNumber}
+                value={emp.contactNumber??""}
               />
               <InfoRow
                 icon={<LocationOn />}
                 label="Location"
-                value={emp.workLocation}
+                value={emp.workLocation??""}
               />
               <InfoRow
                 icon={<Work />}
@@ -153,13 +151,13 @@ const EmployeeDashboard = () => {
         </Grid>
 
         {/* RIGHT DETAILS */}
-        <Grid item xs={12} md={8}>
+        <Grid >
           {/* ORGANIZATION */}
           <Paper sx={{ p: 3, borderRadius: 4, mb: 3 }}>
             <SectionTitle title="Organization Details" />
 
             <Grid container spacing={2}>
-              <Detail label="Team" value={emp.team} />
+              <Detail label="Team" value={emp.team??""} />
               <Detail
                 label="Reporting Manager"
                 value={emp.managerId?.employeeName || "—"}
@@ -240,7 +238,7 @@ const SectionTitle = ({ title }: { title: string }) => (
 );
 
 const Detail = ({ label, value }: { label: string; value: string }) => (
-  <Grid item xs={12} sm={6}>
+  <Grid >
     <Typography variant="body2">
       <b>{label}:</b> {value}
     </Typography>
