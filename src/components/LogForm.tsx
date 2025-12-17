@@ -1,4 +1,4 @@
-import  { useEffect, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import {
   Box,
   Typography,
@@ -30,10 +30,9 @@ import { useSnackbar } from "../context/SnackbarContext";
 import { getRouteRole } from "../utils/getRouteRole";
 import { useNavigate } from "react-router-dom";
 import type { State } from "./LogFormType";
- 
+
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
- 
- 
+
 // --------------------- INITIAL STATE ---------------------
 const initialState: State = {
   employeeId: "",
@@ -43,7 +42,7 @@ const initialState: State = {
   team: "",
   manager: "",
   requirementType: "EE",
- 
+
   projectName: "demo",
   clientName: "demo",
   projectCode: "demo",
@@ -52,27 +51,30 @@ const initialState: State = {
   callDate: "2025-12-09",
   screenshot: null,
   peoplePresent: [{ name: "sam" }],
- 
+
   selectedTechnologies: ["React"],
   totalPersons: 4,
   techRows: [{ technology: "React", count: 4 }],
- 
+
   oppCategory: "New Feature",
   shortDescription: "demo des",
   detailedNotes: "demo description",
- 
+
   expectedStart: "2025-12-25",
   expectedEnd: "2027-01-01",
- 
+
   nnDescription: "demo",
   nnClientName: "demo",
   nnSource: "demo",
   nnOppFrom: "demo",
 };
- 
-// ============================================================
-//                       COMPONENT
-// ============================================================
+const PROJECT_OPTIONS = [
+  "Internal Tool",
+  "Client Portal",
+  "Analytics Dashboard",
+  "Mobile App",
+];
+
 const LOGForm = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const thunkDispatch: AppDispatch = useDispatch();
@@ -80,16 +82,25 @@ const LOGForm = () => {
   const { currentUserDetails } = useSelector(
     (state: RootState) => state.employee
   );
- 
-  console.log("state", state.techRows);
+console.log("satte", state);
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
-  console.log("empllllllll", currentUserDetails);
- 
+
   // ---------------------- AUTO-FILL USER DATA ----------------------
   useEffect(() => {
     thunkDispatch(getCurrentEmployee());
   }, []);
+
+  useEffect(() => {
+    if (state.requirementType === "EE") {
+      dispatch({
+        type: "SET_FIELD",
+        field: "projectName",
+        value: "",
+      });
+    }
+  }, [state.requirementType]);
+
   useEffect(() => {
     const user = {
       employeeId: currentUserDetails?.employeeId,
@@ -99,7 +110,7 @@ const LOGForm = () => {
       team: currentUserDetails?.team,
       manager: currentUserDetails?.managerId?.employeeName,
     };
- 
+
     for (const key in user) {
       dispatch({
         type: "SET_FIELD",
@@ -108,12 +119,12 @@ const LOGForm = () => {
       });
     }
   }, []);
- 
+
   // ---------------------- SUBMIT ----------------------
   const handleSubmit = async () => {
     const payload = {
       requirementType: state.requirementType,
- 
+
       oppFrom:
         state.requirementType === "NN"
           ? undefined
@@ -127,7 +138,7 @@ const LOGForm = () => {
               meetingScreenshot: state.screenshot,
               peoplePresent: state.peoplePresent,
             },
- 
+
       oppTo:
         state.requirementType === "NN"
           ? undefined
@@ -139,7 +150,7 @@ const LOGForm = () => {
               shortDescription: state.shortDescription,
               detailedNotes: state.detailedNotes,
             },
- 
+
       nnDetails:
         state.requirementType === "NN"
           ? {
@@ -149,13 +160,13 @@ const LOGForm = () => {
               oppFrom: state.nnOppFrom,
             }
           : undefined,
- 
+
       timeline: {
         expectedStart: state.expectedStart,
         expectedEnd: state.expectedEnd,
       },
     };
- 
+
     const result = await thunkDispatch(createUserLog(payload));
     if (result.success) {
       showMessage("Log created successfully.");
@@ -165,10 +176,10 @@ const LOGForm = () => {
       showMessage("Error.");
     }
   };
- 
+
   const canAddMoreRows = () =>
     state.techRows.length < state.selectedTechnologies.length;
- 
+
   return (
     <Box
       sx={{
@@ -192,12 +203,12 @@ const LOGForm = () => {
         <Typography variant="h5" fontWeight="bold" mb={3} color="#48206F">
           Log Form
         </Typography>
- 
+
         {/* ───────────────────── EMPLOYEE DETAILS ───────────────────── */}
         <Typography variant="h6" fontWeight={"bold"} mb={2}>
           Employee Details
         </Typography>
- 
+
         <Grid container spacing={2}>
           {[
             ["Employee ID", "employeeId"],
@@ -219,7 +230,7 @@ const LOGForm = () => {
             />
             // </Grid>
           ))}
- 
+
           {/* Requirement Type */}
           <Grid minWidth={190}>
             <TextField
@@ -243,11 +254,11 @@ const LOGForm = () => {
             </TextField>
           </Grid>
         </Grid>
- 
+
         {/* ───────────────────── NN SECTION ───────────────────── */}
         {state.requirementType === "NN" && (
           <>
-            <Typography mt={4}  fontWeight={"bold"} variant="h6">
+            <Typography mt={4} fontWeight={"bold"} variant="h6">
               NN Details
             </Typography>
             <Grid container spacing={2} mt={1}>
@@ -277,20 +288,58 @@ const LOGForm = () => {
             </Grid>
           </>
         )}
- 
+
         <Divider sx={{ marginTop: 4 }} />
- 
+
         {/* ───────────────────── OPP FROM (EE/EN only) ───────────────────── */}
         {(state.requirementType === "EE" || state.requirementType === "EN") && (
           <>
-            <Typography mt={4}  fontWeight={"bold"} variant="h6">
+            <Typography mt={4} fontWeight={"bold"} variant="h6">
               Opportunity Source
             </Typography>
- 
+
             <Grid container spacing={2} mt={1}>
-              {/* Standard fields */}
+              <Grid size={3}>
+                {state.requirementType === "EE" ? (
+                  <TextField
+                    select
+                    fullWidth
+                    size="small"
+                    label="Project Name"
+                    value={state.projectName}
+                    onChange={(e) =>
+                      dispatch({
+                        type: "SET_FIELD",
+                        field: "projectName",
+                        value: e.target.value,
+                      })
+                    }
+                  >
+                    {PROJECT_OPTIONS.map((project) => (
+                      <MenuItem key={project} value={project}>
+                        {project}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                ) : (
+                  <TextField
+                    // fullWidth
+                    size="small"
+                    label="Project Name"
+                    value={state.projectName}
+                    onChange={(e) =>
+                      dispatch({
+                        type: "SET_FIELD",
+                        field: "projectName",
+                        value: e.target.value,
+                      })
+                    }
+                  />
+                )}
+              </Grid>
+
               {[
-                ["Project Name", "projectName"],
+                // ["Project Name", "projectName"],
                 ["Client Name", "clientName"],
                 ["Project Code", "projectCode"],
               ].map(([label, field]) => (
@@ -311,7 +360,7 @@ const LOGForm = () => {
                   />
                 </Grid>
               ))}
- 
+
               {/* Urgency */}
               <Grid size={3}>
                 <TextField
@@ -334,7 +383,7 @@ const LOGForm = () => {
                   <MenuItem value="Normal">Normal</MenuItem>
                 </TextField>
               </Grid>
- 
+
               {/* Meeting Type */}
               <Grid size={3}>
                 <TextField
@@ -359,7 +408,7 @@ const LOGForm = () => {
                   <MenuItem value="Presentation">Presentation</MenuItem>
                 </TextField>
               </Grid>
- 
+
               {/* Date */}
               <Grid size={3}>
                 <TextField
@@ -379,7 +428,7 @@ const LOGForm = () => {
                   }
                 />
               </Grid>
- 
+
               {/* Spacing row */}
               <Grid />
             </Grid>
@@ -388,8 +437,8 @@ const LOGForm = () => {
               <Typography fontWeight="bold" mt={2}>
                 Participants
               </Typography>
- 
-              {state.peoplePresent.map((p:{name:string}, i:number) => (
+
+              {state.peoplePresent.map((p: { name: string }, i: number) => (
                 <Grid
                   container
                   spacing={1}
@@ -413,7 +462,7 @@ const LOGForm = () => {
                       }
                     />
                   </Grid>
- 
+
                   <Grid>
                     <IconButton
                       color="error"
@@ -427,7 +476,7 @@ const LOGForm = () => {
                   </Grid>
                 </Grid>
               ))}
- 
+
               <Button
                 sx={{ mt: 2, border: "1px solid #8347ad" }}
                 startIcon={<AddCircleIcon />}
@@ -436,14 +485,14 @@ const LOGForm = () => {
                 Add Person
               </Button>
             </Grid>
- 
+
             <Divider sx={{ marginTop: 4 }} />
- 
+
             {/* ───────────────────── OPP TO ───────────────────── */}
             <Typography mt={4} fontWeight={"bold"} variant="h6">
               Opportunity To
             </Typography>
- 
+
             <Grid container spacing={2} mt={3}>
               {/* Tech Select */}
               <Grid minWidth={230}>
@@ -470,7 +519,7 @@ const LOGForm = () => {
                   </Select>
                 </FormControl>
               </Grid>
- 
+
               {/* Total Persons */}
               <Grid minWidth={230}>
                 <TextField
@@ -482,7 +531,7 @@ const LOGForm = () => {
                 />
               </Grid>
             </Grid>
- 
+
             {/* Add Tech Row */}
             <Box mt={2}>
               <Button
@@ -495,79 +544,86 @@ const LOGForm = () => {
                 Add Technology Row
               </Button>
             </Box>
- 
+
             {/* Dynamic Tech Rows */}
-            {state.techRows.map((row:{technology:string, count:number}, index:number) => (
-              <Grid
-                container
-                spacing={2}
-                alignItems="center"
-                key={index}
-                sx={{ mt: 1 }}
-              >
-                <Grid minWidth={230}>
-                  <TextField
-                    select
-                    fullWidth
-                    label="Technology"
-                    // sx={fieldStyle}
-                    size="small"
-                    value={row.technology}
-                    onChange={(e) =>
-                      dispatch({
-                        type: "UPDATE_TECH_ROW",
-                        index,
-                        field: "technology",
-                        value: e.target.value,
-                      })
-                    }
-                  >
-                    {state.selectedTechnologies
-                      .filter(
-                        (tech:string) =>
-                          tech === row.technology ||
-                          !state.techRows.some((r:{technology:string, count:number}) => r.technology === tech)
-                      )
-                      .map((tech:string) => (
-                        <MenuItem key={tech} value={tech}>
-                          {tech}
-                        </MenuItem>
-                      ))}
-                  </TextField>
+            {state.techRows.map(
+              (row: { technology: string; count: number }, index: number) => (
+                <Grid
+                  container
+                  spacing={2}
+                  alignItems="center"
+                  key={index}
+                  sx={{ mt: 1 }}
+                >
+                  <Grid minWidth={230}>
+                    <TextField
+                      select
+                      fullWidth
+                      label="Technology"
+                      // sx={fieldStyle}
+                      size="small"
+                      value={row.technology}
+                      onChange={(e) =>
+                        dispatch({
+                          type: "UPDATE_TECH_ROW",
+                          index,
+                          field: "technology",
+                          value: e.target.value,
+                        })
+                      }
+                    >
+                      {state.selectedTechnologies
+                        .filter(
+                          (tech: string) =>
+                            tech === row.technology ||
+                            !state.techRows.some(
+                              (r: { technology: string; count: number }) =>
+                                r.technology === tech
+                            )
+                        )
+                        .map((tech: string) => (
+                          <MenuItem key={tech} value={tech}>
+                            {tech}
+                          </MenuItem>
+                        ))}
+                    </TextField>
+                  </Grid>
+
+                  <Grid minWidth={230}>
+                    <TextField
+                      fullWidth
+                      label="Needed Count"
+                      type="number"
+                      // sx={fieldStyle}
+                      size="small"
+                      value={row.count}
+                      inputProps={{ min: 0 }} // 👈 prevents -ve input
+                      onChange={(e) =>
+                        dispatch({
+                          type: "UPDATE_TECH_ROW",
+                          index,
+                          field: "count",
+                          value: e.target.value,
+                        })
+                      }
+                    />
+                  </Grid>
+
+                  <Grid>
+                    <IconButton
+                      color="error"
+                      sx={{ outline: "none" }}
+                      onClick={() =>
+                        dispatch({ type: "REMOVE_TECH_ROW", index })
+                      }
+                    >
+                      <RemoveCircleIcon />
+                    </IconButton>
+                  </Grid>
                 </Grid>
- 
-                <Grid minWidth={230}>
-                  <TextField
-                    fullWidth
-                    label="Needed Count"
-                    type="number"
-                    // sx={fieldStyle}
-                    size="small"
-                    value={row.count}
-                    inputProps={{ min: 0 }} // 👈 prevents -ve input
-                    onChange={(e) =>
-                      dispatch({
-                        type: "UPDATE_TECH_ROW",
-                        index,
-                        field: "count",
-                        value: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
- 
-                <Grid>
-                  <IconButton
-                    color="error"
-                    sx={{outline:"none"}}
-                    onClick={() => dispatch({ type: "REMOVE_TECH_ROW", index })}
-                  >
-                    <RemoveCircleIcon />
-                  </IconButton>
-                </Grid>
-              </Grid>
-            ))}
- 
+              )
+            )}
+
             {/* Category and Notes */}
             <Grid container spacing={2} mt={3}>
               <Grid minWidth={230}>
@@ -591,7 +647,7 @@ const LOGForm = () => {
                   <MenuItem value="Others">Others</MenuItem>
                 </TextField>
               </Grid>
- 
+
               <Grid minWidth={230}>
                 <TextField
                   fullWidth
@@ -608,7 +664,7 @@ const LOGForm = () => {
                   }
                 />
               </Grid>
- 
+
               <Grid minWidth={230}>
                 <TextField
                   fullWidth
@@ -630,14 +686,14 @@ const LOGForm = () => {
             </Grid>
           </>
         )}
- 
+
         <Divider sx={{ marginTop: 4 }} />
- 
+
         {/* ───────────────────── TIMELINE ───────────────────── */}
         <Typography mt={4} fontWeight={"bold"} variant="h6">
           Expected Timeline
         </Typography>
- 
+
         <Grid container spacing={2} mt={1}>
           <Grid minWidth={230}>
             <TextField
@@ -657,7 +713,7 @@ const LOGForm = () => {
               }
             />
           </Grid>
- 
+
           <Grid minWidth={230}>
             <TextField
               type="date"
@@ -677,7 +733,7 @@ const LOGForm = () => {
             />
           </Grid>
         </Grid>
- 
+
         {/* Submit */}
         <Box textAlign="center" mt={4}>
           <Button
@@ -698,5 +754,5 @@ const LOGForm = () => {
     </Box>
   );
 };
- 
+
 export default LOGForm;

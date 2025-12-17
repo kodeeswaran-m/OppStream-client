@@ -27,6 +27,7 @@ import { logout } from "../../store/actions/authActions";
 import type { ThunkDispatch } from "redux-thunk";
 import type { AnyAction } from "redux";
 import { getRouteRole } from "../../utils/getRouteRole";
+import LoginIcon from '@mui/icons-material/Login';
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -62,11 +63,22 @@ const Navbar = () => {
   };
 
   // Menu Items based on role
+  // const menuItems =
+  //   role && routeConfig[role]
+  //     ? routeConfig[role]
+  //         .filter((r) => r.label)
+  //         .map((r) => ({ label: r.label!, path: r.path }))
+  //     : [];
+
   const menuItems =
     role && routeConfig[role]
       ? routeConfig[role]
           .filter((r) => r.label)
-          .map((r) => ({ label: r.label!, path: r.path }))
+          .map((r) => ({
+            label: r.label!,
+            path: r.path,
+            icon: r.icon,
+          }))
       : [];
 
   return (
@@ -148,6 +160,7 @@ const Navbar = () => {
                   <Button
                     component={Link}
                     to="/login"
+                    startIcon={<LoginIcon/>}
                     sx={{
                       color: "white",
                       ...(location.pathname === "/login" ? activeStyle : {}),
@@ -171,12 +184,25 @@ const Navbar = () => {
 
               {isLoggedIn &&
                 menuItems.map((item) => (
+                  // <Button
+                  //   key={item.path}
+                  //   component={Link}
+                  //   to={item.path}
+                  //   sx={{
+                  //     color: "white",
+                  //     ...(location.pathname === item.path ? activeStyle : {}),
+                  //   }}
+                  // >
+                  //   {item.label}
+                  // </Button>
                   <Button
                     key={item.path}
                     component={Link}
                     to={item.path}
+                    startIcon={item.icon}
                     sx={{
                       color: "white",
+                      textTransform: "none",
                       ...(location.pathname === item.path ? activeStyle : {}),
                     }}
                   >
@@ -211,11 +237,11 @@ const Navbar = () => {
                         onClick={() => {
                           const routeRole = getRouteRole(user?.role);
                           console.log("routerole", routeRole);
-                          navigate(`/${routeRole}/form`);
+                          navigate(`/${routeRole}/viewProfile`);
                           handleClose();
                         }}
                       >
-                        Update Profile
+                        View Profile
                       </MenuItem>
                     ) : (
                       ""
@@ -304,8 +330,8 @@ const Navbar = () => {
                 </ListItem>
 
                 <ListItem disablePadding>
-                  <ListItemButton component={Link} to="/employee/update">
-                    <ListItemText primary="Update Profile" />
+                  <ListItemButton component={Link} to="/employee/viewProfile">
+                    <ListItemText primary="View Profile" />
                   </ListItemButton>
                 </ListItem>
 

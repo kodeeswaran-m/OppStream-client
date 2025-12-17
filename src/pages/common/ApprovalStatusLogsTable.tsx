@@ -23,6 +23,7 @@ import { getApprovedOrRejectedLogs } from "../../store/actions/employeeActions";
 import type { RootState } from "../../store";
 import { useNavigate } from "react-router-dom";
 import { getRouteRole } from "../../utils/getRouteRole";
+import TableSkeleton from "../../components/common/TableSkeleton";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -40,7 +41,7 @@ const columns = [
 ];
 
 const ApprovalStatusLogsTable = () => {
-  const { approvedOrRejectedLogs, approvedOrRejectedLogsCount } = useSelector(
+  const { loading, approvedOrRejectedLogs, approvedOrRejectedLogsCount } = useSelector(
     (state: RootState) => state.employee
   );
   const { user } = useSelector((state: RootState) => state.auth);
@@ -111,11 +112,13 @@ const ApprovalStatusLogsTable = () => {
         return "-";
     }
   };
-
+if (loading) {
+  return <TableSkeleton rows={6} columns={columns.length} />;
+}
   return (
     <>
-      {/* Header */}
-      <Box
+    {
+      approvedOrRejectedLogs.length!==0?<>      <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
@@ -180,7 +183,10 @@ const ApprovalStatusLogsTable = () => {
             ))}
           </TableBody>
         </Table>
-      </TableContainer>
+      </TableContainer></>:<Typography textAlign={"center"}>No logs found.</Typography>
+    }
+      {/* Header */}
+
     </>
   );
 };

@@ -8,6 +8,7 @@ import type { RootState } from "../../store";
 import { getCurrentEmployee } from "../../store/actions/employeeActions";
 import type { ThunkDispatch } from "redux-thunk";
 import type { AnyAction } from "redux";
+import EmployeeDetailsChartSkeleton from "../common/EmployeeDetailsChartSkeleton";
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
 const EmployeeDetailsChart = () => {
@@ -66,6 +67,7 @@ const EmployeeDetailsChart = () => {
     (item) =>
       item.labelName.toLowerCase() !== currentUserDetails?.role?.toLowerCase()
   );
+  if(loading) return <EmployeeDetailsChartSkeleton/>
 
   return (
     <Box sx={{ backgroundColor: "#f4f2f5ff", paddingTop: 0.2 }}>
@@ -89,9 +91,7 @@ const EmployeeDetailsChart = () => {
             flexWrap: "wrap",
           }}
         >
-          {loading ? (
-            <CircularProgress />
-          ) : (
+          {
             roleCards.map((item) => (
               <Grid key={item.name}>
                 <Paper
@@ -129,7 +129,7 @@ const EmployeeDetailsChart = () => {
                 </Paper>
               </Grid>
             ))
-          )}
+          }
         </Grid>
         <Grid >
           <Paper sx={{ p: 3, borderRadius: 3 }}>
@@ -137,9 +137,7 @@ const EmployeeDetailsChart = () => {
               Employee Distribution
             </Typography>
 
-            {loading ? (
-              <CircularProgress />
-            ) : (
+            {
               <PieChart
                 key={windowWidth}
                 height={200}
@@ -150,7 +148,7 @@ const EmployeeDetailsChart = () => {
                     endAngle: 90,
                     innerRadius: "60%",
                     outerRadius: "90%",
-                    paddingAngle: 1,
+                    paddingAngle: 0.6,
                     data: pieData,
 
                     highlightScope: { fade: "global", highlight: "item" },
@@ -192,7 +190,7 @@ const EmployeeDetailsChart = () => {
                   },
                 }}
               />
-            )}
+            }
           </Paper>
         </Grid>
       </Grid>

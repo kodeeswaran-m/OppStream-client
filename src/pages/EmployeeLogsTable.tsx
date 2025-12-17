@@ -15,6 +15,7 @@ import { type AnyAction } from "redux";
 import { useEffect } from "react";
 import { getReportingEmployeeLogs } from "../store/actions/employeeActions";
 import type { RootState } from "../store";
+import TableSkeleton from "../components/common/TableSkeleton";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -30,7 +31,7 @@ const columns = [
 ];
 
 const EmployeeLogsTable = () => {
-  const { reportingEmployeeLogs, repEmpLogsCount } = useSelector(
+  const { loading, reportingEmployeeLogs, repEmpLogsCount } = useSelector(
     (state: RootState) => state.employee
   );
 
@@ -73,9 +74,14 @@ const EmployeeLogsTable = () => {
         return "-";
     }
   };
-
+  if (loading) {
+    return <TableSkeleton rows={6} columns={columns.length} />;
+  }
   return (
     <>
+
+     {reportingEmployeeLogs.length !== 0 ? (
+            <>
       <Box
         sx={{
           display: "flex",
@@ -148,6 +154,11 @@ const EmployeeLogsTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+            </>
+          ) : (
+            <Typography textAlign={"center"}>No logs found.</Typography>
+          )}
+
     </>
   );
 };

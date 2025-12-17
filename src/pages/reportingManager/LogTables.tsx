@@ -4,13 +4,22 @@ import EmployeeLogsTable from "../EmployeeLogsTable";
 import UserLogsTable from "../common/UserLogsTable";
 import PendingApprovalLogsTable from "../common/PendingApprovalLogsTable";
 import ApprovalStatusLogsTable from "../common/ApprovalStatusLogsTable";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 const LogTables = () => {
-  const [value, setValue] = useState(0);
+  const location = useLocation();
+  const [value, setValue] = useState<number>(location.state?.activeTab ?? 0);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    if (location.state?.activeTab !== undefined) {
+      setValue(location.state.activeTab);
+    }
+  }, [location.state]);
 
   return (
     <Box
@@ -45,7 +54,7 @@ const LogTables = () => {
               paddingY: 0,
               borderRadius: "10px",
               transition: "0.9s",
-              outline:"none"
+              outline: "none",
             },
             "& .Mui-selected": {
               color: "#8347AD",
@@ -63,18 +72,18 @@ const LogTables = () => {
         </Tabs>
 
         {/* Tab Panels */}
-        <Box sx={{padding:2}} hidden={value !== 0}>
+        <Box sx={{ padding: 2 }} hidden={value !== 0}>
           <PendingApprovalLogsTable />
         </Box>
 
-        <Box sx={{padding:2}} hidden={value !== 1}>
+        <Box sx={{ padding: 2 }} hidden={value !== 1}>
           <ApprovalStatusLogsTable />
         </Box>
-        <Box sx={{padding:2}} hidden={value !== 2}>
+        <Box sx={{ padding: 2 }} hidden={value !== 2}>
           <EmployeeLogsTable />
         </Box>
 
-        <Box sx={{padding:2}} hidden={value !== 3}>
+        <Box sx={{ padding: 2 }} hidden={value !== 3}>
           <UserLogsTable />
         </Box>
       </Paper>

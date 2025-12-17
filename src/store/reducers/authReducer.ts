@@ -1,3 +1,4 @@
+import type { UserRole } from "../../routes/routeTypes";
 import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
@@ -16,7 +17,8 @@ import {
 interface User{
   username?:string,
   email?:string,
-  role?:string
+  role?:UserRole
+  // role?:string
 }
 interface AuthState {
   accessToken: string | null;
