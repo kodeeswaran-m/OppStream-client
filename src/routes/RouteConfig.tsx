@@ -62,9 +62,9 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
   "reporting manager": [
     {
       path: "/manager/dashboard",
+      icon: <DashboardIcon fontSize="small" />,
       label: "Dashboard",
       breadcrumb: "Dashboard",
-      icon: <DashboardIcon fontSize="small" />,
       element: <ReportingManagerDashboard />,
     },
     {
@@ -110,10 +110,9 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
   "associate manager": [
     {
       path: "/associate/dashboard",
+      icon: <DashboardIcon fontSize="small" />,
       label: "Dashboard",
       breadcrumb: "Dashboard",
-
-      icon: <DashboardIcon fontSize="small" />,
       element: <VPDashboard />,
     },
     {
@@ -131,15 +130,17 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
 
     {
       path: "/associate/logForm",
+      icon: <DescriptionIcon fontSize="small" />,
+
       label: "Log Form",
       breadcrumb: "Log Form",
-      icon: <DescriptionIcon fontSize="small" />,
       element: <LogPage />,
     },
     {
       path: "/associate/logTables",
-      label: "Table",
       icon: <TableChartIcon fontSize="small" />,
+
+      label: "Table",
       breadcrumb: "Log Tables",
 
       element: <LogTables />,
@@ -162,10 +163,10 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
   VP: [
     {
       path: "/vp/dashboard",
+      icon: <DashboardIcon fontSize="small" />,
+
       label: "Dashboard",
       breadcrumb: "Dashboard",
-
-      icon: <DashboardIcon fontSize="small" />,
       element: <VPDashboard />,
     },
     {
@@ -183,23 +184,25 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
 
     {
       path: "/vp/logForm",
-      label: "Log Form",
       icon: <DescriptionIcon fontSize="small" />,
+
+      label: "Log Form",
       breadcrumb: "Log Form",
       element: <LogPage />,
     },
     {
       path: "/vp/logTables",
-      label: "Table",
       icon: <TableChartIcon fontSize="small" />,
-       breadcrumb: "Log Tables",
+
+      label: "Table",
+      breadcrumb: "Log Tables",
       element: <LogTables />,
     },
     {
       path: "/vp/logDetails/:id",
       // label: "Log Details",
-          breadcrumb: "Log Details",
-      parentPath: "/vp/logTables",
+      breadcrumb: "Log Details",
+      parentPath: "/vp  /logTables",
       element: <LogDetailsPageWrapper />,
     },
     {
