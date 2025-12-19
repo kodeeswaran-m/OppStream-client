@@ -149,7 +149,7 @@ const EmployeeFormPage = () => {
     <Box
       sx={{
         minHeight: "100vh",
-        background: "#EFE6F6",
+        background: "#F2F2F2",
         padding: "120px 24px 40px",
       }}
     >

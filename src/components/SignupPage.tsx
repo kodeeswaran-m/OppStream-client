@@ -95,14 +95,14 @@ const Signup = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#f5f5f5",
+        backgroundColor: "#F2F2F2",
       }}
     >
       <Paper
         elevation={6}
-        sx={{ padding: 5, width: 350, borderRadius: 3 }}
+        sx={{ padding: 5, width: 350, borderRadius: 3,  mt:10}}
       >
-        <Typography variant="h5" fontWeight={600} textAlign="center" mb={3}>
+        <Typography variant="h5" fontWeight={600} textAlign="center" mb={3} >
           Create Account
         </Typography>
 

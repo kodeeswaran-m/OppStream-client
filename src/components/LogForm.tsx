@@ -185,7 +185,7 @@ console.log("satte", state);
       sx={{
         minHeight: "100vh",
         p: 6, // more spacing around the page
-        background: "#F7F5FF", // lighter landscape
+        background: "#F2F2F2", // lighter landscape
         display: "flex",
         justifyContent: "center",
       }}

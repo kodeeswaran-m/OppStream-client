@@ -103,7 +103,7 @@ const EmployeeLogsTable = () => {
             paddingX: 1,
             paddingY: 0.5,
             fontSize: "12px",
-            backgroundColor: "#EFE6F6",
+            backgroundColor: "#F2F2F2",
             border: "1px solid #d6d6d6ff",
             borderRadius: "6px",
             "&:hover": {

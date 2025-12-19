@@ -67,7 +67,7 @@ const EmployeeDashboard = () => {
     <Box
       sx={{
         minHeight: "100vh",
-        backgroundColor: "#f4f6fb",
+        backgroundColor: "#F2F2F2",
         px: { xs: 2, md: 5 },
         py: 5,
         mt: 6,

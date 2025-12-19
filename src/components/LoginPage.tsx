@@ -78,7 +78,7 @@ const Login = () => {
       alignItems="center"
       minHeight="100vh"
       minWidth="100vw"
-      sx={{ backgroundColor: "#f4f6f8" }}
+      sx={{ backgroundColor: "#F2F2F2" }}
     >
       <Paper elevation={6} sx={{ padding: 4, width: 340, borderRadius: 3 }}>
         <Typography variant="h5" fontWeight={600} textAlign="center" mb={3}>

@@ -86,6 +86,7 @@ const UserLogsTable = () => {
               alignItems: "center",
               fontSize: "18px",
               fontWeight: "bold",
+              margin:2,
               paddingX: 2,
               paddingY: 1,
             }}
@@ -96,7 +97,7 @@ const UserLogsTable = () => {
                 paddingX: 1,
                 paddingY: 0.5,
                 fontSize: "12px",
-                backgroundColor: "#EFE6F6",
+                backgroundColor: "#F2F2F2",
                 border: "1px solid #d6d6d6ff",
                 borderRadius: "6px",
                 "&:hover": {
@@ -108,7 +109,7 @@ const UserLogsTable = () => {
               Count : {userLogscount}
             </Typography>
           </Box>
-          <TableContainer component={Paper} sx={{ marginTop: 3 }}>
+          <TableContainer component={Paper} sx={{ marginTop: 3}}>
             <Table>
               {/* TABLE HEAD */}
               <TableHead sx={{ backgroundColor: "#EFE6F6" }}>

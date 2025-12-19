@@ -19,7 +19,7 @@ import StepConnector, {
 
 const PageContainer = styled(Box)(() => ({
   padding: "30px",
-  background: "#F5F7FA",
+  background: "#F2F2F2",
   minHeight: "100vh",
 }));
 
