@@ -15,6 +15,7 @@ import {
   Typography,
   Paper,
   CircularProgress,
+  Collapse,
 } from "@mui/material";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
@@ -34,6 +35,15 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        dispatch({ type: "CLEAR_AUTH_ERROR" });
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [error, dispatch]);
 
   /* =========================
      VALIDATION FUNCTION
@@ -100,9 +110,9 @@ const Signup = () => {
     >
       <Paper
         elevation={6}
-        sx={{ padding: 5, width: 350, borderRadius: 3,  mt:10}}
+        sx={{ padding: 5, width: 350, borderRadius: 3, mt: 10 }}
       >
-        <Typography variant="h5" fontWeight={600} textAlign="center" mb={3} >
+        <Typography variant="h5" fontWeight={600} textAlign="center" mb={3}>
           Create Account
         </Typography>
 
@@ -197,9 +207,11 @@ const Signup = () => {
         </form>
 
         {error && (
-          <Typography color="error" textAlign="center" mt={2}>
-            {error}
-          </Typography>
+          <Collapse in={!!error}>
+            <Typography color="error" textAlign="center" mt={2}>
+              {error}
+            </Typography>
+          </Collapse>
         )}
       </Paper>
     </Box>

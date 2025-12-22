@@ -16,6 +16,7 @@ import {
   Paper,
   CircularProgress,
   Alert,
+  Collapse,
 } from "@mui/material";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
@@ -36,6 +37,15 @@ const Login = () => {
   useEffect(() => {
     if (accessToken) navigate("/dashboard");
   }, [accessToken, navigate]);
+useEffect(() => {
+  if (error) {
+    const timer = setTimeout(() => {
+      dispatch({ type: "CLEAR_AUTH_ERROR" });
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }
+}, [error, dispatch]);
 
   /* =========================
      VALIDATION
@@ -113,9 +123,11 @@ const Login = () => {
           />
 
           {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {error}
-            </Alert>
+            <Collapse in={!!error}>
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {error}
+              </Alert>
+            </Collapse>
           )}
 
           <Button
