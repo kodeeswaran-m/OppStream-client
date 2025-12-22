@@ -10,9 +10,10 @@ import {
   Box,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import type { ThunkDispatch } from "redux-thunk";
-import { type AnyAction } from "redux";
 import { useEffect } from "react";
+import type { ThunkDispatch } from "redux-thunk";
+import type { AnyAction } from "redux";
+
 import { getVisibleLogs } from "../../store/actions/employeeActions";
 import type { RootState } from "../../store";
 import TableSkeleton from "../../components/common/TableSkeleton";
@@ -38,13 +39,13 @@ const UserLogsTable = () => {
 
   useEffect(() => {
     dispatch(getVisibleLogs());
-  }, []);
+  }, [dispatch]);
 
-  // Helper: Convert log + column to value
+  // Helper to resolve cell values
   const getCellValue = (log: any, key: string) => {
     switch (key) {
       case "requirementType":
-        return log.requirementType;
+        return log.requirementType || "-";
 
       case "projectName":
         return log.oppFrom?.projectName || "-";
@@ -62,6 +63,7 @@ const UserLogsTable = () => {
         return log.timeline?.expectedStart
           ? new Date(log.timeline.expectedStart).toLocaleDateString()
           : "-";
+
       case "expectedEnd":
         return log.timeline?.expectedEnd
           ? new Date(log.timeline.expectedEnd).toLocaleDateString()
@@ -71,58 +73,77 @@ const UserLogsTable = () => {
         return "-";
     }
   };
+
   if (loading) {
     return <TableSkeleton rows={6} columns={columns.length} />;
   }
+
   return (
     <>
-      {userLogs.length !== 0 ? (
+      {userLogs.length > 0 ? (
         <>
-          {" "}
+          {/* Header / Count */}
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              fontSize: "18px",
-              fontWeight: "bold",
-              margin:2,
-              paddingX: 2,
-              paddingY: 1,
+              px: 2,
+              py: 1,
+              width: "100%",
             }}
           >
             <Typography
-              variant="h6"
               sx={{
-                paddingX: 1,
-                paddingY: 0.5,
                 fontSize: "12px",
+                fontWeight: 600,
+                px: 1.5,
+                py: 0.6,
                 backgroundColor: "#F2F2F2",
-                border: "1px solid #d6d6d6ff",
+                border: "1px solid #d6d6d6",
                 borderRadius: "6px",
-                "&:hover": {
-                  backgroundColor: "#e3e3e3ff",
-                  transform: "scale(1.04)",
-                },
               }}
             >
-              Count : {userLogscount}
+              Count: {userLogscount}
             </Typography>
           </Box>
-          <TableContainer component={Paper} sx={{ marginTop: 3}}>
+
+          {/* Table */}
+          <TableContainer
+            component={Paper}
+            sx={{
+              px:1.5,
+              width: "98%",
+              mt: 1,
+              borderRadius: "10px",
+              boxShadow: "0 4px 14px rgba(0,0,0,0.06)",
+              overflowX: "auto",
+            }}
+          >
             <Table>
-              {/* TABLE HEAD */}
-              <TableHead sx={{ backgroundColor: "#EFE6F6"}}>
+              {/* Table Head */}
+              <TableHead
+                sx={{
+                  
+                  backgroundColor: "#EFE6F6",
+                  "& .MuiTableCell-root": {
+                    px:1.5,
+                    fontWeight: 600,
+                    fontSize: "1.4rem",
+                    color: "#333",
+                    py: 1.5,
+                    borderBottom: "1px solid #ddd",
+                  },
+                }}
+              >
                 <TableRow>
                   {columns.map((col) => (
-                    <TableCell key={col.key}>
-                      <strong>{col.label}</strong>
-                    </TableCell>
+                    <TableCell key={col.key}>{col.label}</TableCell>
                   ))}
                 </TableRow>
               </TableHead>
 
-              {/* TABLE BODY */}
+              {/* Table Body */}
               <TableBody>
                 {userLogs.map((log) => (
                   <TableRow
@@ -130,13 +151,26 @@ const UserLogsTable = () => {
                     sx={{
                       cursor: "pointer",
                       "&:hover": {
-                        backgroundColor: "#e3e3e3ff",
-                        // cursor: "pointer",
+                        backgroundColor: "#f1f1f1",
+                        height:"100%",
+                      },
+                      "&:last-child td": {
+                        borderBottom: 0,
                       },
                     }}
                   >
                     {columns.map((col) => (
-                      <TableCell key={col.key}>
+                      <TableCell
+                        key={col.key}
+                        sx={{
+                          fontSize: "1.35rem",
+                          
+                          py: 1.4,
+                          color: "#444",
+                          borderBottom: "1px solid #eee",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
                         {getCellValue(log, col.key)}
                       </TableCell>
                     ))}
@@ -147,7 +181,16 @@ const UserLogsTable = () => {
           </TableContainer>
         </>
       ) : (
-        <Typography textAlign={"center"}>No logs found.</Typography>
+        <Typography
+          sx={{
+            textAlign: "center",
+            mt: 4,
+            fontSize: "1.4rem",
+            color: "#777",
+          }}
+        >
+          No logs found.
+        </Typography>
       )}
     </>
   );
