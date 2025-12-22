@@ -169,7 +169,7 @@ const Navbar = () => {
                     Login
                   </Button>
 
-                  <Button
+                  {/* <Button
                     component={Link}
                     to="/signup"
                     sx={{
@@ -178,7 +178,7 @@ const Navbar = () => {
                     }}
                   >
                     Signup
-                  </Button>
+                  </Button> */}
                 </>
               )}
 
