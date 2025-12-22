@@ -36,7 +36,10 @@ import {
   GET_APPROVED_OR_REJECTED_LOGS_FAILURE,
 } from "../constants/employeeConstants";
 
-// ---------- CREATE OR UPDATE EMPLOYEE ----------
+/* ----------------------------------------------------
+   EMPLOYEE CRUD
+---------------------------------------------------- */
+
 export const upsertEmployee = (formData: any) => async (dispatch: Dispatch) => {
   dispatch({ type: UPSERT_EMP_REQUEST });
 
@@ -50,26 +53,21 @@ export const upsertEmployee = (formData: any) => async (dispatch: Dispatch) => {
 
     return { success: true, data: res.data };
   } catch (error: any) {
-    const message =
-      error.response?.data?.message || "Failed to save employee details";
-
     dispatch({
       type: UPSERT_EMP_FAILURE,
-      payload: message,
+      payload: error.response?.data?.message || "Failed to save employee details",
     });
 
-    return { success: false, data: message };
+    return { success: false };
   }
 };
 
-// ---------- GET ALL EMPLOYEES ----------
 export const getEmployees = () => async (dispatch: Dispatch) => {
   dispatch({ type: GET_EMP_REQUEST });
 
   try {
     const res = await axios.get("/api/employee/getEmpByRole");
-    console.log("Data" , res.data);
-    
+
     dispatch({
       type: GET_EMP_SUCCESS,
       payload: res.data.employees,
@@ -77,42 +75,12 @@ export const getEmployees = () => async (dispatch: Dispatch) => {
 
     return { success: true, data: res.data.employees };
   } catch (error: any) {
-    const message =
-      error.response?.data?.message || "Failed to fetch employees";
-
     dispatch({
       type: GET_EMP_FAILURE,
-      payload: message,
+      payload: error.response?.data?.message || "Failed to fetch employees",
     });
 
-    return { success: false, data: message };
-  }
-};
-
-// ---------- GET SINGLE EMPLOYEE ----------
-export const getEmployeeById = (id: string) => async (dispatch: Dispatch) => {
-  dispatch({ type: GET_SINGLE_EMP_REQUEST });
-
-  try {
-    const res = await axios.get(`/api/employees/${id}`);
-    
-    
-
-    dispatch({
-      type: GET_SINGLE_EMP_SUCCESS,
-      payload: res.data.employee,
-    });
-
-    return { success: true, data: res.data.employee };
-  } catch (error: any) {
-    const message = error.response?.data?.message || "Failed to fetch employee";
-
-    dispatch({
-      type: GET_SINGLE_EMP_FAILURE,
-      payload: message,
-    });
-
-    return { success: false, data: message };
+    return { success: false };
   }
 };
 
@@ -129,14 +97,12 @@ export const getManagersList = () => async (dispatch: Dispatch) => {
 
     return { success: true, data: res.data.managers };
   } catch (error: any) {
-    const message = error.response?.data?.message || "Failed to fetch managers";
-
     dispatch({
       type: GET_MANAGERS_FAILURE,
-      payload: message,
+      payload: error.response?.data?.message || "Failed to fetch managers",
     });
 
-    return { success: false, data: message };
+    return { success: false };
   }
 };
 
@@ -153,112 +119,130 @@ export const getCurrentEmployee = () => async (dispatch: Dispatch) => {
 
     return { success: true, data: res.data.employee };
   } catch (error: any) {
-    const message =
-      error.response?.data?.message || "Failed to load employee details";
-
     dispatch({
       type: GET_CURRENT_EMP_FAILURE,
-      payload: message,
+      payload: error.response?.data?.message || "Failed to load employee",
     });
 
-    return { success: false, data: message };
+    return { success: false };
   }
 };
 
+/* ----------------------------------------------------
+   LOGS
+---------------------------------------------------- */
+
 export const createUserLog = (payload: any) => async (dispatch: Dispatch) => {
   dispatch({ type: CREATE_EMP_LOG_REQUEST });
+
   try {
-    console.log("payload", payload);
     const res = await axios.post("/api/employee/createLog", payload);
+
     dispatch({
       type: CREATE_EMP_LOG_SUCCESS,
       payload: res.data,
     });
-    console.log("res", res);
+
     return { success: true, data: res.data.log };
   } catch (error: any) {
-    const message =
-      error.response?.data?.message || "Failed to load employee details";
-
     dispatch({
       type: CREATE_EMP_LOG_FAILURE,
-      payload: message,
+      payload: error.response?.data?.message || "Failed to create log",
     });
 
-    return { success: false, data: message };
+    return { success: false };
   }
 };
 
 export const getVisibleLogs = () => async (dispatch: Dispatch) => {
   dispatch({ type: GET_VISIBLE_LOGS_REQUEST });
+
   try {
     const res = await axios.get("/api/employee/getVisibleLogs");
+
     dispatch({
       type: GET_VISIBLE_LOGS_SUCCESS,
       payload: res.data,
     });
-    console.log("res", res);
-    return { success: true, data: res.data.log };
-  } catch (error: any) {
-    const message =
-      error.response?.data?.message || "Failed to load employee details";
 
+    return { success: true };
+  } catch (error: any) {
     dispatch({
       type: GET_VISIBLE_LOGS_FAILURE,
-      payload: message,
+      payload: error.response?.data?.message || "Failed to load logs",
     });
 
-    return { success: false, data: message };
+    return { success: false };
   }
 };
 
 export const getReportingEmployeeLogs = () => async (dispatch: Dispatch) => {
   dispatch({ type: GET_REPORTING_EMPLOYEE_LOGS_REQUEST });
+
   try {
     const res = await axios.get("/api/employee/getReportingEmployeeLogs");
+
     dispatch({
       type: GET_REPORTING_EMPLOYEE_LOGS_SUCCESS,
       payload: res.data,
     });
-    console.log("res", res);
-    return { success: true, data: res.data.log };
-  } catch (error: any) {
-    const message =
-      error.response?.data?.message || "Failed to load employee details";
 
+    return { success: true };
+  } catch (error: any) {
     dispatch({
       type: GET_REPORTING_EMPLOYEE_LOGS_FAILURE,
-      payload: message,
+      payload: error.response?.data?.message || "Failed to load logs",
     });
 
-    return { success: false, data: message };
+    return { success: false };
   }
 };
 
-export const updateApprovalStatus = (logId:string,status: "APPROVED"|"REJECTED"|"PENDING") => async (dispatch: Dispatch) => {
-  dispatch({ type: UPDATE_APPROVAL_STATUS_REQUEST });
+/* ----------------------------------------------------
+   ✅ APPROVE / REJECT (UPDATED)
+---------------------------------------------------- */
 
-  try {
-    const res = await axios.post(`/api/employee/${logId}/approval`, {status});
+export const approveLog =
+  (
+    logId: string,
+    approvalStatus: "APPROVED" | "REJECTED",
+    rejectionReason?: string
+  ) =>
+  async (dispatch: Dispatch) => {
+    dispatch({ type: UPDATE_APPROVAL_STATUS_REQUEST });
 
-    dispatch({
-      type: UPDATE_APPROVAL_STATUS_SUCCESS,
-      payload: res.data,
-    });
+    try {
+      const payload: any = { approvalStatus };
 
-    return { success: true, data: res.data };
-  } catch (error: any) {
-    const message =
-      error.response?.data?.message || "Failed to save employee details";
+      if (approvalStatus === "REJECTED") {
+        payload.rejectionReason = rejectionReason;
+      }
 
-    dispatch({
-      type: UPDATE_APPROVAL_STATUS_FAILURE,
-      payload: message,
-    });
+      const res = await axios.post(
+        `/api/employee/${logId}/approve`,
+        payload
+      );
 
-    return { success: false, data: message };
-  }
-};
+      dispatch({
+        type: UPDATE_APPROVAL_STATUS_SUCCESS,
+        payload: res.data,
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      dispatch({
+        type: UPDATE_APPROVAL_STATUS_FAILURE,
+        payload:
+          error.response?.data?.message || "Approval action failed",
+      });
+
+      return { success: false };
+    }
+  };
+
+/* ----------------------------------------------------
+   APPROVAL LISTS
+---------------------------------------------------- */
 
 export const getPendingApprovalLogs = () => async (dispatch: Dispatch) => {
   dispatch({ type: GET_PENDING_APPROVAL_LOGS_REQUEST });
@@ -271,17 +255,14 @@ export const getPendingApprovalLogs = () => async (dispatch: Dispatch) => {
       payload: res.data,
     });
 
-    return { success: true, data: res.data.logs };
+    return { success: true };
   } catch (error: any) {
-    const message =
-      error.response?.data?.message || "Failed to fetch logs";
-
     dispatch({
       type: GET_PENDING_APPROVAL_LOGS_FAILURE,
-      payload: message,
+      payload: error.response?.data?.message || "Failed to fetch logs",
     });
 
-    return { success: false, data: message };
+    return { success: false };
   }
 };
 
@@ -295,19 +276,52 @@ export const getApprovedOrRejectedLogs = () => async (dispatch: Dispatch) => {
       type: GET_APPROVED_OR_REJECTED_LOGS_SUCCESS,
       payload: res.data,
     });
-console.log("res", res.data.logs);
-    return { success: true, data: res.data.logs };
-  } catch (error: any) {
-    const message =
-      error.response?.data?.message || "Failed to fetch logs";
 
+    return { success: true };
+  } catch (error: any) {
     dispatch({
       type: GET_APPROVED_OR_REJECTED_LOGS_FAILURE,
-      payload: message,
+      payload: error.response?.data?.message || "Failed to fetch logs",
     });
 
-    return { success: false, data: message };
+    return { success: false };
   }
 };
 
+export const updateApprovalStatus =
+  (
+    logId: string,
+    payload: {
+      approvalStatus: "APPROVED" | "REJECTED" | "PENDING";
+      rejectionReason?: string;
+    }
+  ) =>
+  async (dispatch: Dispatch) => {
+    dispatch({ type: UPDATE_APPROVAL_STATUS_REQUEST });
+
+    try {
+      const res = await axios.post(
+        `/api/employee/${logId}/approval`,
+        payload
+      );
+
+      dispatch({
+        type: UPDATE_APPROVAL_STATUS_SUCCESS,
+        payload: res.data,
+      });
+
+      return { success: true, data: res.data };
+    } catch (error: any) {
+      const message =
+        error.response?.data?.message ||
+        "Failed to update approval status";
+
+      dispatch({
+        type: UPDATE_APPROVAL_STATUS_FAILURE,
+        payload: message,
+      });
+
+      return { success: false, data: message };
+    }
+  };
 

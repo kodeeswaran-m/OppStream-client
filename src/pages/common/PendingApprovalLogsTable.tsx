@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,24 +12,42 @@ import {
   Select,
   MenuItem,
   IconButton,
+  TextField,
+  Button,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Dialog,
 } from "@mui/material";
-
 import SaveIcon from "@mui/icons-material/Save";
+import CloseIcon from "@mui/icons-material/Close";
+import { styled } from "@mui/material/styles";
+
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch } from "redux-thunk";
-import { type AnyAction } from "redux";
-import { useEffect, useState } from "react";
+import type { AnyAction } from "redux";
+import { useNavigate } from "react-router-dom";
 
 import {
   getPendingApprovalLogs,
   updateApprovalStatus,
 } from "../../store/actions/employeeActions";
 import type { RootState } from "../../store";
-import { useNavigate } from "react-router-dom";
 import { getRouteRole } from "../../utils/getRouteRole";
 import TableSkeleton from "../../components/common/TableSkeleton";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
+type ApprovalStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+// Styled Dialog
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiDialogContent-root": {
+    padding: theme.spacing(2),
+  },
+  "& .MuiDialogActions-root": {
+    padding: theme.spacing(1),
+  },
+}));
 
 const columns = [
   { label: "Employee ID", key: "employeeId" },
@@ -37,10 +56,8 @@ const columns = [
   { label: "Requirement Type", key: "requirementType" },
   { label: "Project Name", key: "projectName" },
   { label: "Client Name", key: "clientName" },
-  { label: "Priority Level", key: "urgency" },
+  { label: "Urgency", key: "urgency" },
   { label: "Expected Start Date", key: "expectedStart" },
-
-  // EXTRA COLUMNS
   { label: "Approval Status", key: "approvalStatus" },
   { label: "Action", key: "action" },
 ];
@@ -50,30 +67,64 @@ const PendingApprovalLogsTable = () => {
     useSelector((state: RootState) => state.employee);
   const { user } = useSelector((state: RootState) => state.auth);
 
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
-  const dispatch: AppDispatch = useDispatch();
-  console.log("pendingApprovalLogs", pendingApprovalLogs);
-  // Track edited status per row
-  const [editedStatus, setEditedStatus] = useState<
-    Record<string, "PENDING" | "APPROVED" | "REJECTED">
-  >({});
+  const [editedStatus, setEditedStatus] = useState<Record<string, ApprovalStatus>>({});
+  const [rejectionReason, setRejectionReason] = useState<Record<string, string>>({});
+  const [openModal, setOpenModal] = useState(false);
+  const [currentLogId, setCurrentLogId] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(getPendingApprovalLogs());
-  }, []);
+  }, [dispatch]);
 
-  // Helper: Convert log + column to value
+  const handleOpenModal = (logId: string) => {
+    setCurrentLogId(logId);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setCurrentLogId(null);
+    setOpenModal(false);
+  };
+
+  const handleSave = (logId: string) => {
+    const approvalStatus = editedStatus[logId];
+    if (!approvalStatus) return;
+
+    const payload: { approvalStatus: ApprovalStatus; rejectionReason?: string } = {
+      approvalStatus,
+    };
+
+    if (approvalStatus === "REJECTED") {
+      if (!rejectionReason[logId]?.trim()) {
+        alert("Please enter rejection reason");
+        return;
+      }
+      payload.rejectionReason = rejectionReason[logId];
+    }
+
+    dispatch(updateApprovalStatus(logId, payload)).then((res) => {
+      if (res?.success) {
+        dispatch(getPendingApprovalLogs());
+        setEditedStatus({});
+        setRejectionReason({});
+        handleCloseModal();
+      }
+    });
+  };
+
   const getCellValue = (log: any, key: string) => {
     switch (key) {
       case "employeeId":
-        return log.createdBy.employeeId;
+        return log.createdBy?.employeeId || "-";
       case "employeeName":
-        return log.createdBy.employeeName;
+        return log.createdBy?.employeeName || "-";
       case "role":
-        return log.createdBy.role;
+        return log.createdBy?.role || "-";
       case "requirementType":
-        return log.requirementType;
+        return log.requirementType || "-";
       case "projectName":
         return log.oppFrom?.projectName || "-";
       case "clientName":
@@ -89,149 +140,171 @@ const PendingApprovalLogsTable = () => {
     }
   };
 
-  // Save handler
-  const handleSave = (logId: string) => {
-    if (!editedStatus[logId]) return;
-    console.log("logID and status", logId, editedStatus[logId]);
-    dispatch(updateApprovalStatus(logId, editedStatus[logId])).then((data) => {
-      if (data?.success === true) dispatch(getPendingApprovalLogs());
-    });
-    // remove saved value
-    setEditedStatus((prev) => {
-      const copy = { ...prev };
-      delete copy[logId];
-      return copy;
-    });
-  };
-  if (loading) {
-    return <TableSkeleton rows={6} columns={columns.length} />;
-  }
-  return (
+  if (loading) return <TableSkeleton rows={6} columns={columns.length} />;
+
+  return pendingApprovalLogs.length ? (
     <>
-      {pendingApprovalLogs.length !== 0 ? (
-        <>
-          {" "}
-          {/* HEADER */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              fontSize: "16px",
-              fontWeight: "bold",
-              paddingX: 2,
-              paddingY: 1,
-            }}
-          >
-            {/* <Typography variant="h6">Employee Logs</Typography> */}
+      <Box sx={{ display: "flex", justifyContent: "space-between", px: 2 }}>
+      <Typography
+                variant="h6"
+                sx={{
+                  paddingX: 1,
+                  paddingY: 0.5,
+                  fontSize: "12px",
+                  backgroundColor: "#EFE6F6",
+                  border: "1px solid #d6d6d6ff",
+                  borderRadius: "6px",
+                  "&:hover": {
+                    backgroundColor: "#e3e3e3ff",
+                    transform: "scale(1.04)",
+                  },
+                }}
+              >
+                Count : {pendingApprovalLogsCount}
+              </Typography>
+      </Box>
 
-            <Typography
-              variant="h6"
-              sx={{
-                paddingX: 1,
-                paddingY: 0.5,
-                fontSize: "12px",
-                backgroundColor: "#EFE6F6",
-                border: "1px solid #d6d6d6ff",
-                borderRadius: "6px",
-                "&:hover": {
-                  backgroundColor: "#e3e3e3ff",
-                  transform: "scale(1.04)",
-                },
-              }}
-            >
-              Count : {pendingApprovalLogsCount}
-            </Typography>
-          </Box>
-          {/* TABLE */}
-          <TableContainer component={Paper} sx={{ marginTop: 3 }}>
-            <Table size="small">
-              {/* TABLE HEAD */}
-              <TableHead sx={{ backgroundColor: "#EFE6F6" }}>
-                <TableRow>
-                  {columns.map((col) => (
-                    <TableCell key={col.key}>
-                      <strong>{col.label}</strong>
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
+      <TableContainer component={Paper} sx={{ mt: 3 }}>
+        <Table size="small">
+          <TableHead sx={{ backgroundColor: "#EFE6F6" }}>
+            <TableRow>
+              {columns.map((col) => (
+                <TableCell key={col.key}>
+                  <strong>{col.label}</strong>
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
 
-              {/* TABLE BODY */}
-              <TableBody>
-                {pendingApprovalLogs.map((log: any) => (
-                  <TableRow
-                    key={log._id}
-                    onClick={() => {
-                      const routeRole = getRouteRole(user?.role);
-                      navigate(`/${routeRole}/logDetails/${log._id}`);
-                    }}
-                    sx={{
-                      "&:hover": { backgroundColor: "#e3e3e3ff" },
-                    }}
-                  >
-                    {" "}
-                    {columns.map((col) => {
-                      if (col.key === "approvalStatus") {
-                        return (
-                          <TableCell key={col.key}>
-                            <Select
-                              size="small"
-                              defaultValue="PENDING"
-                              //   value={editedStatus[log._id] ?? log.approvalStatus}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
-                              onChange={(e) => {
-                                e.stopPropagation();
-                                setEditedStatus((prev) => ({
-                                  ...prev,
-                                  [log._id]: e.target.value,
-                                }));
-                              }}
-                              sx={{ minWidth: 140 }}
-                            >
-                              <MenuItem value="PENDING">Pending</MenuItem>
-                              <MenuItem value="APPROVED">Approved</MenuItem>
-                              <MenuItem value="REJECTED">Rejected</MenuItem>
-                            </Select>
-                          </TableCell>
-                        );
-                      }
+          <TableBody>
+            {pendingApprovalLogs.map((log: any) => {
+              const currentStatus = editedStatus[log._id] ?? "PENDING";
 
-                      if (col.key === "action") {
-                        return (
-                          <TableCell key={col.key}>
-                            <IconButton
-                              color="primary"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleSave(log._id);
-                              }}
-                              disabled={!editedStatus[log._id]}
-                            >
-                              <SaveIcon />
-                            </IconButton>
-                          </TableCell>
-                        );
-                      }
 
+              return (
+                <TableRow
+                  key={log._id}
+                  hover
+                  onClick={() =>
+                    navigate(
+                      `/${getRouteRole(user?.role)}/logDetails/${log._id}`
+                    )
+                  }
+                >
+                  {columns.map((col) => {
+                    if (col.key === "approvalStatus") {
                       return (
                         <TableCell key={col.key}>
-                          {getCellValue(log, col.key)}
+                          <Select
+                            size="small"
+                            value={currentStatus}
+                            onClick={(e) => e.stopPropagation()}
+                            onChange={(e) => {
+                              const value = e.target.value as ApprovalStatus;
+                              setEditedStatus({ ...editedStatus, [log._id]: value });
+
+                              if (value === "REJECTED") handleOpenModal(log._id);
+                            }}
+                            sx={{ minWidth: 140 }}
+                          >
+                            <MenuItem value="PENDING">Pending</MenuItem>
+                            <MenuItem value="APPROVED">Approved</MenuItem>
+                            <MenuItem value="REJECTED">Rejected</MenuItem>
+                          </Select>
                         </TableCell>
                       );
-                    })}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
-      ) : (
-        <Typography textAlign={"center"}>No logs found.</Typography>
-      )}
+                    }
+
+                    if (col.key === "action") {
+                      return (
+                        <TableCell key={col.key}>
+                          <IconButton
+                            color="primary"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSave(log._id);
+                            }}
+                            disabled={
+                              !editedStatus[log._id] ||
+                              (editedStatus[log._id] === "REJECTED" &&
+                                !rejectionReason[log._id]?.trim())
+                            }
+                          >
+                            <SaveIcon />
+                          </IconButton>
+                        </TableCell>
+                      );
+                    }
+
+                    return (
+                      <TableCell key={col.key}>{getCellValue(log, col.key)}</TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/* Rejection Modal */}
+      <BootstrapDialog
+        open={openModal}
+        onClose={handleCloseModal}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          Rejection Reason
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseModal}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent dividers sx={{ minHeight: 200 }}>
+          <TextField
+            autoFocus
+            label="Reason for rejection"
+            fullWidth
+            multiline
+            rows={6}
+            value={currentLogId ? rejectionReason[currentLogId] || "" : ""}
+            onChange={(e) =>
+              setRejectionReason({
+                ...rejectionReason,
+                [currentLogId!]: e.target.value,
+              })
+            }
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleCloseModal}>Cancel</Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() =>
+              currentLogId && handleSave(currentLogId)
+            }
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </BootstrapDialog>
     </>
+  ) : (
+    <Typography textAlign="center" sx={{ mt: 3 }}>
+      No logs found.
+    </Typography>
   );
 };
 
