@@ -24,7 +24,7 @@ const columns = [
   { label: "Project Name", key: "projectName" },
   { label: "Client Name", key: "clientName" },
   { label: "Project Code", key: "projectCode" },
-  { label: "Urgency", key: "urgency" },
+  { label: "Priority Level", key: "urgency" },
   { label: "Expected Start Date", key: "expectedStart" },
   { label: "Expected End Date", key: "expectedEnd" },
 ];
@@ -112,7 +112,7 @@ const UserLogsTable = () => {
           <TableContainer component={Paper} sx={{ marginTop: 3}}>
             <Table>
               {/* TABLE HEAD */}
-              <TableHead sx={{ backgroundColor: "#EFE6F6" }}>
+              <TableHead sx={{ backgroundColor: "#EFE6F6"}}>
                 <TableRow>
                   {columns.map((col) => (
                     <TableCell key={col.key}>

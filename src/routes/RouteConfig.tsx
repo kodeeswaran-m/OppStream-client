@@ -19,6 +19,8 @@ import ProfilePage from "../pages/common/ProfilePage";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import DescriptionIcon from "@mui/icons-material/Description";
 import TableChartIcon from "@mui/icons-material/TableChart";
+import LogTable from "../pages/employee/logTable";
+import LOGForm from "../components/LogForm";
 export const routeConfig: Record<UserRole, AppRoute[]> = {
   employee: [
     {
@@ -47,15 +49,20 @@ export const routeConfig: Record<UserRole, AppRoute[]> = {
       icon: <DescriptionIcon fontSize="small" />,
       breadcrumb: "Log Form",
       label: "Log",
-      element: <LogPage />,
+      element: <LOGForm />,
     },
+    {
+      path: "/employee/logs/edit/:id",
+      element: <LOGForm />,
+    },
+
     {
       path: "/employee/logTable",
       label: "Log Table",
       breadcrumb: "Log Tables",
 
       icon: <TableChartIcon fontSize="small" />,
-      element: <UserLogsTable />,
+      element: <LogTable />,
     },
   ],
 

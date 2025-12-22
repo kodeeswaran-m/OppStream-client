@@ -19,7 +19,6 @@ const AppBreadcrumbs = () => {
     location.pathname,
     routeConfig[role]
   );
-console.log("breadcrumbs", breadcrumbs);
   if (breadcrumbs.length <= 1) return null;
 
   return (

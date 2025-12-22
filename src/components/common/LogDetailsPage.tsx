@@ -117,12 +117,12 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
   }, []);
 
   return (
-    <PageContainer >
+    <PageContainer>
       <Typography
         variant="h5"
         fontWeight={700}
         color="primary"
-        sx={{ mb: 3, mt: 6 }}
+        sx={{ mb: 3, mt: 0}}
       >
         Log Details
       </Typography>
@@ -228,9 +228,8 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
         <SectionCard>
           <CardContent>
             <SectionTitle>
-              Opportunity From{" "}
               <Typography variant="h6" fontWeight={700} color="primary">
-                Created By
+                Opportunity From{" "}
               </Typography>
             </SectionTitle>
 
@@ -249,7 +248,7 @@ const LogDetailsPage: React.FC<LogDetailsProps> = ({ log }) => {
 
               <Grid>
                 <Typography>
-                  <Label>Urgency:</Label> {log.oppFrom?.urgency}
+                  <Label>Priority Level:</Label> {log.oppFrom?.urgency}
                 </Typography>
                 <Typography>
                   <Label>Meeting Type:</Label> {log.oppFrom?.meetingType}

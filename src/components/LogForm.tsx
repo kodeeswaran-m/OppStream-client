@@ -30,6 +30,8 @@ import { useSnackbar } from "../context/SnackbarContext";
 import { getRouteRole } from "../utils/getRouteRole";
 import { useNavigate } from "react-router-dom";
 import type { State } from "./LogFormType";
+import { useParams } from "react-router-dom";
+import { getLogById, updateLogById } from "../services/logService";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -82,10 +84,12 @@ const LOGForm = () => {
   const { currentUserDetails } = useSelector(
     (state: RootState) => state.employee
   );
-console.log("satte", state);
+  console.log("satte", state);
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
-
+  const { id } = useParams();
+  const isEditMode = Boolean(id);
+console.log("id", isEditMode);
   // ---------------------- AUTO-FILL USER DATA ----------------------
   useEffect(() => {
     thunkDispatch(getCurrentEmployee());
@@ -119,12 +123,188 @@ console.log("satte", state);
       });
     }
   }, []);
+  useEffect(() => {
+    if (!isEditMode || !id) return;
+
+    const fetchLog = async () => {
+      const res = await getLogById(id);
+      const log = res.log;
+
+      // ---- Prefill reducer state ----
+      dispatch({
+        type: "SET_FIELD",
+        field: "requirementType",
+        value: log.requirementType,
+      });
+
+      if (log.oppFrom) {
+        dispatch({
+          type: "SET_FIELD",
+          field: "projectName",
+          value: log.oppFrom.projectName,
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "clientName",
+          value: log.oppFrom.clientName,
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "projectCode",
+          value: log.oppFrom.projectCode,
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "urgency",
+          value: log.oppFrom.urgency,
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "meetingType",
+          value: log.oppFrom.meetingType,
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "callDate",
+          value: log.oppFrom.meetingDate?.split("T")[0],
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "peoplePresent",
+          value: log.oppFrom.peoplePresent,
+        });
+      }
+
+      if (log.oppTo) {
+        dispatch({
+          type: "SET_TECHNOLOGIES",
+          value: log.oppTo.technologyRequired,
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "techRows",
+          value: log.oppTo.techRows,
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "totalPersons",
+          value: log.oppTo.totalPersons,
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "oppCategory",
+          value: log.oppTo.category,
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "shortDescription",
+          value: log.oppTo.shortDescription,
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "detailedNotes",
+          value: log.oppTo.detailedNotes,
+        });
+      }
+
+      if (log.nnDetails) {
+        dispatch({
+          type: "SET_FIELD",
+          field: "nnDescription",
+          value: log.nnDetails.description,
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "nnClientName",
+          value: log.nnDetails.clientName,
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "nnSource",
+          value: log.nnDetails.source,
+        });
+        dispatch({
+          type: "SET_FIELD",
+          field: "nnOppFrom",
+          value: log.nnDetails.oppFrom,
+        });
+      }
+
+      dispatch({
+        type: "SET_FIELD",
+        field: "expectedStart",
+        value: log.timeline?.expectedStart?.split("T")[0],
+      });
+
+      dispatch({
+        type: "SET_FIELD",
+        field: "expectedEnd",
+        value: log.timeline?.expectedEnd?.split("T")[0],
+      });
+    };
+
+    fetchLog();
+  }, [isEditMode, id]);
 
   // ---------------------- SUBMIT ----------------------
+  // const handleSubmit = async () => {
+  //   const payload = {
+  //     requirementType: state.requirementType,
+
+  //     oppFrom:
+  //       state.requirementType === "NN"
+  //         ? undefined
+  //         : {
+  //             projectName: state.projectName,
+  //             clientName: state.clientName,
+  //             projectCode: state.projectCode,
+  //             urgency: state.urgency,
+  //             meetingType: state.meetingType,
+  //             meetingDate: state.callDate,
+  //             meetingScreenshot: state.screenshot,
+  //             peoplePresent: state.peoplePresent,
+  //           },
+
+  //     oppTo:
+  //       state.requirementType === "NN"
+  //         ? undefined
+  //         : {
+  //             technologyRequired: state.selectedTechnologies,
+  //             techRows: state.techRows,
+  //             totalPersons: state.totalPersons,
+  //             category: state.oppCategory,
+  //             shortDescription: state.shortDescription,
+  //             detailedNotes: state.detailedNotes,
+  //           },
+
+  //     nnDetails:
+  //       state.requirementType === "NN"
+  //         ? {
+  //             description: state.nnDescription,
+  //             clientName: state.nnClientName,
+  //             source: state.nnSource,
+  //             oppFrom: state.nnOppFrom,
+  //           }
+  //         : undefined,
+
+  //     timeline: {
+  //       expectedStart: state.expectedStart,
+  //       expectedEnd: state.expectedEnd,
+  //     },
+  //   };
+
+  //   const result = await thunkDispatch(createUserLog(payload));
+  //   if (result.success) {
+  //     showMessage("Log created successfully.");
+  //     const routeRole = getRouteRole(user?.role);
+  //     navigate(`/${routeRole}/dashboard`);
+  //   } else {
+  //     showMessage("Error.");
+  //   }
+  // };
   const handleSubmit = async () => {
     const payload = {
       requirementType: state.requirementType,
-
       oppFrom:
         state.requirementType === "NN"
           ? undefined
@@ -138,7 +318,6 @@ console.log("satte", state);
               meetingScreenshot: state.screenshot,
               peoplePresent: state.peoplePresent,
             },
-
       oppTo:
         state.requirementType === "NN"
           ? undefined
@@ -150,7 +329,6 @@ console.log("satte", state);
               shortDescription: state.shortDescription,
               detailedNotes: state.detailedNotes,
             },
-
       nnDetails:
         state.requirementType === "NN"
           ? {
@@ -160,20 +338,25 @@ console.log("satte", state);
               oppFrom: state.nnOppFrom,
             }
           : undefined,
-
       timeline: {
         expectedStart: state.expectedStart,
         expectedEnd: state.expectedEnd,
       },
     };
 
-    const result = await thunkDispatch(createUserLog(payload));
-    if (result.success) {
-      showMessage("Log created successfully.");
+    let result;
+
+    if (isEditMode && id) {
+      result = await updateLogById(id, payload);
+      showMessage("Log updated successfully");
+    } else {
+      result = await thunkDispatch(createUserLog(payload));
+      showMessage("Log created successfully");
+    }
+
+    if (result?.success) {
       const routeRole = getRouteRole(user?.role);
       navigate(`/${routeRole}/dashboard`);
-    } else {
-      showMessage("Error.");
     }
   };
 
@@ -200,8 +383,11 @@ console.log("satte", state);
           boxShadow: "0px 4px 20px rgba(0,0,0,0.08)",
         }}
       >
-        <Typography variant="h5" fontWeight="bold" mb={3} color="#48206F">
+        {/* <Typography variant="h5" fontWeight="bold" mb={3} color="#48206F">
           Log Form
+        </Typography> */}
+        <Typography variant="h5" fontWeight="bold" mb={3} color="#48206F">
+          {isEditMode ? "Edit Log" : "Create Log"}
         </Typography>
 
         {/* ───────────────────── EMPLOYEE DETAILS ───────────────────── */}
@@ -736,7 +922,7 @@ console.log("satte", state);
 
         {/* Submit */}
         <Box textAlign="center" mt={4}>
-          <Button
+          {/* <Button
             variant="contained"
             sx={{
               px: 2,
@@ -748,6 +934,19 @@ console.log("satte", state);
             onClick={handleSubmit}
           >
             Submit
+          </Button> */}
+          <Button
+            variant="contained"
+            sx={{
+              px: 2,
+              py: 0.2,
+              background: "#7E57C2",
+              fontSize: "1rem",
+            }}
+            size="small"
+            onClick={handleSubmit}
+          >
+            {isEditMode ? "Update" : "Submit"}
           </Button>
         </Box>
       </Paper>

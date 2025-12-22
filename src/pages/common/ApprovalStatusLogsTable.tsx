@@ -34,7 +34,7 @@ const columns = [
   { label: "Requirement Type", key: "requirementType" },
   { label: "Project Name", key: "projectName" },
   { label: "Client Name", key: "clientName" },
-  { label: "Urgency", key: "urgency" },
+  { label: "Priority Level", key: "urgency" },
   { label: "Expected Start", key: "expectedStart" },
   { label: "Approval Status", key: "approvalStatus" },
   { label: "Waiting For", key: "waitingFor" },

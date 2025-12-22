@@ -27,7 +27,7 @@ import { logout } from "../../store/actions/authActions";
 import type { ThunkDispatch } from "redux-thunk";
 import type { AnyAction } from "redux";
 import { getRouteRole } from "../../utils/getRouteRole";
-import LoginIcon from '@mui/icons-material/Login';
+import LoginIcon from "@mui/icons-material/Login";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -160,7 +160,7 @@ const Navbar = () => {
                   <Button
                     component={Link}
                     to="/login"
-                    startIcon={<LoginIcon/>}
+                    startIcon={<LoginIcon />}
                     sx={{
                       color: "white",
                       ...(location.pathname === "/login" ? activeStyle : {}),
@@ -212,7 +212,16 @@ const Navbar = () => {
 
               {isLoggedIn && (
                 <>
-                  <IconButton sx={{ color: "white" }} onClick={handleClick}>
+                  <IconButton
+                    disableRipple
+                    disableFocusRipple
+                    sx={{
+                      color: "white",
+                      "&:focus": { outline: "none" },
+                      "&:focus-visible": { outline: "none" },
+                    }}
+                    onClick={handleClick}
+                  >
                     <AccountCircleIcon sx={{ fontSize: 30 }} />
                   </IconButton>
 

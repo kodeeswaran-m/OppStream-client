@@ -85,7 +85,7 @@ const Login = () => {
           Login
         </Typography>
 
-        <form onSubmit={handleSubmit} noValidate>
+        <form onSubmit={handleSubmit} noValidate autoComplete="off">
           <TextField
             label="Email"
             fullWidth
@@ -96,6 +96,7 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
             error={!!formErrors.email}
             helperText={formErrors.email}
+            autoComplete="new-email"
           />
 
           <TextField
@@ -108,6 +109,7 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             error={!!formErrors.password}
             helperText={formErrors.password}
+            autoComplete="new-password"
           />
 
           {error && (
