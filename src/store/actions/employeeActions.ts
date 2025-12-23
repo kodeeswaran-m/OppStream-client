@@ -210,7 +210,7 @@ export const getReportingEmployeeLogs = () => async (dispatch: Dispatch) => {
 
   try {
     const res = await axios.get("/api/employee/getReportingEmployeeLogs");
-
+    console.log("res.data for reportingline employees", res.data.data);
     dispatch({
       type: GET_REPORTING_EMPLOYEE_LOGS_SUCCESS,
       payload: res.data,

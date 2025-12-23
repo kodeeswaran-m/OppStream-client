@@ -14,10 +14,10 @@ import {
   Button,
   Typography,
   Paper,
-  CircularProgress,
   Alert,
   Collapse,
 } from "@mui/material";
+import LogoLoader from "./common/LogoLoader";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -137,7 +137,7 @@ useEffect(() => {
             sx={{ mt: 3, py: 1.2, fontWeight: 600 }}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={22} /> : "Login"}
+            {loading ? <LogoLoader size={12}/> :"login" }
           </Button>
         </form>
 

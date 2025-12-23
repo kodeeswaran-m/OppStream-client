@@ -17,6 +17,7 @@ import {
   CircularProgress,
   Collapse,
 } from "@mui/material";
+import LogoLoader from "./common/LogoLoader";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -188,7 +189,7 @@ const Signup = () => {
             disabled={loading}
             sx={{ py: 1.2, fontWeight: 600 }}
           >
-            {loading ? <CircularProgress size={22} /> : "Sign Up"}
+            {loading ? <LogoLoader size={12}/> : "Sign Up"}
           </Button>
 
           <Typography textAlign="center" mt={2} fontSize={14}>

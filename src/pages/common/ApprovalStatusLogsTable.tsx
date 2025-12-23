@@ -40,10 +40,9 @@ const columns = [
   { label: "Waiting For", key: "waitingFor" },
 ];
 
-const ApprovalStatusLogsTable = () => {
-  const { loading, approvedOrRejectedLogs, approvedOrRejectedLogsCount } = useSelector(
-    (state: RootState) => state.employee
-  );
+const ApprovalStatusLogsTable = ({value}:{value:number}) => {
+  const { loading, approvedOrRejectedLogs, approvedOrRejectedLogsCount } =
+    useSelector((state: RootState) => state.employee);
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   console.log("approvedOrRejectedLogs", approvedOrRejectedLogs);
@@ -51,8 +50,9 @@ const ApprovalStatusLogsTable = () => {
 
   useEffect(() => {
     console.log("de");
+    if(value===1)
     dispatch(getApprovedOrRejectedLogs());
-  }, []);
+  }, [value]);
 
   const getWaitingFor = (log: any) => {
     if (!log.approvals || log.approvals.length === 0) return "-";
@@ -112,81 +112,84 @@ const ApprovalStatusLogsTable = () => {
         return "-";
     }
   };
-if (loading) {
-  return <TableSkeleton rows={6} columns={columns.length} />;
-}
+  if (loading) {
+    return <TableSkeleton rows={6} columns={columns.length} />;
+  }
   return (
     <>
-    {
-      approvedOrRejectedLogs.length!==0?<>      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          paddingX: 2,
-          paddingY: 1,
-        }}
-      >
-        <Typography
-          variant="h6"
-          sx={{
-            paddingX: 1,
-            paddingY: 0.5,
-            fontSize: "12px",
-            backgroundColor: "#EFE6F6",
-            border: "1px solid #d6d6d6ff",
-            borderRadius: "6px",
-            "&:hover": {
-              backgroundColor: "#e3e3e3ff",
-              transform: "scale(1.04)",
-            },
-          }}
-        >
-          Count : {approvedOrRejectedLogsCount}
-        </Typography>
-      </Box>
+      {approvedOrRejectedLogs.length !== 0 ? (
+        <>
+          {" "}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              paddingX: 2,
+              paddingY: 1,
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                paddingX: 1,
+                paddingY: 0.5,
+                fontSize: "12px",
+                backgroundColor: "#EFE6F6",
+                border: "1px solid #d6d6d6ff",
+                borderRadius: "6px",
+                "&:hover": {
+                  backgroundColor: "#e3e3e3ff",
+                  transform: "scale(1.04)",
+                },
+              }}
+            >
+              Count : {approvedOrRejectedLogsCount}
+            </Typography>
+          </Box>
+          {/* Table */}
+          <TableContainer component={Paper} sx={{ marginTop: 3 }}>
+            <Table>
+              <TableHead sx={{ backgroundColor: "#EFE6F6" }}>
+                <TableRow>
+                  {columns.map((col) => (
+                    <TableCell key={col.key}>
+                      <strong>{col.label}</strong>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
 
-      {/* Table */}
-      <TableContainer component={Paper} sx={{ marginTop: 3 }}>
-        <Table >
-          <TableHead sx={{ backgroundColor: "#EFE6F6" }}>
-            <TableRow>
-              {columns.map((col) => (
-                <TableCell key={col.key}>
-                  <strong>{col.label}</strong>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {approvedOrRejectedLogs.map((log: any) => (
-              <TableRow
-                key={log._id}
-                onClick={() => {
-                  const routeRole = getRouteRole(user?.role);
-                  navigate(`/${routeRole}/logDetails/${log._id}`);
-                }}
-                sx={{
-                  height:30,
-                  "&:hover": {
-                    backgroundColor: "#e3e3e3ff",
-                  },
-                }}
-              >
-                {columns.map((col) => (
-                  <TableCell key={col.key}>
-                    {getCellValue(log, col.key)}
-                  </TableCell>
+              <TableBody>
+                {approvedOrRejectedLogs.map((log: any) => (
+                  <TableRow
+                    key={log._id}
+                    onClick={() => {
+                      const routeRole = getRouteRole(user?.role);
+                      navigate(`/${routeRole}/logDetails/${log._id}`);
+                    }}
+                    sx={{
+                      height: 30,
+                      "&:hover": {
+                        backgroundColor: "#e3e3e3ff",
+                      },
+                    }}
+                  >
+                    {columns.map((col) => (
+                      <TableCell key={col.key}>
+                        {getCellValue(log, col.key)}
+                      </TableCell>
+                    ))}
+                  </TableRow>
                 ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer></>:<Typography textAlign={"center"}>No logs found.</Typography>
-    }
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </>
+      ) : (
+        <Typography textAlign={"center"}>No logs found.</Typography>
+      )}
       {/* Header */}
-
     </>
   );
 };
