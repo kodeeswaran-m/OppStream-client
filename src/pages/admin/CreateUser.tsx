@@ -182,7 +182,7 @@ const CreateUser = () => {
                   }
                   label="Business Unit"
                 >
-                  <option value="">Select Business Unit</option>
+                  <option value=""></option>
 
                   {businessUnits.length === 0 ? (
                     <option disabled>No Business Units Found</option>
