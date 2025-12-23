@@ -8,7 +8,6 @@ import CreateBusinessUnit from "../pages/admin/CreateBusinessUnit";
 import EmployeeFormPage from "../pages/EmployeeFormPages";
 import LogPage from "../pages/common/LogPage";
 import LogTables from "../pages/reportingManager/LogTables";
-import UserLogsTable from "../pages/common/UserLogsTable";
 import LogDetailsPageWrapper from "../pages/common/LogDetailsPageWrapper";
 import CreateUser from "../pages/admin/CreateUser";
 import UsersTable from "../pages/admin/UsersTable";
@@ -19,7 +18,7 @@ import ProfilePage from "../pages/common/ProfilePage";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import DescriptionIcon from "@mui/icons-material/Description";
 import TableChartIcon from "@mui/icons-material/TableChart";
-import LogTable from "../pages/employee/logTable";
+import LogTable from "../pages/employee/LogTable";
 import LOGForm from "../components/LogForm";
 export const routeConfig: Record<UserRole, AppRoute[]> = {
   employee: [

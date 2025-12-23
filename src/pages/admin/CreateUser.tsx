@@ -13,12 +13,13 @@ import {
   MenuItem,
   Typography,
   Paper,
-  CircularProgress,
+
   FormControl,
   InputLabel,
   Select,
 } from "@mui/material";
 import { useSnackbar } from "../../context/SnackbarContext";
+import LogoLoader from "../../components/common/LogoLoader";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -206,7 +207,7 @@ const CreateUser = () => {
             disabled={loading}
             sx={{ py: 1.2, fontWeight: 600 }}
           >
-            {loading ? <CircularProgress size={22} /> : "Submit"}
+            {loading ?<LogoLoader size={12}/>: "Submit"}
           </Button>
         </form>
 

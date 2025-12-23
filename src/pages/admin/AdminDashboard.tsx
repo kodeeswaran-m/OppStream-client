@@ -329,6 +329,23 @@ const ROLE_MAP: Record<string, string> = {
 
 /* ================= TYPES ================= */
 
+// const COLORS = [
+//   "#3b82f6",
+//   "#8b5cf6",
+//   "#f59e0b",
+//   "#10b981",
+//   "#ef4444",
+//   "#06b6d4",
+// ];
+export type DashboardStatItem = {
+  title: string;
+  value: number;
+  icon: React.ElementType;
+  bgColor: string;
+  textColor: string;
+  borderColor: string;
+};
+
 export type ColumnVisibility = {
   employeeId: boolean;
   employeeName: boolean;
@@ -477,7 +494,99 @@ export default function AdminDashboard() {
         (col) => columnVisibility[col.field]
       ),
     [allColumns, columnVisibility]
+    );
+  const items: DashboardStatItem[] = [
+    {
+      title: "Employees",
+      value: employees.length,
+      icon: Users,
+      bgColor: "#eff6ff", // blue-50
+      textColor: "#1d4ed8", // blue-600
+      borderColor: "#e2e8f0", // slate-200
+    },
+    {
+      title: "Business Units",
+      value: businessUnits.length,
+      icon: FolderOpen,
+      bgColor: "#f5f3ff", // purple-50
+      textColor: "#6b21a8", // purple-700
+      borderColor: "#e2e8f0",
+    },
+    {
+      title: "Total Logs",
+      value: logs.length,
+      icon: FileText,
+      bgColor: "#fff7ed", // orange-50
+      textColor: "#c2410c", // orange-700
+      borderColor: "#e2e8f0",
+    },
+    {
+      title: "Available Emps.",
+      value: employees.filter((e) => e.status === "Available").length,
+      icon: CheckCircle,
+      bgColor: "#ecfdf5", // green-50
+      textColor: "#047857", // green-700
+      borderColor: "#e2e8f0",
+    },
+  ];
+  const cardStyle = (item: DashboardStatItem) => ({
+    p: 3,
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    borderRadius: "14px",
+    border: `1px solid ${item.borderColor}`,
+    bgcolor: "white",
+    transition: "0.2s",
+    cursor: "pointer",
+    "&:hover": {
+      transform: "scale(1.05)",
+      boxShadow: "0 4px 14px rgba(0,0,0,0.12)",
+    },
+  });
+
+  const CardContent = ({
+    item,
+    Icon,
+  }: {
+    item: DashboardStatItem;
+    Icon: React.ElementType;
+  }) => (
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="space-between"
+      width="100%"
+    >
+      <Box>
+        <Typography sx={{ color: "#475569", fontSize: "14px" }}>
+          {item.title}
+        </Typography>
+        <Typography
+          sx={{
+            mt: 1,
+            fontSize: "16px",
+            fontWeight: "bold",
+            color: item.textColor,
+          }}
+        >
+          <CountUp start={0} end={item.value} duration={2} />
+        </Typography>
+      </Box>
+
+      <Box
+        sx={{
+          p: 1,
+          borderRadius: "10px",
+          background: item.bgColor,
+        }}
+      >
+        <Icon size={20} color={item.textColor} />
+      </Box>
+    </Box>
   );
+
+
 
   /* ================= LOG COUNT ================= */
 
@@ -491,9 +600,15 @@ export default function AdminDashboard() {
   /* ================= UI ================= */
 
   return (
-    <Box sx={{ backgroundColor: "#f4f2f5ff", p: 4 }}>
-      {/* ================= METRIC CARDS ================= */}
-      <Grid container spacing={3} mt={6}>
+    <Box
+      sx={{
+        backgroundColor: "#f4f2f5ff",
+        paddingLeft: 4,
+        paddingRight: 4,
+        paddingBottom: 4,
+      }}
+    >
+      {/* <Grid container spacing={3} mt={6} alignItems="stretch">
         {[
           {
             title: "Total Employees",
@@ -581,9 +696,84 @@ export default function AdminDashboard() {
         })}
       </Grid>
 
-      {/* ================= PIE CHART ================= */}
-      <Grid container spacing={3} mt={6}>
+       */}
+      {/* <Grid container spacing={3} mt={6}>
         <DepartmentPieChart />
+      </Grid>  */}
+
+      <Grid
+        container
+        spacing={3}
+        // mt={6}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+      >
+        {/* LEFT COLUMN */}
+        <Grid display="flex">
+          <Grid
+            container
+            spacing={3}
+            direction={{ xs: "row", md: "column" }}
+            justifyContent="center" // 🔥 vertical centering
+            alignItems="center" // 🔥 horizontal centering
+            height="100%"
+          >
+            {[items[0], items[1]].map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <Grid
+                  key={idx}
+                  display="flex"
+                  justifyContent="center"
+                >
+                  <Paper sx={{ ...cardStyle(item), minHeight:100, minWidth:200 }}>
+                    <CardContent item={item} Icon={Icon} />
+                  </Paper>
+                </Grid>
+              );
+            })}
+          </Grid>
+        </Grid>
+
+
+        {/* RIGHT COLUMN */}
+        <Grid display="flex">
+          <Grid
+            container
+            spacing={3}
+            direction={{ xs: "row", md: "column" }}
+            justifyContent="center" // 🔥 vertical centering
+            alignItems="center" // 🔥 horizontal centering
+            height="100%"
+          >
+            {[items[2], items[3]].map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <Grid
+                  key={idx}
+                  display="flex"
+                  justifyContent="center"
+                >
+                  <Paper sx={{ ...cardStyle(item),  minHeight:100, minWidth:200  }}>
+                    <CardContent item={item} Icon={Icon} />
+                  </Paper>
+                </Grid>
+              );
+            })}
+          </Grid>
+        </Grid>
+
+                {/* CENTER CHART */}
+        <Grid
+         
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <DepartmentPieChart />
+        </Grid>
+
       </Grid>
 
       {/* ================= EMPLOYEE DIRECTORY ================= */}

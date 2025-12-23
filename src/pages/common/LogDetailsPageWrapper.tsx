@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { getLogById } from "../../services/logService";
 import { useParams } from "react-router-dom";
 import LogDetailsPage from "../../components/common/LogDetailsPage";
-import { CircularProgress, Box } from "@mui/material";
+import { Box } from "@mui/material";
+import LogoLoader from "../../components/common/LogoLoader";
 
 const LogDetailsPageWrapper = () => {
   const { id } = useParams();
@@ -28,7 +29,7 @@ const LogDetailsPageWrapper = () => {
   if (loading) {
     return (
       <Box sx={{ textAlign: "center", mt: 5 }}>
-        <CircularProgress />
+        <LogoLoader size={12}/>
       </Box>
     );
   }

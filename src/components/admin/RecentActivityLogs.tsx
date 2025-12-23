@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Grid, Paper, Typography, Chip } from "@mui/material";
 import { FileText, CheckCircle, Clock, User } from "lucide-react";
  
@@ -59,7 +58,7 @@ const RecentActivityLogs = ({
                   }}
                 >
                   {/* Created By + Role */}
-                  <Grid item xs={12} sm={8} md={9}>
+                  <Grid>
                     <Box
                       display="flex"
                       alignItems="center"
@@ -83,10 +82,6 @@ const RecentActivityLogs = ({
  
                   {/* Requirement Type Chip */}
                   <Grid
-                    item
-                    xs={12}
-                    sm={4}
-                    md={3}
                     display="flex"
                     justifyContent={{ xs: "flex-start", sm: "flex-end" }}
                   >
@@ -109,7 +104,7 @@ const RecentActivityLogs = ({
                 {/* Bottom Row */}
                 <Grid container spacing={2} mt={1}>
                   {/* Approvals */}
-                  <Grid item xs={12} sm={6} md={4}>
+                  <Grid >
                     <Box display="flex" alignItems="center" gap={1}>
                       <CheckCircle size={16} color="#16a34a" />
                       <Typography color="text.secondary">
@@ -119,7 +114,7 @@ const RecentActivityLogs = ({
                   </Grid>
  
                   {/* Created Time */}
-                  <Grid item xs={12} sm={6} md={4}>
+                  <Grid >
                     <Box display="flex" alignItems="center" gap={1}>
                       <Clock size={16} color="#ea580c" />
                       <Typography variant="caption">

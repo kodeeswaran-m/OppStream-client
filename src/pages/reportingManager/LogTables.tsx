@@ -23,7 +23,7 @@ const LogTables = () => {
 
   return (
     <Box
-      sx={{ backgroundColor: "#f4f2f5ff", paddingTop: 0.2, height: "100vh" }}
+      sx={{ backgroundColor: "#f4f2f5ff", paddingBottom: 0.2}}
     >
       <Paper
         elevation={3}
@@ -77,7 +77,7 @@ const LogTables = () => {
         </Box>
 
         <Box sx={{ padding: 2 }} hidden={value !== 1}>
-          <ApprovalStatusLogsTable />
+          <ApprovalStatusLogsTable  value={value}/>
         </Box>
         <Box sx={{ padding: 2 }} hidden={value !== 2}>
           <EmployeeLogsTable />

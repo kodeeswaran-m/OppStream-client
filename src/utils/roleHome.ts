@@ -1,5 +1,5 @@
 export const ROLE_HOME: Record<string, string> = {
-  employee: "/employee/form",
+  employee: "/employee/logTable",
   "reporting manager": "/manager/dashboard",
   "associate manager": "/associate/dashboard",
   VP: "/vp/dashboard",

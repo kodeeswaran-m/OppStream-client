@@ -12,6 +12,8 @@ import {
     LOAD_USER_REQUEST,
   LOAD_USER_SUCCESS,
   LOAD_USER_FAILURE,
+  CLEAR_AUTH_ERROR
+
 } from "../constants/authConstants";
 
 interface User{
@@ -94,6 +96,12 @@ const authReducer = (state = initialState, action: any): AuthState => {
         user: null,
         error: action.payload,
       };
+      case CLEAR_AUTH_ERROR:
+  return {
+    ...state,
+    error: null,
+  };
+
 
     default:
       return state;

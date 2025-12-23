@@ -14,9 +14,10 @@ import {
   TextField,
   Button,
   // Alert,
-  CircularProgress,
+
 } from "@mui/material";
 import { useSnackbar } from "../../context/SnackbarContext";
+import LogoLoader from "../../components/common/LogoLoader";
 
 const CreateBusinessUnit = () => {
   const dispatch = useDispatch();
@@ -98,7 +99,7 @@ const CreateBusinessUnit = () => {
               sx={{ py: 1, fontSize: "12px" }}
             >
               {loading ? (
-                <CircularProgress size={16} color="inherit" />
+                <LogoLoader size={12}/>
               ) : (
                 "Create"
               )}

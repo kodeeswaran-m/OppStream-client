@@ -45,7 +45,7 @@ const initialState: State = {
   manager: "",
   requirementType: "EE",
 
-  projectName: "demo",
+  projectName: "Internal Tool",
   clientName: "demo",
   projectCode: "demo",
   urgency: "Immediate",
@@ -246,7 +246,6 @@ console.log("id", isEditMode);
     fetchLog();
   }, [isEditMode, id]);
 
-  // ---------------------- SUBMIT ----------------------
   // const handleSubmit = async () => {
   //   const payload = {
   //     requirementType: state.requirementType,
@@ -302,6 +301,7 @@ console.log("id", isEditMode);
   //     showMessage("Error.");
   //   }
   // };
+
   const handleSubmit = async () => {
     const payload = {
       requirementType: state.requirementType,

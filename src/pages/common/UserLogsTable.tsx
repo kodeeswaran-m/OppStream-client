@@ -8,15 +8,19 @@ import {
   Paper,
   Typography,
   Box,
+  Chip,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
 import type { ThunkDispatch } from "redux-thunk";
 import type { AnyAction } from "redux";
-
+import { useEffect } from "react";
 import { getVisibleLogs } from "../../store/actions/employeeActions";
 import type { RootState } from "../../store";
 import TableSkeleton from "../../components/common/TableSkeleton";
+import { useNavigate } from "react-router-dom";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -25,9 +29,11 @@ const columns = [
   { label: "Project Name", key: "projectName" },
   { label: "Client Name", key: "clientName" },
   { label: "Project Code", key: "projectCode" },
-  { label: "Priority Level", key: "urgency" },
+  { label: "Urgency", key: "urgency" },
   { label: "Expected Start Date", key: "expectedStart" },
   { label: "Expected End Date", key: "expectedEnd" },
+  { label: "Status", key: "status" },
+  { label: "Edit", key: "edit" },
 ];
 
 const UserLogsTable = () => {
@@ -36,13 +42,37 @@ const UserLogsTable = () => {
   );
 
   const dispatch: AppDispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getVisibleLogs());
   }, [dispatch]);
 
-  // Helper to resolve cell values
+  /* -------------------- HELPERS -------------------- */
+
+  const getFinalApproval = (approvals: any[] = []) => {
+    const rejected = approvals.find((a) => a.status === "REJECTED");
+    if (rejected) {
+      return {
+        status: "REJECTED",
+        rejectedBy: `${rejected.role} (${rejected.approverName || "Unknown"})`,
+      };
+    }
+
+    if (approvals.some((a) => a.status === "PENDING")) {
+      return { status: "PENDING" };
+    }
+
+    return { status: "APPROVED" };
+  };
+
+  const handleEdit = (log: any) => {
+    navigate(`/employee/logs/edit/${log._id}`);
+  };
+
   const getCellValue = (log: any, key: string) => {
+    const approval = getFinalApproval(log.approvals);
+
     switch (key) {
       case "requirementType":
         return log.requirementType || "-";
@@ -69,130 +99,167 @@ const UserLogsTable = () => {
           ? new Date(log.timeline.expectedEnd).toLocaleDateString()
           : "-";
 
+      case "status":
+        return (
+          <Tooltip
+            title={
+              approval.status === "REJECTED" ? (
+                <>
+                  Rejected by {approval.rejectedBy}
+                  <br />
+                  Remarks: {approval.rejectedBy}
+                  {/* Remarks: {approval?.rejectionReason??"no reason"} */}
+                </>
+              ) : (
+                approval.status
+              )
+            }
+          >
+            <Chip
+              label={approval.status}
+              size="small"
+              color={
+                approval.status === "REJECTED"
+                  ? "error"
+                  : approval.status === "APPROVED"
+                  ? "success"
+                  : "warning"
+              }
+              sx={{ fontWeight: 600 }}
+            />
+          </Tooltip>
+        );
+
+      case "edit":
+        return (
+          <Tooltip
+            title={
+              approval.status === "REJECTED"
+                ? "Edit Log"
+                : "Editing allowed only if rejected"
+            }
+          >
+            <span>
+              <IconButton
+                size="small"
+                disabled={approval.status !== "REJECTED"}
+                onClick={() => handleEdit(log)}
+              >
+                <EditIcon fontSize="small" />
+              </IconButton>
+            </span>
+          </Tooltip>
+        );
+
       default:
         return "-";
     }
   };
+
+  /* -------------------- UI -------------------- */
 
   if (loading) {
     return <TableSkeleton rows={6} columns={columns.length} />;
   }
 
   return (
-    <>
-      {userLogs.length > 0 ? (
+    <Box
+      sx={{
+        px: { xs: 1, sm: 2, md: 3 },
+        py: 2,
+        fontSize: "12px", // 👈 global font size for this component
+      }}
+    >
+      {userLogs.length !== 0 ? (
         <>
-          {/* Header / Count */}
+          {/* HEADER */}
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              px: 2,
-              py: 1,
-              width: "100%",
+              mb: 2,
             }}
           >
+            <Typography fontSize="16px" fontWeight={600}>
+              Logs
+            </Typography>
+
             <Typography
               sx={{
                 fontSize: "12px",
-                fontWeight: 600,
                 px: 1.5,
-                py: 0.6,
-                backgroundColor: "#F2F2F2",
+                py: 0.5,
                 border: "1px solid #d6d6d6",
                 borderRadius: "6px",
               }}
             >
-              Count: {userLogscount}
+              Count : {userLogscount}
             </Typography>
           </Box>
 
-          {/* Table */}
-          <TableContainer
-            component={Paper}
-            sx={{
-              px:1.5,
-              width: "98%",
-              mt: 1,
-              borderRadius: "10px",
-              boxShadow: "0 4px 14px rgba(0,0,0,0.06)",
-              overflowX: "auto",
-            }}
-          >
-            <Table>
-              {/* Table Head */}
-              <TableHead
-                sx={{
-                  
-                  backgroundColor: "#EFE6F6",
-                  "& .MuiTableCell-root": {
-                    px:1.5,
-                    fontWeight: 600,
-                    fontSize: "1.4rem",
-                    color: "#333",
-                    py: 1.5,
-                    borderBottom: "1px solid #ddd",
-                  },
-                }}
-              >
+          {/* TABLE */}
+          <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
+            <Table
+              stickyHeader
+              sx={{
+                minWidth: 1000,
+              }}
+            >
+              <TableHead>
                 <TableRow>
                   {columns.map((col) => (
-                    <TableCell key={col.key}>{col.label}</TableCell>
+                    <TableCell
+                      key={col.key}
+                      sx={{
+                        backgroundColor: "#EFE6F6",
+                        fontWeight: 600,
+                        fontSize: "13px",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {col.label}
+                    </TableCell>
                   ))}
                 </TableRow>
               </TableHead>
 
-              {/* Table Body */}
               <TableBody>
-                {userLogs.map((log) => (
-                  <TableRow
-                    key={log._id}
-                    sx={{
-                      cursor: "pointer",
-                      "&:hover": {
-                        backgroundColor: "#f1f1f1",
-                        height:"100%",
-                      },
-                      "&:last-child td": {
-                        borderBottom: 0,
-                      },
-                    }}
-                  >
-                    {columns.map((col) => (
-                      <TableCell
-                        key={col.key}
-                        sx={{
-                          fontSize: "1.35rem",
-                          
-                          py: 1.4,
-                          color: "#444",
-                          borderBottom: "1px solid #eee",
+                {userLogs.map((log) => {
+                  const approval = getFinalApproval(log.approvals);
+                  const isApproved = approval.status === "APPROVED";
+
+                  return (
+                    <TableRow
+                      key={log._id}
+                      hover={!isApproved}
+                      sx={{
+                        cursor: isApproved ? "not-allowed" : "pointer",
+                        opacity: isApproved ? 0.6 : 1,
+                        "& td": {
+                          fontSize: "13px",
                           whiteSpace: "nowrap",
-                        }}
-                      >
-                        {getCellValue(log, col.key)}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
+                        },
+                      }}
+                    >
+                      {columns.map((col) => (
+                        <TableCell key={col.key}>
+                          {getCellValue(log, col.key)}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
         </>
       ) : (
-        <Typography
-          sx={{
-            textAlign: "center",
-            mt: 4,
-            fontSize: "1.4rem",
-            color: "#777",
-          }}
-        >
+        <Typography textAlign="center" mt={4}>
           No logs found.
         </Typography>
       )}
-    </>
+    </Box>
   );
 };
 

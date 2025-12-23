@@ -14,9 +14,10 @@ import {
   Button,
   Typography,
   Paper,
-  CircularProgress,
   Alert,
+  Collapse,
 } from "@mui/material";
+import LogoLoader from "./common/LogoLoader";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
@@ -36,6 +37,15 @@ const Login = () => {
   useEffect(() => {
     if (accessToken) navigate("/dashboard");
   }, [accessToken, navigate]);
+useEffect(() => {
+  if (error) {
+    const timer = setTimeout(() => {
+      dispatch({ type: "CLEAR_AUTH_ERROR" });
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }
+}, [error, dispatch]);
 
   /* =========================
      VALIDATION
@@ -113,9 +123,11 @@ const Login = () => {
           />
 
           {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {error}
-            </Alert>
+            <Collapse in={!!error}>
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {error}
+              </Alert>
+            </Collapse>
           )}
 
           <Button
@@ -125,7 +137,7 @@ const Login = () => {
             sx={{ mt: 3, py: 1.2, fontWeight: 600 }}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={22} /> : "Login"}
+            {loading ? <LogoLoader size={12}/> :"login" }
           </Button>
         </form>
 

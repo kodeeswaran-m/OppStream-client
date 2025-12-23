@@ -106,6 +106,34 @@ export const getManagersList = () => async (dispatch: Dispatch) => {
   }
 };
 
+export const getEmployeeById = (id: string) => async (dispatch: Dispatch) => {
+  dispatch({ type: GET_SINGLE_EMP_REQUEST });
+ 
+  try {
+    const res = await axios.get(`/api/employees/${id}`);
+   
+   
+ 
+    dispatch({
+      type: GET_SINGLE_EMP_SUCCESS,
+      payload: res.data.employee,
+    });
+ 
+    return { success: true, data: res.data.employee };
+  } catch (error: any) {
+    const message = error.response?.data?.message || "Failed to fetch employee";
+ 
+    dispatch({
+      type: GET_SINGLE_EMP_FAILURE,
+      payload: message,
+    });
+ 
+    return { success: false, data: message };
+  }
+};
+
+ 
+
 export const getCurrentEmployee = () => async (dispatch: Dispatch) => {
   dispatch({ type: GET_CURRENT_EMP_REQUEST });
 
@@ -154,6 +182,7 @@ export const createUserLog = (payload: any) => async (dispatch: Dispatch) => {
   }
 };
 
+
 export const getVisibleLogs = () => async (dispatch: Dispatch) => {
   dispatch({ type: GET_VISIBLE_LOGS_REQUEST });
 
@@ -181,7 +210,7 @@ export const getReportingEmployeeLogs = () => async (dispatch: Dispatch) => {
 
   try {
     const res = await axios.get("/api/employee/getReportingEmployeeLogs");
-
+    console.log("res.data for reportingline employees", res.data.data);
     dispatch({
       type: GET_REPORTING_EMPLOYEE_LOGS_SUCCESS,
       payload: res.data,

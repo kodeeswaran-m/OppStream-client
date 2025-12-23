@@ -169,7 +169,7 @@ const Navbar = () => {
                     Login
                   </Button>
 
-                  <Button
+                  {/* <Button
                     component={Link}
                     to="/signup"
                     sx={{
@@ -178,10 +178,9 @@ const Navbar = () => {
                     }}
                   >
                     Signup
-                  </Button>
+                  </Button> */}
                 </>
               )}
-
               {isLoggedIn &&
                 menuItems.map((item) => (
                   // <Button
@@ -203,6 +202,10 @@ const Navbar = () => {
                     sx={{
                       color: "white",
                       textTransform: "none",
+                      "&:hover": {
+                        color: "#fdfbd4",
+                        fontWeight:"bold"
+                      },
                       ...(location.pathname === item.path ? activeStyle : {}),
                     }}
                   >

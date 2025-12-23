@@ -108,7 +108,7 @@ const LogTable = () => {
                   Rejected by {approval.rejectedBy}
                   <br />
                   Remarks: {approval.rejectedBy}
-                  Remarks: {approval?.rejectionReason}
+                  {/* Remarks: {approval?.rejectionReason??"no reason"} */}
                 </>
               ) : (
                 approval.status

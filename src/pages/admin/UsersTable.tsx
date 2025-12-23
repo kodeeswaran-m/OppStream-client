@@ -16,12 +16,17 @@ import {
   TablePagination,
   Stack,
   Typography,
-  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from "@mui/material";
+import ClearIcon from "@mui/icons-material/Clear";
+import InputAdornment from "@mui/material/InputAdornment";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import SearchIcon from "@mui/icons-material/Search";
 
 import { useDispatch, useSelector } from "react-redux";
 import { getUsers } from "../../store/actions/adminActions";
@@ -29,11 +34,14 @@ import type { RootState } from "../../store";
 import { useLocation, useNavigate } from "react-router-dom";
 import { deleteUserById } from "../../services/adminService";
 import { useSnackbar } from "../../context/SnackbarContext";
+import LogoLoader from "../../components/common/LogoLoader";
 
 const UsersTable = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   const { users, loading, total } = useSelector(
     (state: RootState) => state.admin
@@ -92,26 +100,46 @@ const UsersTable = () => {
   }, [searchTerm, roleFilter, currentPage, pageLimit, fetchUsers]);
 
   const handlePageChange = (
-  _event: React.MouseEvent<HTMLButtonElement> | null,
-  newPage: number
-) => {
-  setCurrentPage(newPage);
-};
-
+    _event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setCurrentPage(newPage);
+  };
 
   const handleLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPageLimit(parseInt(e.target.value, 10));
     setCurrentPage(0);
   };
 
-  const handleDelete = async (userId: string) => {
-    const res = await deleteUserById(userId);
+  // const handleDelete = async (userId: string) => {
+  //   const res = await deleteUserById(userId);
+  //   if (res.success) {
+  //     fetchUsers();
+  //     showMessage("User Deleted.");
+  //   }
+  //   console.log("res delte", res);
+  // };
+  const handleDeleteClick = (userId: string) => {
+    setSelectedUserId(userId);
+    setOpenDeleteDialog(true);
+  };
+  const handleConfirmDelete = async () => {
+    if (!selectedUserId) return;
+
+    const res = await deleteUserById(selectedUserId);
     if (res.success) {
       fetchUsers();
-      showMessage("User Deleted.");
+      showMessage("User deleted successfully");
     }
-    console.log("res delte", res);
+
+    setOpenDeleteDialog(false);
+    setSelectedUserId(null);
   };
+  const handleCancelDelete = () => {
+    setOpenDeleteDialog(false);
+    setSelectedUserId(null);
+  };
+
   const handleEdit = (userId: string) => {
     navigate(`/admin/update-user/${userId}`);
   };
@@ -130,18 +158,6 @@ const UsersTable = () => {
           spacing={2}
           mb={2}
         >
-          <TextField
-            size="small"
-            label="Search User"
-            placeholder="Sam.."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            InputProps={{
-              startAdornment: <SearchIcon sx={{ mr: 1 }} />,
-            }}
-            sx={{ width: 250 }}
-          />
-
           <FormControl size="small" sx={{ width: 180 }}>
             <InputLabel>Role</InputLabel>
             <Select
@@ -157,6 +173,23 @@ const UsersTable = () => {
               <MenuItem value="admin">Admin</MenuItem>
             </Select>
           </FormControl>
+          <TextField
+            size="small"
+            label="Search User"
+            placeholder="Search by name or email."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{ width: 250 }}
+            InputProps={{
+              endAdornment: searchTerm && (
+                <InputAdornment position="end">
+                  <IconButton size="small" onClick={() => setSearchTerm("")}>
+                    <ClearIcon fontSize="small" />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
         </Stack>
 
         {/* Table */}
@@ -174,7 +207,7 @@ const UsersTable = () => {
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={4} align="center" sx={{ py: 5 }}>
-                    <CircularProgress />
+                    <LogoLoader size={12} />
                   </TableCell>
                 </TableRow>
               ) : users.length === 0 ? (
@@ -206,7 +239,7 @@ const UsersTable = () => {
                       </IconButton>
                       <IconButton
                         color="error"
-                        onClick={() => handleDelete(user._id)}
+                        onClick={() => handleDeleteClick(user._id)}
                       >
                         <DeleteIcon
                           sx={{
@@ -214,7 +247,7 @@ const UsersTable = () => {
                               transform: "scale(1.06)",
                             },
                           }}
-                         />
+                        />
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -234,6 +267,32 @@ const UsersTable = () => {
           />
         </Box>
       </Paper>
+      <Dialog
+        open={openDeleteDialog}
+        onClose={handleCancelDelete}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this user? This action cannot be
+            undone.
+          </Typography>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleCancelDelete}>Cancel</Button>
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
+            variant="contained"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
