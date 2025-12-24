@@ -28,10 +28,10 @@ const initialForm = {
   username: "ram",
   role: "employee",
   email: "ram@gmail.com",
-  password: "Ram@123",
-  confirmPassword: "Ram@123",
+  password: "Pass@123",
+  confirmPassword: "Pass@123",
   businessUnitId: "",
-  employeeId: "ACE9098",
+  employeeId: "ACE",
 };
 
 function formReducer(state: typeof initialForm, action: any) {
@@ -93,8 +93,7 @@ const CreateUser = () => {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
-        minWidth: "100vw",
+
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
