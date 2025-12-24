@@ -346,6 +346,10 @@ export type DashboardStatItem = {
   borderColor: string;
 };
 
+
+
+
+
 export type ColumnVisibility = {
   employeeId: boolean;
   employeeName: boolean;
@@ -398,6 +402,9 @@ export default function AdminDashboard() {
   useEffect(() => {
     dispatch(getAdminDashboardData());
   }, [dispatch]);
+
+  
+  
 
   /* ================= COLUMN MENU ================= */
 
@@ -522,7 +529,8 @@ export default function AdminDashboard() {
     },
     {
       title: "Available Emps.",
-      value: employees.filter((e) => e.status === "Available").length,
+      value: employees.filter((e) => e.isAvailable).length,
+
       icon: CheckCircle,
       bgColor: "#ecfdf5", // green-50
       textColor: "#047857", // green-700
