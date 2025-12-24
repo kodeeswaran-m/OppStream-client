@@ -48,7 +48,7 @@ const CreateBusinessUnit = () => {
   };
 
   return (
-    <Grid sx={{ backgroundColor: "#F2F2F2", height: "100vh" }}>
+    <Grid sx={{ backgroundColor: "#F2F2F2"}}>
       <Box
         sx={{
           display: "flex",
@@ -62,7 +62,7 @@ const CreateBusinessUnit = () => {
             width: "100%",
             maxWidth: 450,
             p: 4,
-            mt: 16,
+            mt: 2,
             borderRadius: 3,
           }}
         >

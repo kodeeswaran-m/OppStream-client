@@ -146,7 +146,7 @@ const UsersTable = () => {
 
   return (
     <Box sx={{ backgroundColor: "#f4f2f5ff", padding: 1 }}>
-      <Paper sx={{ padding: 2, borderRadius: 3, margin: 2, mt: 10 }}>
+      <Paper sx={{ padding: 2, borderRadius: 3, margin: 2, mt: 1 }}>
         <Typography variant="h6" fontWeight={600} mb={2}>
           Users List
         </Typography>
