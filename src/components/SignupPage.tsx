@@ -14,7 +14,6 @@ import {
   MenuItem,
   Typography,
   Paper,
-  CircularProgress,
   Collapse,
 } from "@mui/material";
 import LogoLoader from "./common/LogoLoader";
