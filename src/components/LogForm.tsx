@@ -39,7 +39,6 @@ import { getLogById, updateLogById } from "../services/logService";
 
 type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 
-// --------------------- INITIAL STATE ---------------------
 const initialState: State = {
   employeeId: "",
   employeeName: "",
@@ -94,7 +93,7 @@ const LOGForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = Boolean(id);
-  const today = new Date().toISOString().split("T")[0];
+  // const today = new Date().toISOString().split("T")[0];
 
   console.log("id", isEditMode);
   // ---------------------- AUTO-FILL USER DATA ----------------------
