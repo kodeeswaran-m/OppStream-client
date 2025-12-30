@@ -20,6 +20,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import LogTable from "../pages/employee/LogTable";
 import LOGForm from "../components/LogForm";
+
 export const routeConfig: Record<UserRole, AppRoute[]> = {
   employee: [
     {

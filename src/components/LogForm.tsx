@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import {
   Box,
   Typography,
@@ -14,8 +14,12 @@ import {
   OutlinedInput,
   Divider,
 } from "@mui/material";
+import dayjs, { Dayjs } from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import { generateSummaryFromNotes } from "../services/summaryService";
 import {
   createUserLog,
   getCurrentEmployee,
@@ -48,7 +52,7 @@ const initialState: State = {
   projectName: "Internal Tool",
   clientName: "demo",
   projectCode: "demo",
-  urgency: "Immediate",
+  urgency: "Medium",
   meetingType: "Presentation",
   callDate: "2025-12-09",
   screenshot: null,
@@ -60,9 +64,9 @@ const initialState: State = {
 
   oppCategory: "New Feature",
   shortDescription: "demo des",
-  detailedNotes: "demo description",
-
-  expectedStart: "2025-12-25",
+  detailedNotes:
+    "The client is currently using a legacy system that has performance limitations and lacks scalability during peak usage. During the discussion, the client highlighted challenges related to slow response times, manual reporting, and limited integration capabilities with third-party tools.We proposed a phased implementation approach, starting with a proof of concept focused on the most critical workflows. The client showed interest in adopting a modern, cloud-based architecture that supports better performance, security, and future scalability.Key stakeholders requested a detailed cost breakdown, tentative project timeline, and resource allocation plan. A follow-up meeting has been scheduled to present the technical solution, migration strategy, and estimated effort.",
+  expectedStart: "2026-01-25",
   expectedEnd: "2027-01-01",
 
   nnDescription: "demo",
@@ -84,13 +88,24 @@ const LOGForm = () => {
   const { currentUserDetails } = useSelector(
     (state: RootState) => state.employee
   );
-  console.log("satte", state);
+  const [generatingSummary, setGeneratingSummary] = useState(false);
+
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = Boolean(id);
-console.log("id", isEditMode);
+  const today = new Date().toISOString().split("T")[0];
+
+  console.log("id", isEditMode);
   // ---------------------- AUTO-FILL USER DATA ----------------------
+  const zoomAnimation = {
+    "@keyframes zoomPulse": {
+      "0%": { transform: "scale(1)" },
+      "50%": { transform: "scale(1.1)" },
+      "100%": { transform: "scale(1)" },
+    },
+  };
+
   useEffect(() => {
     thunkDispatch(getCurrentEmployee());
   }, []);
@@ -246,62 +261,6 @@ console.log("id", isEditMode);
     fetchLog();
   }, [isEditMode, id]);
 
-  // const handleSubmit = async () => {
-  //   const payload = {
-  //     requirementType: state.requirementType,
-
-  //     oppFrom:
-  //       state.requirementType === "NN"
-  //         ? undefined
-  //         : {
-  //             projectName: state.projectName,
-  //             clientName: state.clientName,
-  //             projectCode: state.projectCode,
-  //             urgency: state.urgency,
-  //             meetingType: state.meetingType,
-  //             meetingDate: state.callDate,
-  //             meetingScreenshot: state.screenshot,
-  //             peoplePresent: state.peoplePresent,
-  //           },
-
-  //     oppTo:
-  //       state.requirementType === "NN"
-  //         ? undefined
-  //         : {
-  //             technologyRequired: state.selectedTechnologies,
-  //             techRows: state.techRows,
-  //             totalPersons: state.totalPersons,
-  //             category: state.oppCategory,
-  //             shortDescription: state.shortDescription,
-  //             detailedNotes: state.detailedNotes,
-  //           },
-
-  //     nnDetails:
-  //       state.requirementType === "NN"
-  //         ? {
-  //             description: state.nnDescription,
-  //             clientName: state.nnClientName,
-  //             source: state.nnSource,
-  //             oppFrom: state.nnOppFrom,
-  //           }
-  //         : undefined,
-
-  //     timeline: {
-  //       expectedStart: state.expectedStart,
-  //       expectedEnd: state.expectedEnd,
-  //     },
-  //   };
-
-  //   const result = await thunkDispatch(createUserLog(payload));
-  //   if (result.success) {
-  //     showMessage("Log created successfully.");
-  //     const routeRole = getRouteRole(user?.role);
-  //     navigate(`/${routeRole}/dashboard`);
-  //   } else {
-  //     showMessage("Error.");
-  //   }
-  // };
-
   const handleSubmit = async () => {
     const payload = {
       requirementType: state.requirementType,
@@ -362,6 +321,29 @@ console.log("id", isEditMode);
 
   const canAddMoreRows = () =>
     state.techRows.length < state.selectedTechnologies.length;
+  const handleGenerateSummary = async () => {
+    if (!state.detailedNotes.trim()) {
+      showMessage("Please enter detailed notes first");
+      return;
+    }
+
+    try {
+      setGeneratingSummary(true);
+
+      const { summary } = await generateSummaryFromNotes(state.detailedNotes);
+
+      dispatch({
+        type: "SET_FIELD",
+        field: "shortDescription",
+        value: summary,
+      });
+    } catch (error) {
+      console.log(error);
+      showMessage("Failed to generate summary");
+    } finally {
+      setGeneratingSummary(false);
+    }
+  };
 
   return (
     <Box
@@ -509,7 +491,7 @@ console.log("id", isEditMode);
                   </TextField>
                 ) : (
                   <TextField
-                    // fullWidth
+                    fullWidth
                     size="small"
                     label="Project Name"
                     value={state.projectName}
@@ -564,9 +546,9 @@ console.log("id", isEditMode);
                     })
                   }
                 >
-                  <MenuItem value="Immediate">Immediate</MenuItem>
                   <MenuItem value="High">High</MenuItem>
-                  <MenuItem value="Normal">Normal</MenuItem>
+                  <MenuItem value="Medium">Medium</MenuItem>
+                  <MenuItem value="Low">Low</MenuItem>
                 </TextField>
               </Grid>
 
@@ -680,6 +662,27 @@ console.log("id", isEditMode);
             </Typography>
 
             <Grid container spacing={2} mt={3}>
+              <Grid minWidth={230}>
+                <TextField
+                  select
+                  fullWidth
+                  label="Opp. Category"
+                  // sx={fieldStyle}
+                  size="small"
+                  value={state.oppCategory}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "SET_FIELD",
+                      field: "oppCategory",
+                      value: e.target.value,
+                    })
+                  }
+                >
+                  <MenuItem value="New Feature">New Feature</MenuItem>
+                  <MenuItem value="Migration">Migration</MenuItem>
+                  <MenuItem value="Others">Others</MenuItem>
+                </TextField>
+              </Grid>
               {/* Tech Select */}
               <Grid minWidth={230}>
                 <FormControl fullWidth size="small">
@@ -809,66 +812,110 @@ console.log("id", isEditMode);
                 </Grid>
               )
             )}
+            {/* Detailed Notes */}
+            <Grid container mt={3}>
+              <TextField
+                fullWidth
+                label="Detailed Notes"
+                multiline
+                minRows={3}
+                maxRows={6}
+                size="medium"
+                value={state.detailedNotes}
+                onChange={(e) =>
+                  dispatch({
+                    type: "SET_FIELD",
+                    field: "detailedNotes",
+                    value: e.target.value,
+                  })
+                }
+                sx={{
+                  // Target the textarea
+                  "& textarea": {
+                    scrollbarWidth: "thin", // Firefox
+                    scrollbarColor: "#7B1FA2 transparent",
 
-            {/* Category and Notes */}
-            <Grid container spacing={2} mt={3}>
-              <Grid minWidth={230}>
-                <TextField
-                  select
-                  fullWidth
-                  label="Opp. Category"
-                  // sx={fieldStyle}
-                  size="small"
-                  value={state.oppCategory}
-                  onChange={(e) =>
-                    dispatch({
-                      type: "SET_FIELD",
-                      field: "oppCategory",
-                      value: e.target.value,
-                    })
-                  }
-                >
-                  <MenuItem value="New Feature">New Feature</MenuItem>
-                  <MenuItem value="Migration">Migration</MenuItem>
-                  <MenuItem value="Others">Others</MenuItem>
-                </TextField>
-              </Grid>
+                    // Chrome, Edge, Safari
+                    "&::-webkit-scrollbar": {
+                      width: "6px",
+                    },
+                    "&::-webkit-scrollbar-track": {
+                      background: "transparent",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "#7B1FA2",
+                      borderRadius: "8px",
+                    },
+                    "&::-webkit-scrollbar-thumb:hover": {
+                      backgroundColor: "#6A1B9A",
+                    },
 
-              <Grid minWidth={230}>
-                <TextField
-                  fullWidth
-                  label="Short Description"
-                  // sx={fieldStyle}
-                  size="small"
-                  value={state.shortDescription}
-                  onChange={(e) =>
-                    dispatch({
-                      type: "SET_FIELD",
-                      field: "shortDescription",
-                      value: e.target.value,
-                    })
-                  }
-                />
-              </Grid>
-
-              <Grid minWidth={230}>
-                <TextField
-                  fullWidth
-                  label="Detailed Notes"
-                  multiline
-                  rows={1}
-                  // sx={fieldStyle}
-                  size="small"
-                  value={state.detailedNotes}
-                  onChange={(e) =>
-                    dispatch({
-                      type: "SET_FIELD",
-                      field: "detailedNotes",
-                      value: e.target.value,
-                    })
-                  }
-                />
-              </Grid>
+                    // Remove scrollbar arrows
+                    "&::-webkit-scrollbar-button": {
+                      display: "none",
+                    },
+                  },
+                }}
+              />
+            </Grid>
+            {/* Short Description */}
+            <Grid container mt={3} display={"flex"} gap={2}>
+              {/* <Grid minWidth={480}> */}
+              <TextField
+                fullWidth
+                label="Short Description"
+                multiline
+                minRows={3}
+                maxRows={6}
+                // sx={fieldStyle}
+                size="small"
+                value={state.shortDescription}
+                onChange={(e) =>
+                  dispatch({
+                    type: "SET_FIELD",
+                    field: "shortDescription",
+                    value: e.target.value,
+                  })
+                }
+              />
+              {/* </Grid> */}
+              {/* <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AutoAwesomeIcon fontSize="small" />}
+                onClick={handleGenerateSummary}
+                // disabled={generatingSummary || !state.detailedNotes}
+                sx={{
+                  textTransform: "none",
+                  borderRadius: 2,
+                  px: 3,
+                }}
+              >
+                {generatingSummary ? "Generating..." : "Generate"}
+              </Button> */}
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={
+                  <AutoAwesomeIcon
+                    fontSize="small"
+                    sx={{
+                      animation: generatingSummary
+                        ? "zoomPulse 1s ease-in-out infinite"
+                        : "none",
+                    }}
+                  />
+                }
+                onClick={handleGenerateSummary}
+                sx={{
+                  textTransform: "none",
+                  borderRadius: 2,
+                  px: 3,
+                  ...zoomAnimation,
+                }}
+              >
+                {generatingSummary ? "Generating..." : "Generate"}
+              </Button>
             </Grid>
           </>
         )}
@@ -877,45 +924,77 @@ console.log("id", isEditMode);
 
         {/* ───────────────────── TIMELINE ───────────────────── */}
         <Typography mt={4} fontWeight={"bold"} variant="h6">
-          Expected Timeline
+          Expected Timeline 
         </Typography>
 
         <Grid container spacing={2} mt={1}>
           <Grid minWidth={230}>
-            <TextField
-              type="date"
-              fullWidth
+            <DatePicker
               label="Expected Start Date"
-              // sx={fieldStyle}
-              size="small"
-              InputLabelProps={{ shrink: true }}
-              value={state.expectedStart}
-              onChange={(e) =>
+              value={state.expectedStart ? dayjs(state.expectedStart) : null}
+              minDate={dayjs()} // today
+              onChange={(newValue: Dayjs | null) => {
                 dispatch({
                   type: "SET_FIELD",
                   field: "expectedStart",
-                  value: e.target.value,
-                })
-              }
+                  value: newValue ? newValue.format("YYYY-MM-DD") : "",
+                });
+
+                // Optional: auto-fix end date
+                if (
+                  state.expectedEnd &&
+                  newValue &&
+                  dayjs(state.expectedEnd).isBefore(newValue)
+                ) {
+                  dispatch({
+                    type: "SET_FIELD",
+                    field: "expectedEnd",
+                    value: newValue.format("YYYY-MM-DD"),
+                  });
+                }
+              }}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  size: "small",
+                },
+              }}
             />
           </Grid>
 
           <Grid minWidth={230}>
-            <TextField
-              type="date"
-              fullWidth
+            <DatePicker
               label="Expected End Date"
-              // sx={fieldStyle}
-              size="small"
-              InputLabelProps={{ shrink: true }}
-              value={state.expectedEnd}
-              onChange={(e) =>
+              value={state.expectedEnd ? dayjs(state.expectedEnd) : null}
+              minDate={
+                state.expectedStart ? dayjs(state.expectedStart) : dayjs()
+              }
+              onChange={(newValue: Dayjs | null) => {
                 dispatch({
                   type: "SET_FIELD",
                   field: "expectedEnd",
-                  value: e.target.value,
-                })
-              }
+                  value: newValue ? newValue.format("YYYY-MM-DD") : "",
+                });
+              }}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  size: "small",
+                  error:
+                    Boolean(state.expectedStart && state.expectedEnd) &&
+                    dayjs(state.expectedEnd).isBefore(
+                      dayjs(state.expectedStart)
+                    ),
+                  helperText:
+                    state.expectedStart &&
+                    state.expectedEnd &&
+                    dayjs(state.expectedEnd).isBefore(
+                      dayjs(state.expectedStart)
+                    )
+                      ? "End date cannot be before start date"
+                      : "",
+                },
+              }}
             />
           </Grid>
         </Grid>

@@ -8,14 +8,19 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./theme";
 import { SnackbarProvider } from "./context/SnackbarContext";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <SnackbarProvider>
       <Provider store={store}>
         <ThemeProvider theme={theme}>
-          <CssBaseline /> 
-          <App />
+          <CssBaseline />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <App />
+          </LocalizationProvider>
         </ThemeProvider>
       </Provider>
     </SnackbarProvider>
